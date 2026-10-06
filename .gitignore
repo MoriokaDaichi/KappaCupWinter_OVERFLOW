@@ -1,0 +1,39 @@
+# 制作リポジトリに不要なもの
+/tools/
+/toolsProj/
+/Docs/
+/CLAUDE.md
+.claude/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+*.ipch
+*.aps
+
+# ビルド成果物
+/exlib/
+x64/
+Debug/
+Release/
+Bin/
+*.obj
+*.pch
+*.pdb
+*.idb
+*.ilk
+*.tlog
+*.lastbuildstate
+*.log
+*.iobj
+*.ipdb
+
+# 実行時に生成されるもの
+imgui.ini
+
+# Photon のサンプルとドキュメント（libとヘッダーだけ使う）
+/k2EngineLow/ExEngine/Photon/Demos/
+/k2EngineLow/ExEngine/Photon/doc/

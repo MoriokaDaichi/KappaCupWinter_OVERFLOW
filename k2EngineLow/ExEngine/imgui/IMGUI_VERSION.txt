@@ -1,0 +1,10 @@
+a0cdc046a778deae9bb7d5821d13da5e72dc4e4f
+branch : docking
+version: 1.93.0 WIP
+source : https://github.com/ocornut/imgui
+
+k2Engine への組み込み時のメモ:
+  ・backends/ 配下の imgui_impl_win32.* と imgui_impl_dx12.* は
+    相対インクルードを解決するためにこのフォルダに平置きしている。
+  ・本体には一切手を入れていないので、更新するときは同じファイルを
+    上書きコピーするだけでよい。
