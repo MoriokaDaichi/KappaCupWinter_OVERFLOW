@@ -1,6 +1,7 @@
-#pragma once
+﻿#pragma once
 
 #include "Level3DRender/LevelRender.h"
+#include "InputManager.h"
 
 class Player;
 
@@ -16,5 +17,7 @@ public:
 private:
 	ModelRender m_modelRender;
 	Vector3 m_pos;
+	InputManager m_input;
+	DebugGuiPanel m_debugPanel;
 };
 
