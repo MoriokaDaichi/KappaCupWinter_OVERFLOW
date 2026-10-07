@@ -1,0 +1,7 @@
+# ゲーム側のコードだけに適用する（エンジン側は CP932 のまま触らない）
+# CODING_RULE.md の R-01（UTF-8 BOM付き）と R-02（CRLF）を強制する
+
+[*.{cpp,h,hpp}]
+charset = utf-8-bom
+end_of_line = crlf
+insert_final_newline = true
