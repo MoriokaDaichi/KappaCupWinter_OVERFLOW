@@ -239,6 +239,8 @@
     <ClInclude Include="collision\RayCast.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="state\IState.h" />
+    <ClInclude Include="state\StateMachine.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system\system.h" />
   </ItemGroup>

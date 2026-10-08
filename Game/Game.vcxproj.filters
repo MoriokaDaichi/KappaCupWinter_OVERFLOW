@@ -7,6 +7,9 @@
     <Filter Include="collision">
       <UniqueIdentifier>{00231e35-a804-4beb-8fbb-f05f524f4882}</UniqueIdentifier>
     </Filter>
+    <Filter Include="state">
+      <UniqueIdentifier>{d556708d-3521-4ee7-bd80-2f216b539592}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -32,6 +35,12 @@
     </ClInclude>
     <ClInclude Include="collision\RayCast.h">
       <Filter>collision</Filter>
+    </ClInclude>
+    <ClInclude Include="state\IState.h">
+      <Filter>state</Filter>
+    </ClInclude>
+    <ClInclude Include="state\StateMachine.h">
+      <Filter>state</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
