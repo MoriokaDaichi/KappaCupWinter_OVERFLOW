@@ -19,5 +19,7 @@ private:
 	Vector3 m_pos;
 	InputManager m_input;
 	DebugGuiPanel m_debugPanel;
+	BoxCollider m_floorCollider;	// 仮の床（ステージができたら置き換える）
+	RigidBody   m_floorBody;
 };
 
