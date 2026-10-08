@@ -4,6 +4,9 @@
     <Filter Include="system">
       <UniqueIdentifier>{22dd8095-74f9-46df-81a1-36675a040b1f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="collision">
+      <UniqueIdentifier>{00231e35-a804-4beb-8fbb-f05f524f4882}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -13,6 +16,9 @@
     </ClCompile>
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="collision\RayCast.cpp">
+      <Filter>collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -21,5 +27,11 @@
     </ClInclude>
     <ClInclude Include="Game.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="collision\CollisionType.h">
+      <Filter>collision</Filter>
+    </ClInclude>
+    <ClInclude Include="collision\RayCast.h">
+      <Filter>collision</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
