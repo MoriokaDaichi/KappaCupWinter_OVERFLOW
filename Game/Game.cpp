@@ -20,13 +20,24 @@ bool Game::Start()
 	// 当たり判定の形を線で表示する（デバッグ用）
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 
+	m_charaCon.Init(25.0f, 75.0f, Vector3(0.0f, 300.0f, 0.0f));
+
 	return true;
 }
 
 void Game::Update()
 {
 	m_input.Update();
-	// g_renderingEngine->DisableRaytracing();
+
+	//床の上では重力をかけない（かけると毎フレーム床にめり込んで、ガタガタする）
+	if (!m_charaCon.IsOnGround())
+	{
+		m_gravity.Apply(m_moveSpeed);
+	}
+
+	Vector3 position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
+
+	m_modelRender.SetPosition(position);
 	m_modelRender.Update();
 }
 
