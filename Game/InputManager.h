@@ -1,12 +1,12 @@
 ﻿#pragma once
 
 enum class EnInputAction : int {
-    Jump,     // A
-    Shoot,    // RT
-    Aim,      // LT
-    Grapple,  // RB
-    Pause,    // Start
-    Num       // 個数（配列の大きさに使う）
+    Jump,     ///< A
+    Shoot,    ///< RT
+    Aim,      ///< LT
+    Grapple,  ///< RB
+    Pause,    ///< Start
+    Num       ///< 個数（配列の大きさに使う）
 };
 
 class InputManager

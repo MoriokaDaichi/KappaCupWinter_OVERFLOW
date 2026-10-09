@@ -25,9 +25,9 @@ bool Game::Start()
 
 void Game::Update()
 {
+	m_input.Update();
 	// g_renderingEngine->DisableRaytracing();
 	m_modelRender.Update();
-	m_input.Update();
 }
 
 void Game::Render(RenderContext& rc)
