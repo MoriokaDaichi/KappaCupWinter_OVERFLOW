@@ -1,11 +1,14 @@
 ﻿#include "stdafx.h"
 #include "Game.h"
+#include "actor/Player.h"
 
+Game::~Game()
+{
+	DeleteGO(m_player);
+}
 
 bool Game::Start()
 {
-	m_modelRender.Init("Assets/modelData/unityChan.tkm");
-
 	// 仮の床（ステージができたら置き換える）
 	m_floorCollider.Create(Vector3(2000.0f, 10.0f, 2000.0f));
 
@@ -20,7 +23,8 @@ bool Game::Start()
 	// 当たり判定の形を線で表示する（デバッグ用）
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 
-	m_charaCon.Init(25.0f, 75.0f, Vector3(0.0f, 300.0f, 0.0f));
+	m_player = NewGO<Player>(0, "player");
+	m_player->SetInput(&m_input);
 
 	return true;
 }
@@ -28,20 +32,8 @@ bool Game::Start()
 void Game::Update()
 {
 	m_input.Update();
-
-	//床の上では重力をかけない（かけると毎フレーム床にめり込んで、ガタガタする）
-	if (!m_charaCon.IsOnGround())
-	{
-		m_gravity.Apply(m_moveSpeed);
-	}
-
-	Vector3 position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
-
-	m_modelRender.SetPosition(position);
-	m_modelRender.Update();
 }
 
 void Game::Render(RenderContext& rc)
 {
-	m_modelRender.Draw(rc);
 }

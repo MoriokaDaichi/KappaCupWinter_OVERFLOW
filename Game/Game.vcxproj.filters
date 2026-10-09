@@ -13,6 +13,9 @@
     <Filter Include="physics">
       <UniqueIdentifier>{87747dfa-ff47-4a9a-8da2-deacf4dc46da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="actor">
+      <UniqueIdentifier>{f57d08e6-eec1-49f6-b0b5-b45e74efbed0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -27,6 +30,9 @@
     </ClCompile>
     <ClCompile Include="physics\Gravity.cpp">
       <Filter>physics</Filter>
+    </ClCompile>
+    <ClCompile Include="actor\Player.cpp">
+      <Filter>actor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -50,6 +56,12 @@
     </ClInclude>
     <ClInclude Include="physics\Gravity.h">
       <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\Player.h">
+      <Filter>actor</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\PlayerState.h">
+      <Filter>actor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

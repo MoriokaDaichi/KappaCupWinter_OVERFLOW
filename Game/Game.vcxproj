@@ -223,6 +223,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="actor\Player.cpp" />
     <ClCompile Include="collision\RayCast.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -236,6 +237,8 @@
     <ClCompile Include="system\system.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="actor\Player.h" />
+    <ClInclude Include="actor\PlayerState.h" />
     <ClInclude Include="collision\CollisionType.h" />
     <ClInclude Include="collision\RayCast.h" />
     <ClInclude Include="Game.h" />
