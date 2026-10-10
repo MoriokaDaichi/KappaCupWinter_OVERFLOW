@@ -16,6 +16,9 @@
     <Filter Include="actor">
       <UniqueIdentifier>{f57d08e6-eec1-49f6-b0b5-b45e74efbed0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="actor\playerState">
+      <UniqueIdentifier>{7e252a6c-93f3-45a1-a957-b0e5abbe3318}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -33,6 +36,9 @@
     </ClCompile>
     <ClCompile Include="actor\Player.cpp">
       <Filter>actor</Filter>
+    </ClCompile>
+    <ClCompile Include="actor\playerState\PlayerIdleState.cpp">
+      <Filter>actor\playerState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -60,8 +66,11 @@
     <ClInclude Include="actor\Player.h">
       <Filter>actor</Filter>
     </ClInclude>
-    <ClInclude Include="actor\PlayerState.h">
-      <Filter>actor</Filter>
+    <ClInclude Include="actor\playerState\PlayerState.h">
+      <Filter>actor\playerState</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\playerState\PlayerIdleState.h">
+      <Filter>actor\playerState</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

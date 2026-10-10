@@ -74,7 +74,7 @@ void Player::Move()
 	m_moveSpeed.z = moveDir.z * MOVE_SPEED;
 
 	//スティックを倒しているときだけ向きを変える（離したときは今の向きを保つ）
-	if (moveDir.LengthSq() > 0.001f)
+	if (moveDir.LengthSq() > MOVE_INPUT_THRESHOLD)
 	{
 		m_rotation.SetRotationYFromDirectionXZ(moveDir);
 	}
@@ -85,6 +85,34 @@ void Player::Jump()
 	// = で入れるので、落ちている途中に跳んでも同じ高さだけ上がる
 	m_moveSpeed.y = JUMP_SPEED;
 	m_jumpCount += 1;
+}
+
+bool Player::IsJumpTrigger() const
+{
+	return m_input->IsTrigger(EnInputAction::Jump);
+}
+
+bool Player::IsMoveInput() const
+{
+	Vector2 stick = m_input->GetMove();
+	float length = stick.x * stick.x + stick.y * stick.y;
+	return length > MOVE_INPUT_THRESHOLD;
+}
+
+void Player::ChangeState(EnPlayerState id)
+{
+	m_stateMachine.ChangeState(id);
+}
+
+void Player::ResetJumpCount()
+{
+	m_jumpCount = 0;
+}
+
+void Player::StopHorizontal()
+{
+	m_moveSpeed.x = 0.0f;
+	m_moveSpeed.z = 0.0f;
 }
 
 void Player::Render(RenderContext& rc)

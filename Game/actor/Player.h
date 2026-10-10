@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "physics/Gravity.h"
 #include "state/StateMachine.h"
-#include "actor/PlayerState.h"
+#include "actor/playerState/PlayerState.h"
 
 class InputManager;
 
@@ -27,10 +27,19 @@ public:
 	/** ジャンプする（上向きの速さを入れて、回数を1増やす） */
 	void Jump();
 	/** まだジャンプできるか（跳んだ回数が上限より少ないか） */
-	bool CanJump() const
-	{
-		return m_jumpCount < MAX_JUMP_COUNT;
-	}
+	bool CanJump() const { return m_jumpCount < MAX_JUMP_COUNT;}
+	/** 地面にいるか */
+	bool IsOnGround() const { return m_charaCon.IsOnGround();}
+	/** ジャンプが押されたか */
+	bool IsJumpTrigger() const;
+	/** スティックが倒れているか */
+	bool IsMoveInput() const;
+	/** 状態を切り替える */
+	void ChangeState(EnPlayerState id);
+	/** ジャンプの回数を 0 に戻す */
+	void ResetJumpCount();
+	/** 横の速さを 0 にする（縦の速さはそのまま） */
+	void StopHorizontal();
 
 private:
 	const InputManager* m_input = nullptr;	///< 入力（読むだけ。止めるのは Game の役目）
@@ -38,6 +47,7 @@ private:
 	static constexpr float MOVE_SPEED = 400.0f;		///< 移動速度用
 	static constexpr float JUMP_SPEED = 600.0f;		///< 跳んだ瞬間の上向きの速さ
 	static constexpr int MAX_JUMP_COUNT = 2;		///< 何回ジャンプできるか
+	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;	///< スティックを倒したとみなす境目（長さの2乗）
 
 	CharacterController m_charaCon;	///< 当たり判定と移動
 	Gravity m_gravity;				///< 重力
