@@ -2,6 +2,9 @@
 #include "actor/Player.h"
 
 #include "InputManager.h"
+#include "actor/playerState/PlayerIdleState.h"
+#include "actor/playerState/PlayerRunState.h"
+#include "actor/playerState/PlayerAirState.h"
 
 Player::Player() : m_stateMachine(this)
 {
@@ -17,34 +20,19 @@ bool Player::Start()
 
 	m_charaCon.Init(25.0f, 75.0f, Vector3(0.0f, 300.0f, 0.0f));
 
+	m_stateMachine.AddState<PlayerIdleState>(EnPlayerState::Idle);
+	m_stateMachine.AddState<PlayerRunState>(EnPlayerState::Run);
+	m_stateMachine.AddState<PlayerAirState>(EnPlayerState::Air);
+
+	ChangeState(EnPlayerState::Idle);
+
 	return true;
 }
 
 void Player::Update()
 {
-	Move();
-
-	//着地したらジャンプの回数を戻す。ジャンプせずに足場から落ちたときは、1回分を使ったことにする
-	if (m_charaCon.IsOnGround())
-	{
-		m_jumpCount = 0;
-	}
-	else if (m_jumpCount == 0)
-	{
-		m_jumpCount = 1;
-	}
-
-	//ジャンプ。= で入れるので、落ちている途中に跳んでも同じ高さだけ上がる
-	if (m_input->IsTrigger(EnInputAction::Jump) && CanJump())
-	{
-		Jump();
-	}
-
-	//床の上では重力をかけない（かけると毎フレーム床にめり込んで、ガタガタする）
-	if (!m_charaCon.IsOnGround())
-	{
-		ApplyGravity();
-	}
+	//状態ごとの処理（移動・ジャンプ・重力）
+	m_stateMachine.Update();
 
 	Vector3 position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
 

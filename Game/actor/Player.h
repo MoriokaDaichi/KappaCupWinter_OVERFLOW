@@ -40,7 +40,7 @@ public:
 	void ResetJumpCount();
 	/** 横の速さを 0 にする（縦の速さはそのまま） */
 	void StopHorizontal();
-	/** 重力をかける */
+	/** 重力をかける。空中でだけ呼ぶ（床の上でかけると、毎フレーム床にめり込んでガタガタする） */
 	void ApplyGravity();
 	/** 下に向かっているか */
 	bool IsFalling() const;
