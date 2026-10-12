@@ -224,6 +224,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="actor\Player.cpp" />
+    <ClCompile Include="actor\playerState\PlayerAirState.cpp" />
     <ClCompile Include="actor\playerState\PlayerIdleState.cpp" />
     <ClCompile Include="actor\playerState\PlayerRunState.cpp" />
     <ClCompile Include="collision\RayCast.cpp" />
@@ -240,6 +241,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="actor\Player.h" />
+    <ClInclude Include="actor\playerState\PlayerAirState.h" />
     <ClInclude Include="actor\playerState\PlayerIdleState.h" />
     <ClInclude Include="actor\playerState\PlayerRunState.h" />
     <ClInclude Include="actor\playerState\PlayerState.h" />

@@ -40,6 +40,16 @@ public:
 	void ResetJumpCount();
 	/** 横の速さを 0 にする（縦の速さはそのまま） */
 	void StopHorizontal();
+	/** 重力をかける */
+	void ApplyGravity();
+	/** 下に向かっているか */
+	bool IsFalling() const;
+	/** 地上のジャンプを使ったことにする（まだ跳んでいなければ回数を 1 にする） */
+	void ConsumeGroundJump();
+	/** 空中での移動。スティックの向きへ少しずつ曲がる（離すと勢いのまま） */
+	void AirMove();
+	/** スティックとカメラから進行方向を決める */
+	Vector3 GetMoveDirection() const;
 
 private:
 	const InputManager* m_input = nullptr;	///< 入力（読むだけ。止めるのは Game の役目）
@@ -48,6 +58,7 @@ private:
 	static constexpr float JUMP_SPEED = 600.0f;		///< 跳んだ瞬間の上向きの速さ
 	static constexpr int MAX_JUMP_COUNT = 2;		///< 何回ジャンプできるか
 	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;	///< スティックを倒したとみなす境目（長さの2乗）
+	static constexpr float AIR_CONTROL = 2.0f;		///< 空中移動について1秒あたりに近づく割合
 
 	CharacterController m_charaCon;	///< 当たり判定と移動
 	Gravity m_gravity;				///< 重力
