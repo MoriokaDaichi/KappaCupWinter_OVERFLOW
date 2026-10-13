@@ -46,6 +46,9 @@
     <ClCompile Include="actor\playerState\PlayerAirState.cpp">
       <Filter>actor\playerState</Filter>
     </ClCompile>
+    <ClCompile Include="actor\Character.cpp">
+      <Filter>actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -83,6 +86,9 @@
     </ClInclude>
     <ClInclude Include="actor\playerState\PlayerAirState.h">
       <Filter>actor\playerState</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\Character.h">
+      <Filter>actor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

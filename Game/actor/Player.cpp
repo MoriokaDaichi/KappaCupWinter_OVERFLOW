@@ -16,9 +16,7 @@ Player::~Player()
 
 bool Player::Start()
 {
-	m_modelRender.Init("Assets/modelData/unityChan.tkm");
-
-	m_charaCon.Init(25.0f, 75.0f, Vector3(0.0f, 300.0f, 0.0f));
+	InitCharacter("Assets/modelData/unityChan.tkm", 25.0f, 75.0f, Vector3(0.0f, 300.0f, 0.0f));
 
 	m_stateMachine.AddState<PlayerIdleState>(EnPlayerState::Idle);
 	m_stateMachine.AddState<PlayerRunState>(EnPlayerState::Run);
@@ -27,18 +25,6 @@ bool Player::Start()
 	ChangeState(EnPlayerState::Idle);
 
 	return true;
-}
-
-void Player::Update()
-{
-	//状態ごとの処理（移動・ジャンプ・重力）
-	m_stateMachine.Update();
-
-	Vector3 position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
-
-	m_modelRender.SetRotation(m_rotation);
-	m_modelRender.SetPosition(position);
-	m_modelRender.Update();
 }
 
 void Player::Move()
@@ -89,11 +75,6 @@ void Player::StopHorizontal()
 {
 	m_moveSpeed.x = 0.0f;
 	m_moveSpeed.z = 0.0f;
-}
-
-void Player::ApplyGravity()
-{
-	m_gravity.Apply(m_moveSpeed);
 }
 
 bool Player::IsFalling() const
@@ -149,7 +130,7 @@ Vector3 Player::GetMoveDirection() const
 	return forward * stick.y + right * stick.x;
 }
 
-void Player::Render(RenderContext& rc)
+void Player::UpdateAction()
 {
-	m_modelRender.Draw(rc);
+	m_stateMachine.Update();
 }

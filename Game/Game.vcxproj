@@ -223,6 +223,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="actor\Character.cpp" />
     <ClCompile Include="actor\Player.cpp" />
     <ClCompile Include="actor\playerState\PlayerAirState.cpp" />
     <ClCompile Include="actor\playerState\PlayerIdleState.cpp" />
@@ -240,6 +241,7 @@
     <ClCompile Include="system\system.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="actor\Character.h" />
     <ClInclude Include="actor\Player.h" />
     <ClInclude Include="actor\playerState\PlayerAirState.h" />
     <ClInclude Include="actor\playerState\PlayerIdleState.h" />

@@ -1,19 +1,17 @@
 ﻿#pragma once
-#include "physics/Gravity.h"
+#include "actor/Character.h"
 #include "state/StateMachine.h"
 #include "actor/playerState/PlayerState.h"
 
 class InputManager;
 
 /** プレイヤー。移動・ジャンプ・射撃などを行う */
-class Player : public IGameObject
+class Player : public Character
 {
 public:
 	Player();
 	~Player();
 	bool Start();
-	void Update();
-	void Render(RenderContext& rc);
 
 public:
 	/** 入力を受け取る先を設定する。Game が持っている InputManager を渡す */
@@ -28,8 +26,6 @@ public:
 	void Jump();
 	/** まだジャンプできるか（跳んだ回数が上限より少ないか） */
 	bool CanJump() const { return m_jumpCount < MAX_JUMP_COUNT;}
-	/** 地面にいるか */
-	bool IsOnGround() const { return m_charaCon.IsOnGround();}
 	/** ジャンプが押されたか */
 	bool IsJumpTrigger() const;
 	/** スティックが倒れているか */
@@ -40,8 +36,6 @@ public:
 	void ResetJumpCount();
 	/** 横の速さを 0 にする（縦の速さはそのまま） */
 	void StopHorizontal();
-	/** 重力をかける。空中でだけ呼ぶ（床の上でかけると、毎フレーム床にめり込んでガタガタする） */
-	void ApplyGravity();
 	/** 下に向かっているか */
 	bool IsFalling() const;
 	/** 地上のジャンプを使ったことにする（まだ跳んでいなければ回数を 1 にする） */
@@ -51,20 +45,19 @@ public:
 	/** スティックとカメラから進行方向を決める */
 	Vector3 GetMoveDirection() const;
 
+protected:
+	/** プレイヤーの行動（ステートマシンを動かす） */
+	void UpdateAction() override;
+
 private:
 	const InputManager* m_input = nullptr;	///< 入力（読むだけ。止めるのは Game の役目）
+	StateMachine<Player, EnPlayerState> m_stateMachine;		///< 状態の切り替え役
 
 	static constexpr float MOVE_SPEED = 400.0f;		///< 移動速度用
 	static constexpr float JUMP_SPEED = 600.0f;		///< 跳んだ瞬間の上向きの速さ
 	static constexpr int MAX_JUMP_COUNT = 2;		///< 何回ジャンプできるか
 	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;	///< スティックを倒したとみなす境目（長さの2乗）
-	static constexpr float AIR_CONTROL = 2.0f;		///< 空中移動について1秒あたりに近づく割合
+	static constexpr float AIR_CONTROL = 1.5f;		///< 空中移動について1秒あたりに近づく割合
 
-	CharacterController m_charaCon;	///< 当たり判定と移動
-	Gravity m_gravity;				///< 重力
-	Vector3 m_moveSpeed;			///< 移動速度
-	ModelRender m_modelRender;		///< 見た目
-	Quaternion m_rotation;			///< 向き
 	int m_jumpCount = 0;			///< いま何回跳んだか
-	StateMachine<Player, EnPlayerState> m_stateMachine;		///< 状態の切り替え役
 };
