@@ -37,3 +37,6 @@ imgui.ini
 # Photon のサンプルとドキュメント（libとヘッダーだけ使う）
 /k2EngineLow/ExEngine/Photon/Demos/
 /k2EngineLow/ExEngine/Photon/doc/
+
+# Mixamo などの元データ（FBX）。ライセンス上、元ファイルを公開リポジトリで配ってはいけない
+*.fbx
