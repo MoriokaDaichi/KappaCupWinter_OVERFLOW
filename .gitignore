@@ -40,3 +40,5 @@ imgui.ini
 
 # Mixamo などの元データ（FBX）。ライセンス上、元ファイルを公開リポジトリで配ってはいけない
 *.fbx
+# Mixamo から落とした元データの置き場（FBX と、読み込み時に展開されるテクスチャ）
+/Game/Assets/assets/
