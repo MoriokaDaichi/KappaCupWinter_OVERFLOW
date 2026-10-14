@@ -5,6 +5,8 @@
 #include "actor/playerState/PlayerIdleState.h"
 #include "actor/playerState/PlayerRunState.h"
 #include "actor/playerState/PlayerAirState.h"
+#include "actor/playerState/PlayerWallRunState.h"
+#include "collision/RayCast.h"
 
 Player::Player() : m_stateMachine(this)
 {
@@ -21,6 +23,7 @@ bool Player::Start()
 	m_stateMachine.AddState<PlayerIdleState>(EnPlayerState::Idle);
 	m_stateMachine.AddState<PlayerRunState>(EnPlayerState::Run);
 	m_stateMachine.AddState<PlayerAirState>(EnPlayerState::Air);
+	m_stateMachine.AddState<PlayerWallRunState>(EnPlayerState::WallRun);
 
 	ChangeState(EnPlayerState::Idle);
 
@@ -130,7 +133,107 @@ Vector3 Player::GetMoveDirection() const
 	return forward * stick.y + right * stick.x;
 }
 
+bool Player::FindWall()
+{
+	Vector3 right = Vector3::Right;
+	m_rotation.Apply(right);
+
+	Vector3 from = GetPosition();
+	from.y += WALL_CHECK_HEIGHT;
+
+	const Vector3 dirs[] = { right, right * -1.0f };
+	for (const Vector3& dir : dirs)
+	{
+		Vector3 to = from + dir * WALL_CHECK_LENGTH;
+		RayHitInfo hit = nsCollision::RayCast(from, to);
+
+		if (!hit.isHit)
+		{
+			continue;
+		}
+
+		if (fabsf(hit.normal.y) >= WALL_NORMAL_Y_LIMIT)
+		{
+			continue;
+		}
+
+		m_wallNormal = hit.normal;
+		return true;
+	}
+
+	return false;
+}
+
+bool Player::CanStartWallRun() const
+{
+	Vector3 horizontal = GetMoveSpeed();
+	horizontal.y = 0.0f;
+	float speed = horizontal.Length();
+
+	return IsMoveInput() && speed >= WALLRUN_MIN_SPEED && m_reattachTimer <= 0.0f;
+}
+
+void Player::StartWallRun()
+{
+	m_wallRunTimer = 0.0f;
+	m_moveSpeed.y = 0.0f;
+
+	m_gravity.SetScale(WALLRUN_GRAVITY_SCALE);
+	ResetJumpCount();
+}
+
+void Player::WallRunMove()
+{
+	Vector3 along = Cross(m_wallNormal, Vector3::Up);
+	along.Normalize();
+
+	if (along.Dot(m_moveSpeed) < 0.0f)
+	{
+		along *= -1.0f;
+	}
+
+	Vector3 horizontalSpeed = along * WALLRUN_SPEED + m_wallNormal * -WALLRUN_STICK_SPEED;
+
+	m_moveSpeed.x = horizontalSpeed.x;
+	m_moveSpeed.z = horizontalSpeed.z;
+
+	m_rotation.SetRotationYFromDirectionXZ(along);
+	m_wallRunTimer += g_gameTime->GetFrameDeltaTime();
+	if (!IsWallRunTimeOver())
+	{
+		m_moveSpeed.y = 0.0f;
+	}
+	else
+	{
+		ApplyGravity();
+	}
+}
+
+void Player::WallJump()
+{
+	m_moveSpeed += m_wallNormal * WALL_JUMP_SPEED_OUT;
+	m_moveSpeed.y = WALL_JUMP_SPEED_UP;
+	m_jumpCount += 1;
+}
+
+void Player::EndWallRun()
+{
+	m_gravity.SetScale(1.0f);
+	m_reattachTimer = WALL_REATTACH_TIME;
+}
+
+bool Player::IsWallRunTimeOver() const
+{
+	return m_wallRunTimer >= WALLRUN_MAX_TIME;
+}
+
 void Player::UpdateAction()
 {
+	m_reattachTimer -= g_gameTime->GetFrameDeltaTime();
+	if (m_reattachTimer < 0.0f)
+	{
+		m_reattachTimer = 0.0f;
+	}
+
 	m_stateMachine.Update();
 }

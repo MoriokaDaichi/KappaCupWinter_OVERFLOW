@@ -24,6 +24,12 @@ void PlayerAirState::Update()
 		return;
 	}
 
+	if (m_owner->CanStartWallRun() && m_owner->FindWall())
+	{
+		m_owner->ChangeState(EnPlayerState::WallRun);
+		return;
+	}
+
 	//2 段目のジャンプ。状態は Air のまま
 	if (m_owner->IsJumpTrigger() && m_owner->CanJump())
 	{

@@ -228,6 +228,7 @@
     <ClCompile Include="actor\playerState\PlayerAirState.cpp" />
     <ClCompile Include="actor\playerState\PlayerIdleState.cpp" />
     <ClCompile Include="actor\playerState\PlayerRunState.cpp" />
+    <ClCompile Include="actor\playerState\PlayerWallRunState.cpp" />
     <ClCompile Include="camera\GameCamera.cpp" />
     <ClCompile Include="collision\RayCast.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -248,6 +249,7 @@
     <ClInclude Include="actor\playerState\PlayerIdleState.h" />
     <ClInclude Include="actor\playerState\PlayerRunState.h" />
     <ClInclude Include="actor\playerState\PlayerState.h" />
+    <ClInclude Include="actor\playerState\PlayerWallRunState.h" />
     <ClInclude Include="camera\GameCamera.h" />
     <ClInclude Include="collision\CollisionType.h" />
     <ClInclude Include="collision\RayCast.h" />

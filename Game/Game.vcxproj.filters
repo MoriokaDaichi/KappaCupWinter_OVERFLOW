@@ -55,6 +55,9 @@
     <ClCompile Include="camera\GameCamera.cpp">
       <Filter>camera</Filter>
     </ClCompile>
+    <ClCompile Include="actor\playerState\PlayerWallRunState.cpp">
+      <Filter>actor\playerState</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -98,6 +101,9 @@
     </ClInclude>
     <ClInclude Include="camera\GameCamera.h">
       <Filter>camera</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\playerState\PlayerWallRunState.h">
+      <Filter>actor\playerState</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
