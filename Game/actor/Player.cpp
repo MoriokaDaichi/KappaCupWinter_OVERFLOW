@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "actor/Player.h"
 
-#include "InputManager.h"
+#include "input/InputManager.h"
 #include "actor/playerState/PlayerIdleState.h"
 #include "actor/playerState/PlayerRunState.h"
 #include "actor/playerState/PlayerAirState.h"

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Level3DRender/LevelRender.h"
-#include "InputManager.h"
+#include "input/InputManager.h"
 
 class Player;
 class GameCamera;

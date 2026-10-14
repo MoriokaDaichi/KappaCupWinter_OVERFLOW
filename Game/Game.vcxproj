@@ -232,7 +232,7 @@
     <ClCompile Include="camera\GameCamera.cpp" />
     <ClCompile Include="collision\RayCast.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="input\InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="physics\Gravity.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -254,7 +254,7 @@
     <ClInclude Include="collision\CollisionType.h" />
     <ClInclude Include="collision\RayCast.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="input\InputManager.h" />
     <ClInclude Include="physics\Gravity.h" />
     <ClInclude Include="state\IState.h" />
     <ClInclude Include="state\StateMachine.h" />
