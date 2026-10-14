@@ -42,3 +42,8 @@ imgui.ini
 *.fbx
 # Mixamo から落とした元データの置き場（FBX と、読み込み時に展開されるテクスチャ）
 /Game/Assets/assets/
+
+# 上の Debug/ に巻き込まれないように、仮の床・壁のモデル置き場は Git に入れる
+!/Game/Assets/modelData/debug/
+# Visual Studio が文字コードを変えて保存するときの一時フォルダ
+enc_temp_folder/

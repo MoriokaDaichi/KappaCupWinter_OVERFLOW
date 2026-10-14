@@ -19,8 +19,14 @@ private:
 	Player* m_player = nullptr;
 	GameCamera* m_gameCamera = nullptr;
 
+	static constexpr int WALL_NUM = 2;
+
 	InputManager m_input;
-	BoxCollider m_floorCollider;	// 仮の床（ステージができたら置き換える）
+	ModelRender m_floorRender;		// 仮の床（ステージができたら置き換える）
+	BoxCollider m_floorCollider;	
 	RigidBody   m_floorBody;	
+	ModelRender m_wallRender[WALL_NUM];		//仮の壁（ステージができたら置き換える）
+	BoxCollider m_wallCollider[WALL_NUM];
+	RigidBody m_wallBody[WALL_NUM];
 };
 
