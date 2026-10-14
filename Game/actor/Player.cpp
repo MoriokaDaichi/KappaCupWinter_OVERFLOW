@@ -130,7 +130,14 @@ Vector3 Player::GetMoveDirection() const
 	right.Normalize();
 
 	//移動方向の決定
-	return forward * stick.y + right * stick.x;
+	Vector3 moveDir = forward * stick.y + right * stick.x;
+
+	//キーボードだと斜めの長さが 0.7 くらいになるので、長さを 1 にそろえる（入力がないときは 0 のまま）
+	if (moveDir.LengthSq() > MOVE_INPUT_THRESHOLD)
+	{
+		moveDir.Normalize();
+	}
+	return moveDir;
 }
 
 bool Player::FindWall()
