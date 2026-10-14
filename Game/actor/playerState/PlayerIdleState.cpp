@@ -6,7 +6,6 @@
 void PlayerIdleState::Enter()
 {
 	m_owner->ResetJumpCount();
-	m_owner->StopHorizontal();
 }
 
 void PlayerIdleState::Update()
@@ -29,5 +28,9 @@ void PlayerIdleState::Update()
 	if (m_owner->IsMoveInput())
 	{
 		m_owner->ChangeState(EnPlayerState::Run);
+		return;
 	}
+
+	//スティックを離しているので、少しずつ止まる
+	m_owner->Decelerate();
 }

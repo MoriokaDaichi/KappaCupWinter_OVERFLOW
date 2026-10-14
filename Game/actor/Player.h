@@ -34,8 +34,6 @@ public:
 	void ChangeState(EnPlayerState id);
 	/** ジャンプの回数を 0 に戻す */
 	void ResetJumpCount();
-	/** 横の速さを 0 にする（縦の速さはそのまま） */
-	void StopHorizontal();
 	/** 下に向かっているか */
 	bool IsFalling() const;
 	/** 地上のジャンプを使ったことにする（まだ跳んでいなければ回数を 1 にする） */
@@ -58,6 +56,10 @@ public:
 	void EndWallRun();
 	/** 落ちずに走れる時間を過ぎたか */
 	bool IsWallRunTimeOver() const;
+	/** 横の速さを target に、1秒あたり rate だけ近づける */
+	void ApproachHorizontal(const Vector3& target, float rate);
+	/** 止まるまで減速する（Idle から呼ぶ） */
+	void Decelerate();
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -83,6 +85,8 @@ private:
 	static constexpr float WALL_JUMP_SPEED_UP = 600.0f;		///< 壁ジャンプで上に跳ぶ速さ
 	static constexpr float WALL_JUMP_SPEED_OUT = 400.0f;	///< 壁ジャンプで壁から離れる速さ
 	static constexpr float WALL_REATTACH_TIME = 0.3f;		///< 壁を離れてから、もう一度張り付けるまでの時間（秒）
+	static constexpr float GROUND_ACCEL = 3000.0f;			///< 地上で加速する量（1秒あたり）
+	static constexpr float GROUND_DECEL = 2000.0f;			///< 地上で減速する量（1秒あたり）
 
 	int m_jumpCount = 0;			///< いま何回跳んだか
 	Vector3 m_wallNormal = Vector3::Zero;		///< 今の壁の向き（法線）。FindWall で書き換える

@@ -35,8 +35,7 @@ void Player::Move()
 	Vector3 moveDir = GetMoveDirection();
 
 	//速度に入れる
-	m_moveSpeed.x = moveDir.x * MOVE_SPEED;
-	m_moveSpeed.z = moveDir.z * MOVE_SPEED;
+	ApproachHorizontal(moveDir * MOVE_SPEED, GROUND_ACCEL);
 
 	//スティックを倒しているときだけ向きを変える（離したときは今の向きを保つ）
 	if (moveDir.LengthSq() > MOVE_INPUT_THRESHOLD)
@@ -72,12 +71,6 @@ void Player::ChangeState(EnPlayerState id)
 void Player::ResetJumpCount()
 {
 	m_jumpCount = 0;
-}
-
-void Player::StopHorizontal()
-{
-	m_moveSpeed.x = 0.0f;
-	m_moveSpeed.z = 0.0f;
 }
 
 bool Player::IsFalling() const
@@ -232,6 +225,30 @@ void Player::EndWallRun()
 bool Player::IsWallRunTimeOver() const
 {
 	return m_wallRunTimer >= WALLRUN_MAX_TIME;
+}
+
+void Player::ApproachHorizontal(const Vector3& target, float rate)
+{
+	Vector3 diff = target - m_moveSpeed;
+	diff.y = 0.0f;
+
+	float step = rate * g_gameTime->GetFrameDeltaTime();
+
+	if (diff.Length() <= step)
+	{
+		m_moveSpeed.x = target.x;
+		m_moveSpeed.z = target.z;
+		return;
+	}
+
+	diff.Normalize();
+	m_moveSpeed.x += diff.x * step;
+	m_moveSpeed.z += diff.z * step;
+}
+
+void Player::Decelerate()
+{
+	ApproachHorizontal(Vector3::Zero, GROUND_DECEL);
 }
 
 void Player::UpdateAction()
