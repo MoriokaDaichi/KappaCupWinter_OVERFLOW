@@ -1,10 +1,12 @@
 ﻿#include "stdafx.h"
 #include "Game.h"
 #include "actor/Player.h"
+#include "camera/GameCamera.h"
 
 Game::~Game()
 {
 	DeleteGO(m_player);
+	DeleteGO(m_gameCamera);
 }
 
 bool Game::Start()
@@ -25,6 +27,10 @@ bool Game::Start()
 
 	m_player = NewGO<Player>(0, "player");
 	m_player->SetInput(&m_input);
+
+	m_gameCamera = NewGO<GameCamera>(1, "gameCamera");
+	m_gameCamera->SetTarget(m_player);
+	m_gameCamera->SetInput(&m_input);
 
 	return true;
 }

@@ -4,6 +4,7 @@
 #include "InputManager.h"
 
 class Player;
+class GameCamera;
 
 class Game : public IGameObject
 {
@@ -16,6 +17,7 @@ public:
 
 private:
 	Player* m_player = nullptr;
+	GameCamera* m_gameCamera = nullptr;
 
 	InputManager m_input;
 	BoxCollider m_floorCollider;	// 仮の床（ステージができたら置き換える）

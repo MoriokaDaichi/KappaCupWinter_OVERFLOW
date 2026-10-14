@@ -19,6 +19,9 @@
     <Filter Include="actor\playerState">
       <UniqueIdentifier>{7e252a6c-93f3-45a1-a957-b0e5abbe3318}</UniqueIdentifier>
     </Filter>
+    <Filter Include="camera">
+      <UniqueIdentifier>{1f06ff82-5ab8-4786-a81f-1bf4f41b0576}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -48,6 +51,9 @@
     </ClCompile>
     <ClCompile Include="actor\Character.cpp">
       <Filter>actor</Filter>
+    </ClCompile>
+    <ClCompile Include="camera\GameCamera.cpp">
+      <Filter>camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +95,9 @@
     </ClInclude>
     <ClInclude Include="actor\Character.h">
       <Filter>actor</Filter>
+    </ClInclude>
+    <ClInclude Include="camera\GameCamera.h">
+      <Filter>camera</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -15,6 +15,10 @@ public:
 	bool IsOnGround() const { return m_charaCon.IsOnGround(); }
 	/** 重力をかける。空中でだけ呼ぶ（床の上でかけると、毎フレーム床にめり込んでガタガタする） */
 	void ApplyGravity();
+	/** 速度をわたす */
+	const Vector3& GetMoveSpeed()const { return m_moveSpeed; }
+	/** 位置をわたす */
+	const Vector3& GetPosition() const { return m_charaCon.GetPosition(); }
 
 protected:
 	/** 子クラスが書く（Player ならステートマシン） */
