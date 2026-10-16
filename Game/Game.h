@@ -5,6 +5,7 @@
 
 class Player;
 class GameCamera;
+class Anchor;
 
 class Game : public IGameObject
 {
@@ -20,7 +21,9 @@ private:
 	GameCamera* m_gameCamera = nullptr;
 
 	static constexpr int WALL_NUM = 2;
+	static constexpr int ANCHOR_NUM = 4;
 
+	Anchor* m_anchor[ANCHOR_NUM] = {};
 	InputManager m_input;
 	ModelRender m_floorRender;		// 仮の床（ステージができたら置き換える）
 	BoxCollider m_floorCollider;	

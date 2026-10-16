@@ -2,11 +2,16 @@
 #include "Game.h"
 #include "actor/Player.h"
 #include "camera/GameCamera.h"
+#include "gimmick/Anchor.h"
 
 Game::~Game()
 {
 	DeleteGO(m_player);
 	DeleteGO(m_gameCamera);
+	for (int i = 0; i < ANCHOR_NUM; i++)
+	{
+		DeleteGO(m_anchor[i]);
+	}
 }
 
 bool Game::Start()
@@ -49,6 +54,19 @@ bool Game::Start()
 		m_wallRender[i].Update();
 	}
 	
+	const Vector3 anchorPos[ANCHOR_NUM] =
+	{
+		Vector3(0.0f, 800.0f, 1500.0f),	// 正面の上
+		Vector3(600.0f, 700.0f, 1000.0f),	// 右の壁の上
+		Vector3(-600.0f, 700.0f, 1000.0f),	// 左の壁の上
+		Vector3(0.0f, 600.0f, 3500.0f),	// 正面の遠く
+	};
+
+	for (int i = 0; i < ANCHOR_NUM; i++)
+	{
+		m_anchor[i] = NewGO<Anchor>(0, "anchor");
+		m_anchor[i]->SetPosition(anchorPos[i]);
+	}
 
 	// 当たり判定の形を線で表示する（デバッグ用）
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();

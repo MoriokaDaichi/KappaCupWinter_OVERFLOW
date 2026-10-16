@@ -1,0 +1,22 @@
+﻿#include "stdafx.h"
+#include "gimmick/Anchor.h"
+
+bool Anchor::Start()
+{
+	m_modelRender.Init("Assets/modelData/debug/debug_anchor.tkm");
+	m_modelRender.SetPosition(m_position);
+
+	return true;
+}
+
+void Anchor::Update()
+{
+	float scale = m_isLocked ? LOCKED_SCALE : NORMAL_SCALE;
+	m_modelRender.SetScale(scale, scale, scale);
+	m_modelRender.Update();
+}
+
+void Anchor::Render(RenderContext& rc)
+{
+	m_modelRender.Draw(rc);
+}

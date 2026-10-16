@@ -19,11 +19,14 @@
     <Filter Include="actor\playerState">
       <UniqueIdentifier>{7e252a6c-93f3-45a1-a957-b0e5abbe3318}</UniqueIdentifier>
     </Filter>
-    <Filter Include="input">
-      <UniqueIdentifier>{6b1c2e4a-8d3f-4f7a-9c21-5e0a7b3d9f14}</UniqueIdentifier>
-    </Filter>
     <Filter Include="camera">
       <UniqueIdentifier>{1f06ff82-5ab8-4786-a81f-1bf4f41b0576}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="input">
+      <UniqueIdentifier>{d8bec153-c373-4e73-9edb-fde133646a78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gimmick">
+      <UniqueIdentifier>{f048fc4c-5f68-4dc4-81b1-b8533868c8c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -33,9 +36,6 @@
       <Filter>system</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="input\InputManager.cpp">
-      <Filter>input</Filter>
-    </ClCompile>
     <ClCompile Include="collision\RayCast.cpp">
       <Filter>collision</Filter>
     </ClCompile>
@@ -63,6 +63,12 @@
     <ClCompile Include="actor\playerState\PlayerWallRunState.cpp">
       <Filter>actor\playerState</Filter>
     </ClCompile>
+    <ClCompile Include="input\InputManager.cpp">
+      <Filter>input</Filter>
+    </ClCompile>
+    <ClCompile Include="gimmick\Anchor.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -70,9 +76,6 @@
       <Filter>system</Filter>
     </ClInclude>
     <ClInclude Include="Game.h" />
-    <ClInclude Include="input\InputManager.h">
-      <Filter>input</Filter>
-    </ClInclude>
     <ClInclude Include="collision\CollisionType.h">
       <Filter>collision</Filter>
     </ClInclude>
@@ -111,6 +114,12 @@
     </ClInclude>
     <ClInclude Include="actor\playerState\PlayerWallRunState.h">
       <Filter>actor\playerState</Filter>
+    </ClInclude>
+    <ClInclude Include="input\InputManager.h">
+      <Filter>input</Filter>
+    </ClInclude>
+    <ClInclude Include="gimmick\Anchor.h">
+      <Filter>gimmick</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
