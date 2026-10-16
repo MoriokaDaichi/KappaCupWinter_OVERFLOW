@@ -7,6 +7,7 @@
 #include "actor/playerState/PlayerAirState.h"
 #include "actor/playerState/PlayerWallRunState.h"
 #include "collision/RayCast.h"
+#include "gimmick/Anchor.h"
 
 Player::Player() : m_stateMachine(this)
 {
@@ -259,5 +260,84 @@ void Player::UpdateAction()
 		m_reattachTimer = 0.0f;
 	}
 
+	UpdateLock();
 	m_stateMachine.Update();
+}
+
+void Player::UpdateLock()
+{
+	Anchor* best = nullptr;
+	float bestScore = 0.0f;
+
+	QueryGOs<Anchor>("anchor", [&](Anchor* anchor)
+		{
+			float score = CalcLockScore(anchor);
+
+			if( score < 0.0f)
+			{
+				return true;
+			}
+
+			if (anchor == m_lockedAnchor)
+			{
+				score += LOCK_KEEP_BONUS;
+			}
+
+			if (best == nullptr || score > bestScore)
+			{
+				best = anchor;
+				bestScore = score;
+			}
+
+			return true;
+		});
+
+	if (best == m_lockedAnchor)
+	{
+		return;
+	}
+
+	if (m_lockedAnchor != nullptr)
+	{
+		m_lockedAnchor->SetLocked(false);
+	}
+
+	if (best != nullptr)
+	{
+		best->SetLocked(true);
+	}
+
+	m_lockedAnchor = best;
+}
+
+float Player::CalcLockScore(const Anchor* anchor) const
+{
+	Vector3 toAnchor = anchor->GetPosition() - GetPosition();
+	float distance = toAnchor.Length();
+	if (distance > LOCK_MAX_DISTANCE)
+	{
+		return -1.0f;
+	}
+
+	Vector3 camToAnchor = anchor->GetPosition() - g_camera3D->GetPosition();
+	camToAnchor.Normalize();
+	float dot = g_camera3D->GetForward().Dot(camToAnchor);
+	if (dot < cosf(Math::DegToRad(LOCK_MAX_ANGLE)))
+	{
+		return -1.0f;
+	}
+
+	float angle = Math::RadToDeg(acosf(min(dot, 1.0f)));
+
+	Vector3 from = GetPosition();
+	from.y += WALL_CHECK_HEIGHT;		// 胸の高さから飛ばす（足元だと床に当たる）
+	if (nsCollision::RayCast(from, anchor->GetPosition()).isHit)
+	{
+		return -1.0f;
+	}
+
+	float angleScore = 1.0f - angle / LOCK_MAX_ANGLE;
+	float distanceScore = 1.0f - distance / LOCK_MAX_DISTANCE;
+
+	return angleScore * LOCK_ANGLE_WEIGHT + distanceScore * LOCK_DISTANCE_WEIGHT;
 }

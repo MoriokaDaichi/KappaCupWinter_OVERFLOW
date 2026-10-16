@@ -4,6 +4,7 @@
 #include "actor/playerState/PlayerState.h"
 
 class InputManager;
+class Anchor;
 
 /** プレイヤー。移動・ジャンプ・射撃などを行う */
 class Player : public Character
@@ -60,14 +61,23 @@ public:
 	void ApproachHorizontal(const Vector3& target, float rate);
 	/** 止まるまで減速する（Idle から呼ぶ） */
 	void Decelerate();
+	/** スイングに使うアンカーをメンバに入れる */
+	Anchor* GetLockedAnchor() const { return m_lockedAnchor; }
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
 	void UpdateAction() override;
 
 private:
+	/** 毎フレーム、一番いいアンカーを選んで m_lockedAnchor に入れる */
+	void UpdateLock();
+	/** アンカー1つの点数を出す。候補にならないときはマイナス（例：-1.0f）を返す */
+	float CalcLockScore(const Anchor* anchor) const;
+
+private:
 	const InputManager* m_input = nullptr;	///< 入力（読むだけ。止めるのは Game の役目）
 	StateMachine<Player, EnPlayerState> m_stateMachine;		///< 状態の切り替え役
+	Anchor* m_lockedAnchor = nullptr;		///< スイングに使うアンカー
 
 	static constexpr float MOVE_SPEED = 400.0f;		///< 移動速度用
 	static constexpr float JUMP_SPEED = 600.0f;		///< 跳んだ瞬間の上向きの速さ
@@ -87,6 +97,11 @@ private:
 	static constexpr float WALL_REATTACH_TIME = 0.3f;		///< 壁を離れてから、もう一度張り付けるまでの時間（秒）
 	static constexpr float GROUND_ACCEL = 3000.0f;			///< 地上で加速する量（1秒あたり）
 	static constexpr float GROUND_DECEL = 2000.0f;			///< 地上で減速する量（1秒あたり）
+	static constexpr float LOCK_MAX_DISTANCE = 3000.0f;		///< ロックできる距離
+	static constexpr float LOCK_MAX_ANGLE = 30.0f;			///< 画面の中央からの角度の上限（度）
+	static constexpr float LOCK_ANGLE_WEIGHT = 0.7f;		///< 角度の点の重み
+	static constexpr float LOCK_DISTANCE_WEIGHT = 0.3f;		///< 距離の点の重み
+	static constexpr float LOCK_KEEP_BONUS = 0.1f;			///< 今ロックしているアンカーに足すおまけの点
 
 	int m_jumpCount = 0;			///< いま何回跳んだか
 	Vector3 m_wallNormal = Vector3::Zero;		///< 今の壁の向き（法線）。FindWall で書き換える
