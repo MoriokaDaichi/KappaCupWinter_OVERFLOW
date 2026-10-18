@@ -9,6 +9,7 @@
 #include "actor/playerState/PlayerSwingState.h"
 #include "collision/RayCast.h"
 #include "gimmick/Anchor.h"
+#include "grapple/GrappleWire.h"
 
 Player::Player() : m_stateMachine(this)
 {
@@ -16,6 +17,7 @@ Player::Player() : m_stateMachine(this)
 
 Player::~Player()
 {
+	DeleteGO(m_grappleWire);
 }
 
 bool Player::Start()
@@ -29,6 +31,8 @@ bool Player::Start()
 	m_stateMachine.AddState<PlayerSwingState>(EnPlayerState::Swing);
 
 	ChangeState(EnPlayerState::Idle);
+
+	m_grappleWire = NewGO<GrappleWire>(0, "grappleWire");
 
 	return true;
 }
@@ -266,6 +270,8 @@ bool Player::IsGrappleRelease() const
 
 void Player::StartSwing()
 {
+	m_grappleWire->SetVisible(true);
+
 	if (IsOnGround())
 	{
 		m_moveSpeed.y = SWING_START_LIFT;
@@ -283,6 +289,8 @@ void Player::SwingMove()
 
 	Vector3 toPlayer = GetRopeOrigin() - m_swingAnchor->GetPosition();
 	float distance = toPlayer.Length();
+
+	m_grappleWire->SetEnds(GetRopeOrigin(), m_swingAnchor->GetPosition());
 
 	if (distance < SWING_MIN_DISTANCE)
 	{
@@ -305,6 +313,12 @@ void Player::SwingMove()
 	{
 		m_moveSpeed += toPlayerDir * -(stretch * SWING_PULL_RATE);
 	}
+}
+
+void Player::EndSwing()
+{
+	m_swingAnchor = nullptr; 
+	m_grappleWire->SetVisible(false);
 }
 
 void Player::UpdateAction()

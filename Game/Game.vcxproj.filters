@@ -28,6 +28,9 @@
     <Filter Include="gimmick">
       <UniqueIdentifier>{f048fc4c-5f68-4dc4-81b1-b8533868c8c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="grapple">
+      <UniqueIdentifier>{63ef6346-476d-4fe2-9bca-0371bc8825de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -68,6 +71,9 @@
     </ClCompile>
     <ClCompile Include="gimmick\Anchor.cpp">
       <Filter>gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="grapple\GrappleWire.cpp">
+      <Filter>grapple</Filter>
     </ClCompile>
     <ClCompile Include="actor\playerState\PlayerSwingState.cpp">
       <Filter>actor\playerState</Filter>
@@ -123,6 +129,9 @@
     </ClInclude>
     <ClInclude Include="gimmick\Anchor.h">
       <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="grapple\GrappleWire.h">
+      <Filter>grapple</Filter>
     </ClInclude>
     <ClInclude Include="actor\playerState\PlayerSwingState.h">
       <Filter>actor\playerState</Filter>

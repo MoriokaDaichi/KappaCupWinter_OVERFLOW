@@ -5,6 +5,7 @@
 
 class InputManager;
 class Anchor;
+class GrappleWire;
 
 /** プレイヤー。移動・ジャンプ・射撃などを行う */
 class Player : public Character
@@ -74,7 +75,7 @@ public:
 	/** アンカーを中心に振り子のように動く */
 	void SwingMove();
 	/** スイングを終わるときの片付け（つかんでいるアンカーを外す） */
-	void EndSwing() { m_swingAnchor = nullptr; }
+	void EndSwing();
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -93,6 +94,7 @@ private:
 	StateMachine<Player, EnPlayerState> m_stateMachine;		///< 状態の切り替え役
 	Anchor* m_lockedAnchor = nullptr;		///< ロック中のアンカー
 	Anchor* m_swingAnchor = nullptr;		///< スイングに使うアンカー
+	GrappleWire* m_grappleWire = nullptr;	///< ワイヤーの見た目。スイング中だけ表示する
 
 	static constexpr float MOVE_SPEED = 400.0f;		///< 移動速度用
 	static constexpr float JUMP_SPEED = 600.0f;		///< 跳んだ瞬間の上向きの速さ
