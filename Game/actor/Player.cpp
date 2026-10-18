@@ -6,6 +6,7 @@
 #include "actor/playerState/PlayerRunState.h"
 #include "actor/playerState/PlayerAirState.h"
 #include "actor/playerState/PlayerWallRunState.h"
+#include "actor/playerState/PlayerSwingState.h"
 #include "collision/RayCast.h"
 #include "gimmick/Anchor.h"
 
@@ -25,6 +26,7 @@ bool Player::Start()
 	m_stateMachine.AddState<PlayerRunState>(EnPlayerState::Run);
 	m_stateMachine.AddState<PlayerAirState>(EnPlayerState::Air);
 	m_stateMachine.AddState<PlayerWallRunState>(EnPlayerState::WallRun);
+	m_stateMachine.AddState<PlayerSwingState>(EnPlayerState::Swing);
 
 	ChangeState(EnPlayerState::Idle);
 
@@ -252,6 +254,34 @@ void Player::Decelerate()
 	ApproachHorizontal(Vector3::Zero, GROUND_DECEL);
 }
 
+bool Player::IsGrappleTrigger() const
+{
+	return m_input->IsTrigger(EnInputAction::Grapple);
+}
+
+bool Player::IsGrappleRelease() const
+{
+	return m_input->IsRelease(EnInputAction::Grapple);
+}
+
+void Player::StartSwing()
+{
+	if (IsOnGround())
+	{
+		m_moveSpeed.y = SWING_START_LIFT;
+	}
+
+	m_swingAnchor = m_lockedAnchor;
+
+	m_ropeLength = (m_swingAnchor->GetPosition() - GetRopeOrigin()).Length();
+	ResetJumpCount();
+}
+
+void Player::SwingMove()
+{
+	ApplyGravity();
+}
+
 void Player::UpdateAction()
 {
 	m_reattachTimer -= g_gameTime->GetFrameDeltaTime();
@@ -261,6 +291,12 @@ void Player::UpdateAction()
 	}
 
 	UpdateLock();
+
+	if (IsGrappleTrigger() && CanStartSwing())
+	{
+		ChangeState(EnPlayerState::Swing);
+	}
+
 	m_stateMachine.Update();
 }
 
@@ -340,4 +376,12 @@ float Player::CalcLockScore(const Anchor* anchor) const
 	float distanceScore = 1.0f - distance / LOCK_MAX_DISTANCE;
 
 	return angleScore * LOCK_ANGLE_WEIGHT + distanceScore * LOCK_DISTANCE_WEIGHT;
+}
+
+Vector3 Player::GetRopeOrigin() const
+{
+	Vector3 position = GetPosition();
+	position.y += WALL_CHECK_HEIGHT;
+
+	return position;
 }

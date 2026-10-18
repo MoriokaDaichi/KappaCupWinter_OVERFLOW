@@ -61,8 +61,20 @@ public:
 	void ApproachHorizontal(const Vector3& target, float rate);
 	/** 止まるまで減速する（Idle から呼ぶ） */
 	void Decelerate();
-	/** スイングに使うアンカーをメンバに入れる */
+	/** スイングに使うロック中のアンカーを返す */
 	Anchor* GetLockedAnchor() const { return m_lockedAnchor; }
+	/** グラップルが押されたか */
+	bool IsGrappleTrigger() const;
+	/** グラップルを離したか */
+	bool IsGrappleRelease() const;
+	/** スイングを始められるか（ロック中のアンカーがあるか） */
+	bool CanStartSwing() const {return m_lockedAnchor != nullptr; }
+	/** スイングを始めるときの準備（つかむアンカーとロープの長さを覚える） */
+	void StartSwing();
+	/** アンカーを中心に振り子のように動く */
+	void SwingMove();
+	/** スイングを終わるときの片付け（つかんでいるアンカーを外す） */
+	void EndSwing() { m_swingAnchor = nullptr; }
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -73,11 +85,14 @@ private:
 	void UpdateLock();
 	/** アンカー1つの点数を出す。候補にならないときはマイナス（例：-1.0f）を返す */
 	float CalcLockScore(const Anchor* anchor) const;
+	/** ロープを出す点を返す */
+	Vector3 GetRopeOrigin() const;
 
 private:
 	const InputManager* m_input = nullptr;	///< 入力（読むだけ。止めるのは Game の役目）
 	StateMachine<Player, EnPlayerState> m_stateMachine;		///< 状態の切り替え役
-	Anchor* m_lockedAnchor = nullptr;		///< スイングに使うアンカー
+	Anchor* m_lockedAnchor = nullptr;		///< ロック中のアンカー
+	Anchor* m_swingAnchor = nullptr;		///< スイングに使うアンカー
 
 	static constexpr float MOVE_SPEED = 400.0f;		///< 移動速度用
 	static constexpr float JUMP_SPEED = 600.0f;		///< 跳んだ瞬間の上向きの速さ
@@ -102,9 +117,11 @@ private:
 	static constexpr float LOCK_ANGLE_WEIGHT = 0.7f;		///< 角度の点の重み
 	static constexpr float LOCK_DISTANCE_WEIGHT = 0.3f;		///< 距離の点の重み
 	static constexpr float LOCK_KEEP_BONUS = 0.1f;			///< 今ロックしているアンカーに足すおまけの点
+	static constexpr float SWING_START_LIFT = 100.0f;		///< 地上でつかんだときに浮かせる上向きの速さ
 
 	int m_jumpCount = 0;			///< いま何回跳んだか
 	Vector3 m_wallNormal = Vector3::Zero;		///< 今の壁の向き（法線）。FindWall で書き換える
 	float m_wallRunTimer = 0.0f;	///< 壁を走り始めてからの時間
 	float m_reattachTimer = 0.0f;	///< もう一度張り付けるまでの残り時間
+	float m_ropeLength = 0.0f;		///< ロープの長さ。つかんだときの距離を入れる
 };

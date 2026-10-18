@@ -6,5 +6,6 @@ enum class EnPlayerState : int {
     Run,    ///< 走っている
     Air,    ///< 空中（ジャンプ中・落下中）
     WallRun,///< 壁走り
+    Swing,  ///< グラップルスイング
     Num     ///< 個数（配列の大きさに使う）
 };
