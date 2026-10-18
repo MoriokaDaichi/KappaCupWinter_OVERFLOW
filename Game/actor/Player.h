@@ -118,6 +118,8 @@ private:
 	static constexpr float LOCK_DISTANCE_WEIGHT = 0.3f;		///< 距離の点の重み
 	static constexpr float LOCK_KEEP_BONUS = 0.1f;			///< 今ロックしているアンカーに足すおまけの点
 	static constexpr float SWING_START_LIFT = 100.0f;		///< 地上でつかんだときに浮かせる上向きの速さ
+	static constexpr float SWING_PULL_RATE = 5.0f;			///< ロープが伸びた分を、1秒あたりに戻す割合
+	static constexpr float SWING_MIN_DISTANCE = 0.001f;		///< アンカーとの距離がこれより近いと、ロープの向きを出せない
 
 	int m_jumpCount = 0;			///< いま何回跳んだか
 	Vector3 m_wallNormal = Vector3::Zero;		///< 今の壁の向き（法線）。FindWall で書き換える

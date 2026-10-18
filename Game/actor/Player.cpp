@@ -280,6 +280,31 @@ void Player::StartSwing()
 void Player::SwingMove()
 {
 	ApplyGravity();
+
+	Vector3 toPlayer = GetRopeOrigin() - m_swingAnchor->GetPosition();
+	float distance = toPlayer.Length();
+
+	if (distance < SWING_MIN_DISTANCE)
+	{
+		return;
+	}
+
+	Vector3 toPlayerDir = toPlayer;
+	toPlayerDir.Normalize();
+
+	// ロープの外へ逃げる速さを消す（これで円を描く）
+	float outSpeed = m_moveSpeed.Dot(toPlayerDir);
+	if (distance >= m_ropeLength && outSpeed > 0.0f)
+	{
+		m_moveSpeed -= toPlayerDir * outSpeed;
+	}
+
+	// ロープが伸びた分だけ、内向きに引き戻す
+	float stretch = distance - m_ropeLength;
+	if (stretch > 0.0f)
+	{
+		m_moveSpeed += toPlayerDir * -(stretch * SWING_PULL_RATE);
+	}
 }
 
 void Player::UpdateAction()
