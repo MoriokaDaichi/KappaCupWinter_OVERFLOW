@@ -70,12 +70,14 @@ public:
 	bool IsGrappleRelease() const;
 	/** スイングを始められるか（ロック中のアンカーがあるか） */
 	bool CanStartSwing() const {return m_lockedAnchor != nullptr; }
-	/** スイングを始めるときの準備（つかむアンカーとロープの長さを覚える） */
+	/** スイングを始めるときの準備（つかむアンカーを覚え、ワイヤーを飛ばし始める） */
 	void StartSwing();
-	/** アンカーを中心に振り子のように動く */
+	/** ワイヤーが届くまでは飛ばす。届いたらアンカーを中心に振り子のように動く */
 	void SwingMove();
 	/** スイングを終わるときの片付け（つかんでいるアンカーを外す） */
 	void EndSwing();
+	/** ワイヤーの先がアンカーに届いたか（届くまでは飛んでいる途中） */
+	bool IsGrappleHooked() const { return m_isHooked; }
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -88,6 +90,10 @@ private:
 	float CalcLockScore(const Anchor* anchor) const;
 	/** ロープを出す点を返す */
 	Vector3 GetRopeOrigin() const;
+	/** ワイヤーの先を手元からアンカーへ飛ばす。届いたらつかむ。飛んでいる間は普通に動く */
+	void ShootWire();
+	/** ワイヤーの先が届いたときに、アンカーをつかむ（ロープの長さを決める） */
+	void HookAnchor(float ropeLength);
 
 private:
 	const InputManager* m_input = nullptr;	///< 入力（読むだけ。止めるのは Game の役目）
@@ -122,10 +128,12 @@ private:
 	static constexpr float SWING_START_LIFT = 100.0f;		///< 地上でつかんだときに浮かせる上向きの速さ
 	static constexpr float SWING_PULL_RATE = 5.0f;			///< ロープが伸びた分を、1秒あたりに戻す割合
 	static constexpr float SWING_MIN_DISTANCE = 0.001f;		///< アンカーとの距離がこれより近いと、ロープの向きを出せない
-
+	static constexpr float WIRE_SHOOT_SPEED = 8000.0f;		///< ワイヤーの先が飛んでいく速さ（1秒あたり。3000 先まで約 0.4 秒）
 	int m_jumpCount = 0;			///< いま何回跳んだか
 	Vector3 m_wallNormal = Vector3::Zero;		///< 今の壁の向き（法線）。FindWall で書き換える
 	float m_wallRunTimer = 0.0f;	///< 壁を走り始めてからの時間
 	float m_reattachTimer = 0.0f;	///< もう一度張り付けるまでの残り時間
 	float m_ropeLength = 0.0f;		///< ロープの長さ。つかんだときの距離を入れる
+	float m_wireTipLength = 0.0f;	///< 手元から飛んでいるワイヤーの先までの長さ
+	bool m_isHooked = false;		///< ワイヤーの先がアンカーに届いたか
 };

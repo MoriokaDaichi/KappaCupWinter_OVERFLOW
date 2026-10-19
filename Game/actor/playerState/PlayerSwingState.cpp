@@ -23,7 +23,8 @@ void PlayerSwingState::Update()
 		return;
 	}
 
-	if (m_owner->IsOnGround() && m_owner->IsFalling())
+	//ワイヤーが飛んでいる途中は地上にいてもいいので、つかんでからだけ着地を見る
+	if (m_owner->IsGrappleHooked() && m_owner->IsOnGround() && m_owner->IsFalling())
 	{
 		if (m_owner->IsMoveInput())
 		{

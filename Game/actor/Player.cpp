@@ -272,19 +272,22 @@ void Player::StartSwing()
 {
 	m_grappleWire->SetVisible(true);
 
-	if (IsOnGround())
-	{
-		m_moveSpeed.y = SWING_START_LIFT;
-	}
-
 	m_swingAnchor = m_lockedAnchor;
 
-	m_ropeLength = (m_swingAnchor->GetPosition() - GetRopeOrigin()).Length();
+	//まだつかまない。ワイヤーの先を手元から飛ばし、届いたら HookAnchor でつかむ
+	m_wireTipLength = 0.0f;
+	m_isHooked = false;
 	ResetJumpCount();
 }
 
 void Player::SwingMove()
 {
+	if (!m_isHooked)
+	{
+		ShootWire();
+		return;
+	}
+
 	ApplyGravity();
 
 	Vector3 toPlayer = GetRopeOrigin() - m_swingAnchor->GetPosition();
@@ -317,8 +320,53 @@ void Player::SwingMove()
 
 void Player::EndSwing()
 {
-	m_swingAnchor = nullptr; 
+	m_swingAnchor = nullptr;
+	m_isHooked = false;
 	m_grappleWire->SetVisible(false);
+}
+
+void Player::ShootWire()
+{
+	Vector3 origin = GetRopeOrigin();
+	Vector3 toAnchor = m_swingAnchor->GetPosition() - origin;
+	float distance = toAnchor.Length();
+
+	m_wireTipLength += WIRE_SHOOT_SPEED * g_gameTime->GetFrameDeltaTime();
+
+	//届いた
+	if (m_wireTipLength >= distance)
+	{
+		m_grappleWire->SetEnds(origin, m_swingAnchor->GetPosition());
+		HookAnchor(distance);
+		return;
+	}
+
+	//飛んでいる途中は、手元から先までだけ描く
+	toAnchor.Normalize();
+	m_grappleWire->SetEnds(origin, origin + toAnchor * m_wireTipLength);
+
+	//まだつかんでいないので、いつもどおり動く（床の上では重力をかけない）
+	if (IsOnGround())
+	{
+		Move();
+	}
+	else
+	{
+		AirMove();
+		ApplyGravity();
+	}
+}
+
+void Player::HookAnchor(float ropeLength)
+{
+	m_isHooked = true;
+	m_ropeLength = ropeLength;
+
+	//地上でつかんだら少し浮かせる（すぐ「着地した」と判定されないように）
+	if (IsOnGround())
+	{
+		m_moveSpeed.y = SWING_START_LIFT;
+	}
 }
 
 void Player::UpdateAction()
