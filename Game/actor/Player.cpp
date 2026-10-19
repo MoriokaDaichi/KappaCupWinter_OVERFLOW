@@ -310,11 +310,26 @@ void Player::SwingMove()
 		m_moveSpeed -= toPlayerDir * outSpeed;
 	}
 
-	// ロープが伸びた分だけ、内向きに引き戻す
-	float stretch = distance - m_ropeLength;
-	if (stretch > 0.0f)
+	// 巻き上げ: 最短の長さに近いほどゆっくり引き寄せる（着いた勢いで飛び出さないように）
+	float reelSpeed = 0.0f;
+	if (m_ropeLength > SWING_MIN_ROPE_LENGTH)
 	{
-		m_moveSpeed += toPlayerDir * -(stretch * SWING_PULL_RATE);
+		reelSpeed = min(SWING_REEL_SPEED, (distance - SWING_MIN_ROPE_LENGTH) * SWING_REEL_EASE);
+
+		// 近づいた分だけロープも縮める（伸びることはない）
+		m_ropeLength = max(min(m_ropeLength, distance), SWING_MIN_ROPE_LENGTH);
+	}
+
+	// ロープが伸びた分を戻すのに必要な、内向きの速さ
+	float pullSpeed = max(distance - m_ropeLength, 0.0f) * SWING_PULL_RATE;
+
+	// 内向きの速さが足りないときだけ足す（毎フレーム足し続けると、ばねのように跳ね飛ばされる）
+	// 横の速さ（振り子の勢い）はそのまま残すので、引き寄せられながら振れる
+	float needSpeed = max(reelSpeed, pullSpeed);
+	float inSpeed = -m_moveSpeed.Dot(toPlayerDir);
+	if (inSpeed < needSpeed)
+	{
+		m_moveSpeed -= toPlayerDir * (needSpeed - inSpeed);
 	}
 }
 

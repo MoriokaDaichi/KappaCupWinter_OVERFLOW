@@ -72,7 +72,7 @@ public:
 	bool CanStartSwing() const {return m_lockedAnchor != nullptr; }
 	/** スイングを始めるときの準備（つかむアンカーを覚え、ワイヤーを飛ばし始める） */
 	void StartSwing();
-	/** ワイヤーが届くまでは飛ばす。届いたらアンカーを中心に振り子のように動く */
+	/** ワイヤーが届くまでは飛ばす。届いたら巻き上げながら、アンカーを中心に振り子のように動く */
 	void SwingMove();
 	/** スイングを終わるときの片付け（つかんでいるアンカーを外す） */
 	void EndSwing();
@@ -129,11 +129,15 @@ private:
 	static constexpr float SWING_PULL_RATE = 5.0f;			///< ロープが伸びた分を、1秒あたりに戻す割合
 	static constexpr float SWING_MIN_DISTANCE = 0.001f;		///< アンカーとの距離がこれより近いと、ロープの向きを出せない
 	static constexpr float WIRE_SHOOT_SPEED = 8000.0f;		///< ワイヤーの先が飛んでいく速さ（1秒あたり。3000 先まで約 0.4 秒）
+	static constexpr float SWING_REEL_SPEED = 1000.0f;		///< 巻き上げでアンカーへ引き寄せる速さ（1秒あたり）
+	static constexpr float SWING_MIN_ROPE_LENGTH = 300.0f;	///< 巻き上げを止めるロープの長さ。ここからは振り子だけ
+	static constexpr float SWING_REEL_EASE = 3.0f;			///< 最短の長さまでの残りに掛けて巻き上げの速さを決める（近いほど遅い）
+
 	int m_jumpCount = 0;			///< いま何回跳んだか
 	Vector3 m_wallNormal = Vector3::Zero;		///< 今の壁の向き（法線）。FindWall で書き換える
 	float m_wallRunTimer = 0.0f;	///< 壁を走り始めてからの時間
 	float m_reattachTimer = 0.0f;	///< もう一度張り付けるまでの残り時間
-	float m_ropeLength = 0.0f;		///< ロープの長さ。つかんだときの距離を入れる
+	float m_ropeLength = 0.0f;		///< ロープの長さ。つかんだときの距離を入れ、巻き上げで縮める
 	float m_wireTipLength = 0.0f;	///< 手元から飛んでいるワイヤーの先までの長さ
 	bool m_isHooked = false;		///< ワイヤーの先がアンカーに届いたか
 };
