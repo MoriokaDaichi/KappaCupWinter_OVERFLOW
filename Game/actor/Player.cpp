@@ -415,6 +415,11 @@ void Player::ReleaseBoost()
 	m_moveSpeed.y += m_param.swing.releaseLift;
 }
 
+bool Player::IsShootPress() const
+{
+	return m_input->IsPress(EnInputAction::Shoot);
+}
+
 void Player::UpdateAction()
 {
 	m_reattachTimer -= g_gameTime->GetFrameDeltaTime();
@@ -431,6 +436,7 @@ void Player::UpdateAction()
 	}
 
 	m_stateMachine.Update();
+	m_gun.Update(IsShootPress(), GetRopeOrigin());
 }
 
 void Player::UpdateLock()

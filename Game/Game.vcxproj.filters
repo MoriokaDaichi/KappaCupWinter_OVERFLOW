@@ -37,6 +37,9 @@
     <Filter Include="thirdParty">
       <UniqueIdentifier>{9a4f6d23-1c8b-4e7a-b5d2-6e3f0a9c8b14}</UniqueIdentifier>
     </Filter>
+    <Filter Include="weapon">
+      <UniqueIdentifier>{78a322bf-28fc-4c4a-b823-ac1542c0223d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -86,6 +89,12 @@
     </ClCompile>
     <ClCompile Include="actor\playerState\PlayerSwingState.cpp">
       <Filter>actor\playerState</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon\Gun.cpp">
+      <Filter>weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon\Bullet.cpp">
+      <Filter>weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +159,12 @@
     </ClInclude>
     <ClInclude Include="actor\playerState\PlayerSwingState.h">
       <Filter>actor\playerState</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon\Gun.h">
+      <Filter>weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon\Bullet.h">
+      <Filter>weapon</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

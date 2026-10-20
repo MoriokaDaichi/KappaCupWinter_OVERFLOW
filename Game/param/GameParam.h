@@ -108,6 +108,16 @@ struct AnchorParam
 	float lockedScale = 0.0f;			///< ロック中の大きさ
 };
 
+/** 銃と弾の値（gun.json） */
+struct GunParam
+{
+	float shootInterval = 0.0f;			///< 射撃間隔
+	float range = 0.0f;					///< 有効射程
+	float bulletSpeed = 0.0f;			///< 弾丸の速さ
+	float bulletLifeTime = 0.0f;		///< 弾丸が何秒残るか
+	float bulletScale = 0.0f;			///< 弾丸の大きさ
+};
+
 /** グラップルのワイヤーの値（grappleWire.json） */
 struct GrappleWireParam
 {
@@ -122,6 +132,7 @@ struct GameParam
 	GravityParam gravity;
 	AnchorParam anchor;
 	GrappleWireParam grappleWire;
+	GunParam gun;
 };
 
 namespace nsGameParam

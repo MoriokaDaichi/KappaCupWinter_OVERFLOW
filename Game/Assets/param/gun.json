@@ -1,0 +1,7 @@
+{
+  "shootInterval": 0.15,
+  "range": 10000.0,
+  "bulletSpeed": 8000.0,
+  "bulletLifeTime": 2.0,
+  "bulletScale": 0.2
+}

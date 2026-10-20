@@ -245,6 +245,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Preview|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="system\system.cpp" />
+    <ClCompile Include="weapon\Bullet.cpp" />
+    <ClCompile Include="weapon\Gun.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="actor\Character.h" />
@@ -269,6 +271,8 @@
     <ClInclude Include="state\StateMachine.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system\system.h" />
+    <ClInclude Include="weapon\Bullet.h" />
+    <ClInclude Include="weapon\Gun.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,6 +2,7 @@
 #include "actor/Character.h"
 #include "state/StateMachine.h"
 #include "actor/playerState/PlayerState.h"
+#include "weapon/Gun.h"
 #include "param/GameParam.h"
 
 class InputManager;
@@ -81,6 +82,8 @@ public:
 	bool IsGrappleHooked() const { return m_isHooked; }
 	/** スイングを離したときに、進んでいる向きと上に速さを足す（つかんでいて、十分速いときだけ） */
 	void ReleaseBoost();
+	/** 射撃ボタンを押しているか */
+	bool IsShootPress() const;
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -108,6 +111,7 @@ private:
 	Anchor* m_lockedAnchor = nullptr;		///< ロック中のアンカー
 	Anchor* m_swingAnchor = nullptr;		///< スイングに使うアンカー
 	GrappleWire* m_grappleWire = nullptr;	///< ワイヤーの見た目。スイング中だけ表示する
+	Gun m_gun;								///< 銃。RT で弾を撃つ
 
 	// 調整する値は Assets/param/player.json（意味は param/GameParam.h の PlayerParam）。ここには計算のための値だけ置く
 	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;	///< スティックを倒したとみなす境目（長さの2乗）
