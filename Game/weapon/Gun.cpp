@@ -6,6 +6,13 @@
 
 void Gun::Update(bool isShootPress, const Vector3& muzzle)
 {
+	if (isShootPress)
+	{
+		m_aimTimer = m_param.aimHoldTime;
+	}
+
+	m_aimTimer -= g_gameTime->GetFrameDeltaTime();
+
 	m_shootTimer -= g_gameTime->GetFrameDeltaTime();
 	if (!isShootPress || m_shootTimer > 0.0f)
 	{

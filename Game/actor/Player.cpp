@@ -437,6 +437,7 @@ void Player::UpdateAction()
 
 	m_stateMachine.Update();
 	m_gun.Update(IsShootPress(), GetRopeOrigin());
+	FaceAimDirection();
 }
 
 void Player::UpdateLock()
@@ -551,5 +552,23 @@ void Player::ClampSwingSpeed()
 		m_moveSpeed.Normalize();
 		m_moveSpeed *= m_param.swing.maxSpeed;
 	}
+}
+
+void Player::FaceAimDirection()
+{
+	if (!m_gun.IsAiming() || m_stateMachine.IsCurrentState(EnPlayerState::WallRun))
+	{
+		return;
+	}
+
+	Vector3 dir = g_camera3D->GetForward();
+	dir.y = 0.0f;
+
+	if (dir.LengthSq() < MOVE_INPUT_THRESHOLD)
+	{
+		return;
+	}
+
+	m_rotation.SetRotationYFromDirectionXZ(dir);
 }
 

@@ -116,6 +116,7 @@ struct GunParam
 	float bulletSpeed = 0.0f;			///< 弾丸の速さ
 	float bulletLifeTime = 0.0f;		///< 弾丸が何秒残るか
 	float bulletScale = 0.0f;			///< 弾丸の大きさ
+	float aimHoldTime = 0.0f;			///< 撃つのをやめてから、体を前に向けておく時間・秒
 };
 
 /** グラップルのワイヤーの値（grappleWire.json） */

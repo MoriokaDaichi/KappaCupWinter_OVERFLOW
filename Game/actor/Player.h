@@ -104,6 +104,8 @@ private:
 	void SwingPump(const Vector3& ropeDir);
 	/** 速さが上限を超えていたら、向きはそのまま長さを上限にそろえる */
 	void ClampSwingSpeed();
+	/** 構えている間、体をカメラの前向きに向ける */
+	void FaceAimDirection();
 
 private:
 	const InputManager* m_input = nullptr;	///< 入力（読むだけ。止めるのは Game の役目）

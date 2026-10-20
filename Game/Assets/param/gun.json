@@ -3,5 +3,6 @@
   "range": 10000.0,
   "bulletSpeed": 8000.0,
   "bulletLifeTime": 2.0,
-  "bulletScale": 0.2
+  "bulletScale": 0.2,
+  "aimHoldTime": 0.5
 }
