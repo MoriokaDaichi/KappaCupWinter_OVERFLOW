@@ -21,7 +21,7 @@ private:
 	GameCamera* m_gameCamera = nullptr;
 
 	static constexpr int WALL_NUM = 2;
-	static constexpr int ANCHOR_NUM = 4;
+	static constexpr int ANCHOR_NUM = 8;
 
 	Anchor* m_anchor[ANCHOR_NUM] = {};
 	InputManager m_input;

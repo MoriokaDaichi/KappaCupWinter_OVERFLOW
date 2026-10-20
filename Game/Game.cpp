@@ -32,11 +32,12 @@ bool Game::Start()
 	m_floorRender.Update();
 
 	//仮の壁（ステージができたら置き換える）
-	const Vector3 wallSize(200.0f, 800.0f, 10000.0f);	// 幅・高さ・長さ
+	//壁走りの通路は後ろ側（z = -5500 〜 -500）に置き、前側はグラップルのテスト用に空けておく
+	const Vector3 wallSize(200.0f, 800.0f, 5000.0f);	// 幅・高さ・長さ
 	const Vector3 wallPos[WALL_NUM] =			// 床の上に立つように、高さの半分だけ上げる
 	{
-		Vector3(300.0f, wallSize.y * 0.5f, 0.0f),
-		Vector3(-300.0f, wallSize.y * 0.5f, 0.0f),
+		Vector3(300.0f, wallSize.y * 0.5f, -3000.0f),
+		Vector3(-300.0f, wallSize.y * 0.5f, -3000.0f),
 	};
 
 	for (int i = 0; i < WALL_NUM; i++)
@@ -56,10 +57,16 @@ bool Game::Start()
 	
 	const Vector3 anchorPos[ANCHOR_NUM] =
 	{
-		Vector3(0.0f, 800.0f, 1500.0f),	// 正面の上
-		Vector3(600.0f, 700.0f, 1000.0f),	// 右の壁の上
-		Vector3(-600.0f, 700.0f, 1000.0f),	// 左の壁の上
-		Vector3(0.0f, 600.0f, 3500.0f),	// 正面の遠く
+		// 前側の広い場所：左右に振りながら奥へ続けてスイングできるように並べる
+		Vector3(0.0f, 900.0f, 1500.0f),
+		Vector3(-800.0f, 1000.0f, 3000.0f),
+		Vector3(800.0f, 1000.0f, 4500.0f),
+		Vector3(-800.0f, 1100.0f, 6000.0f),
+		Vector3(800.0f, 1100.0f, 7500.0f),
+		Vector3(0.0f, 1200.0f, 9000.0f),
+		// 後ろ側の通路：壁走りからつなげる
+		Vector3(600.0f, 1000.0f, -3000.0f),	// 右の壁の上
+		Vector3(-600.0f, 1000.0f, -3000.0f),	// 左の壁の上
 	};
 
 	for (int i = 0; i < ANCHOR_NUM; i++)
