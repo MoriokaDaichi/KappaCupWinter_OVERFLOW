@@ -94,8 +94,8 @@ private:
 	void UpdateLock();
 	/** アンカー1つの点数を出す。候補にならないときはマイナス（例：-1.0f）を返す */
 	float CalcLockScore(const Anchor* anchor) const;
-	/** ロープを出す点を返す */
-	Vector3 GetRopeOrigin() const;
+	/** 胸の位置を返す。ロープの手元と、銃口を決める基準に使う */
+	Vector3 GetChestPosition() const;
 	/** ワイヤーの先を手元からアンカーへ飛ばす。届いたらつかむ。飛んでいる間は普通に動く */
 	void ShootWire();
 	/** ワイヤーの先が届いたときに、アンカーをつかむ（ロープの長さを決める） */

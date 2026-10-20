@@ -290,10 +290,10 @@ void Player::SwingMove()
 
 	ApplyGravity();
 
-	Vector3 toPlayer = GetRopeOrigin() - m_swingAnchor->GetPosition();
+	Vector3 toPlayer = GetChestPosition() - m_swingAnchor->GetPosition();
 	float distance = toPlayer.Length();
 
-	m_grappleWire->SetEnds(GetRopeOrigin(), m_swingAnchor->GetPosition());
+	m_grappleWire->SetEnds(GetChestPosition(), m_swingAnchor->GetPosition());
 
 	if (distance < SWING_MIN_DISTANCE)
 	{
@@ -354,7 +354,7 @@ void Player::EndSwing()
 
 void Player::ShootWire()
 {
-	Vector3 origin = GetRopeOrigin();
+	Vector3 origin = GetChestPosition();
 	Vector3 toAnchor = m_swingAnchor->GetPosition() - origin;
 	float distance = toAnchor.Length();
 
@@ -436,8 +436,9 @@ void Player::UpdateAction()
 	}
 
 	m_stateMachine.Update();
-	m_gun.Update(IsShootPress(), GetRopeOrigin());
+	// 銃口は体の向きから決めるので、先に体を向けてから撃つ
 	FaceAimDirection();
+	m_gun.Update(IsShootPress(), GetChestPosition(), m_rotation);
 }
 
 void Player::UpdateLock()
@@ -518,7 +519,7 @@ float Player::CalcLockScore(const Anchor* anchor) const
 	return angleScore * m_param.lock.angleWeight + distanceScore * m_param.lock.distanceWeight;
 }
 
-Vector3 Player::GetRopeOrigin() const
+Vector3 Player::GetChestPosition() const
 {
 	Vector3 position = GetPosition();
 	position.y += m_param.body.chestHeight;
@@ -556,7 +557,9 @@ void Player::ClampSwingSpeed()
 
 void Player::FaceAimDirection()
 {
-	if (!m_gun.IsAiming() || m_stateMachine.IsCurrentState(EnPlayerState::WallRun))
+	// 押した最初のフレームは、まだ Gun の構えのタイマーが入っていないので、ボタンも見る
+	bool isAiming = IsShootPress() || m_gun.IsAiming();
+	if (!isAiming || m_stateMachine.IsCurrentState(EnPlayerState::WallRun))
 	{
 		return;
 	}

@@ -4,5 +4,7 @@
   "bulletSpeed": 8000.0,
   "bulletLifeTime": 2.0,
   "bulletScale": 0.2,
-  "aimHoldTime": 0.5
+  "aimHoldTime": 0.5,
+  "muzzleRight": 20.0,
+  "muzzleForward": 30.0
 }

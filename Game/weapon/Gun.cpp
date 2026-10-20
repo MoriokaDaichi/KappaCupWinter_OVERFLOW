@@ -4,7 +4,7 @@
 #include "weapon/Bullet.h"
 #include "collision/RayCast.h"
 
-void Gun::Update(bool isShootPress, const Vector3& muzzle)
+void Gun::Update(bool isShootPress, const Vector3& chest, const Quaternion& rotation)
 {
 	if (isShootPress)
 	{
@@ -19,7 +19,7 @@ void Gun::Update(bool isShootPress, const Vector3& muzzle)
 		return;
 	}
 
-	Shoot(muzzle);
+	Shoot(CalcMuzzle(chest, rotation));
 	m_shootTimer = m_param.shootInterval;
 }
 
@@ -48,4 +48,22 @@ Vector3 Gun::CalcAimPoint() const
 	}
 
 	return to;
+}
+
+Vector3 Gun::CalcMuzzle(const Vector3& chest, const Quaternion& rotation) const
+{
+	Vector3 right = Vector3::Right;
+	rotation.Apply(right);
+	Vector3 forward = Vector3::Front;
+	rotation.Apply(forward);
+
+	Vector3 muzzle = chest + right * m_param.muzzleRight + forward * m_param.muzzleForward;
+
+	// 壁にくっついていると銃口が壁の中に入る。中から飛ばしたレイは壁に当たらず弾が抜けるので、胸から出す
+	if (nsCollision::RayCast(chest, muzzle).isHit)
+	{
+		return chest;
+	}
+
+	return muzzle;
 }
