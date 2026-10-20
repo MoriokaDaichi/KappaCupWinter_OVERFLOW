@@ -33,6 +33,9 @@ private:
 	const Player* m_player = nullptr;		///< 追いかける相手
 	const InputManager* m_input = nullptr;	///< 右スティックを読むため
 
+	static constexpr float SHOULDER_WALL_MARGIN = 5.0f;		///< 肩の点が壁に当たったとき、体の中心の方へ戻す量
+	static constexpr float CAMERA_MIN_DISTANCE = 1.0f;		///< カメラと注視点がこれより近いときは、この距離だけ離す
+
 	Vector3 m_toCameraPos = Vector3::Zero;	///< 注視点からカメラまでのベクトル。スティックでこれを回す
 	float m_viewAngle = 0.0f;				///< 今の視野角。目標の値に少しずつ近づけるので、値を持っておく
 	float m_pitch = 0.0f;					///< 上下の角度（度）。プラスで見上げる。pitchMin〜pitchMax に収める

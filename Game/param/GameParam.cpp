@@ -19,7 +19,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Swing, wireShootSpeed, startLift
 	reelEase, pumpAccel, faceMinSpeed, maxSpeed, releaseBoost, releaseLift, releaseMinSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam, body, move, jump, wallRun, lock, swing)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraParam, distance, targetHeight, rotateSpeedX, rotateSpeedY, pitchMin, pitchMax,
-	viewAngleNormal, viewAngleMax, viewAngleLerpRate, maxSpeedForFov, collisionRadius, nearClip, farClip)
+	viewAngleNormal, viewAngleMax, viewAngleLerpRate, maxSpeedForFov, collisionRadius, nearClip, farClip, shoulderOffset)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GravityParam, gravity, fallMultiplier, maxFallSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnchorParam, normalScale, lockedScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GrappleWireParam, thicknessScale)

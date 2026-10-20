@@ -64,8 +64,8 @@ void GameCamera::UpdateViewAngle()
 
 void GameCamera::UpdatePosition()
 {
-	Vector3 target = m_player->GetPosition();
-	target.y += m_param.targetHeight;
+	Vector3 pivot = m_player->GetPosition();
+	pivot.y += m_param.targetHeight;
 
 	Vector3 toCamera(0.0f, 0.0f, -1.0f);
 
@@ -77,11 +77,39 @@ void GameCamera::UpdatePosition()
 	qPitch.Apply(toCamera);
 	qYaw.Apply(toCamera);
 
-	Vector3 position = target + toCamera * m_param.distance;
+	Vector3 right(1.0f, 0.0f, 0.0f);
+	qYaw.Apply(right);
+
+	Vector3 shoulder = pivot + right * m_param.shoulderOffset;
+	Vector3 shoulderResult;
+
+	// 壁に当たったら、肩の点を体の中心の方へ少し戻す
+	// （壁に接したままだと、2回目の壁よけがすぐ当たって、カメラと注視点が重なる）
+	if (m_collisionSolver.Execute(shoulderResult, shoulder, pivot))
+	{
+		Vector3 toPivot = pivot - shoulderResult;
+		if (toPivot.LengthSq() > SHOULDER_WALL_MARGIN * SHOULDER_WALL_MARGIN)
+		{
+			toPivot.Normalize();
+			shoulderResult += toPivot * SHOULDER_WALL_MARGIN;
+		}
+		else
+		{
+			shoulderResult = pivot;
+		}
+	}
+
+	Vector3 position = shoulderResult + toCamera * m_param.distance;
 
 	Vector3 result;
-	m_collisionSolver.Execute(result, position, target);
+	m_collisionSolver.Execute(result, position, shoulderResult);
 
-	g_camera3D->SetTarget(target);
+	// 念のため、カメラと注視点が重なったら少し後ろへずらす（重なると DirectX が向きを出せずに止まる）
+	if ((result - shoulderResult).LengthSq() < CAMERA_MIN_DISTANCE * CAMERA_MIN_DISTANCE)
+	{
+		result = shoulderResult + toCamera * CAMERA_MIN_DISTANCE;
+	}
+
+	g_camera3D->SetTarget(shoulderResult);
 	g_camera3D->SetPosition(result);
 }

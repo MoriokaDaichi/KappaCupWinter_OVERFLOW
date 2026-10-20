@@ -91,6 +91,7 @@ struct CameraParam
 	float collisionRadius = 0.0f;		///< 壁めり込みを防ぐ球の半径（Start でだけ使うので、読み直しても変わらない）
 	float nearClip = 0.0f;				///< 近くの描画の限界（Start でだけ使う）。near は Windows のマクロと重なるので使わない
 	float farClip = 0.0f;				///< 遠くの描画の限界（Start でだけ使う。ステージが広いので大きめ）
+	float shoulderOffset = 0.0f;		///< 注視点を右にずらす量
 };
 
 /** 重力の値（gravity.json） */
