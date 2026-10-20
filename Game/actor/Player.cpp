@@ -397,6 +397,24 @@ void Player::HookAnchor(float ropeLength)
 }
 
 
+void Player::ReleaseBoost()
+{
+	if (!IsGrappleHooked())
+	{
+		return;
+	}
+
+	if (m_moveSpeed.LengthSq() < SWING_RELEASE_MIN_SPEED * SWING_RELEASE_MIN_SPEED)
+	{
+		return;
+	}
+
+	Vector3 speed = m_moveSpeed;
+	speed.Normalize();
+	m_moveSpeed += speed * SWING_RELEASE_BOOST;
+	m_moveSpeed.y += SWING_RELEASE_LIFT;
+}
+
 void Player::UpdateAction()
 {
 	m_reattachTimer -= g_gameTime->GetFrameDeltaTime();

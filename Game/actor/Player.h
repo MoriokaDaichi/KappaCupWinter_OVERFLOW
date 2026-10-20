@@ -78,6 +78,8 @@ public:
 	void EndSwing();
 	/** ワイヤーの先がアンカーに届いたか（届くまでは飛んでいる途中） */
 	bool IsGrappleHooked() const { return m_isHooked; }
+	/** スイングを離したときに、進んでいる向きと上に速さを足す（つかんでいて、十分速いときだけ） */
+	void ReleaseBoost();
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -139,6 +141,9 @@ private:
 	static constexpr float SWING_PUMP_ACCEL = 800.0f;		///< グラップルで漕いだ時の加速（1秒あたり）
 	static constexpr float SWING_FACE_MIN_SPEED = 50.0f;	///< スイング中に体の向きを変える、横の速さの下限
 	static constexpr float SWING_MAX_SPEED = 2000.0f;		///< スイング中に出せる速さの上限
+	static constexpr float SWING_RELEASE_BOOST = 300.0f;	///< スイングを離したとき、進んでいる向きに足す速さ
+	static constexpr float SWING_RELEASE_LIFT = 200.0f;		///< スイングを離したとき、上に足す速さ
+	static constexpr float SWING_RELEASE_MIN_SPEED = 300.0f;	///< スイングを離したとき、これより遅いときはブーストしない
 
 	int m_jumpCount = 0;			///< いま何回跳んだか
 	Vector3 m_wallNormal = Vector3::Zero;		///< 今の壁の向き（法線）。FindWall で書き換える

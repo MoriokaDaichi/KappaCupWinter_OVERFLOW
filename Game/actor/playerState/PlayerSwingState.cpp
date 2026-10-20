@@ -12,12 +12,14 @@ void PlayerSwingState::Update()
 {
 	if (m_owner->IsGrappleRelease())
 	{
+		m_owner->ReleaseBoost();
 		m_owner->ChangeState(EnPlayerState::Air);
 		return;
 	}
 
 	if (m_owner->IsJumpTrigger())
 	{
+		m_owner->ReleaseBoost();
 		m_owner->Jump();
 		m_owner->ChangeState(EnPlayerState::Air);
 		return;
