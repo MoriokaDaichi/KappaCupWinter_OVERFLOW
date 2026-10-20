@@ -334,6 +334,8 @@ void Player::SwingMove()
 		m_moveSpeed -= toPlayerDir * (needSpeed - inSpeed);
 	}
 
+	ClampSwingSpeed();
+
 	Vector3 horizontal = m_moveSpeed;
 	horizontal.y = 0.0f;
 	
@@ -516,5 +518,14 @@ void Player::SwingPump(const Vector3& ropeDir)
 
 	input.Normalize();
 	m_moveSpeed += input * SWING_PUMP_ACCEL * g_gameTime->GetFrameDeltaTime();
+}
+
+void Player::ClampSwingSpeed()
+{
+	if (m_moveSpeed.LengthSq() > SWING_MAX_SPEED * SWING_MAX_SPEED)
+	{
+		m_moveSpeed.Normalize();
+		m_moveSpeed *= SWING_MAX_SPEED;
+	}
 }
 
