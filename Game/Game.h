@@ -31,5 +31,6 @@ private:
 	ModelRender m_wallRender[WALL_NUM];		//仮の壁（ステージができたら置き換える）
 	BoxCollider m_wallCollider[WALL_NUM];
 	RigidBody m_wallBody[WALL_NUM];
+	bool m_isReloadKeyDown = false;		///< 前のフレームで F5 を押していたか（押した瞬間だけ読み直すため）
 };
 

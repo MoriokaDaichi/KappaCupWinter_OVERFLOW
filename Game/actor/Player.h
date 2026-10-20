@@ -2,6 +2,7 @@
 #include "actor/Character.h"
 #include "state/StateMachine.h"
 #include "actor/playerState/PlayerState.h"
+#include "param/GameParam.h"
 
 class InputManager;
 class Anchor;
@@ -27,7 +28,7 @@ public:
 	/** ジャンプする（上向きの速さを入れて、回数を1増やす） */
 	void Jump();
 	/** まだジャンプできるか（跳んだ回数が上限より少ないか） */
-	bool CanJump() const { return m_jumpCount < MAX_JUMP_COUNT;}
+	bool CanJump() const { return m_jumpCount < m_param.jump.maxCount;}
 	/** ジャンプが押されたか */
 	bool IsJumpTrigger() const;
 	/** スティックが倒れているか */
@@ -108,42 +109,11 @@ private:
 	Anchor* m_swingAnchor = nullptr;		///< スイングに使うアンカー
 	GrappleWire* m_grappleWire = nullptr;	///< ワイヤーの見た目。スイング中だけ表示する
 
-	static constexpr float MOVE_SPEED = 400.0f;		///< 移動速度用
-	static constexpr float JUMP_SPEED = 600.0f;		///< 跳んだ瞬間の上向きの速さ
-	static constexpr int MAX_JUMP_COUNT = 2;		///< 何回ジャンプできるか
+	// 調整する値は Assets/param/player.json（意味は param/GameParam.h の PlayerParam）。ここには計算のための値だけ置く
 	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;	///< スティックを倒したとみなす境目（長さの2乗）
-	static constexpr float AIR_CONTROL = 1.5f;		///< 空中移動について1秒あたりに近づく割合
-	static constexpr float WALL_CHECK_LENGTH = 50.0f;		///< 壁を探すレイの長さ
-	static constexpr float WALL_CHECK_HEIGHT = 50.0f;		///< 壁を探すレイを飛ばす位置を作る時に m_position に足す値
-	static constexpr float WALL_NORMAL_Y_LIMIT = 0.3f;		///< 壁の向き（法線）の y の絶対値がこれより小さければ壁とみなす
-	static constexpr float WALLRUN_SPEED = 600.0f;			///< 壁を走る速さ
-	static constexpr float WALLRUN_MIN_SPEED = 200.0f;		///< 壁走りを始めるのに必要な横の速さ
-	static constexpr float WALLRUN_GRAVITY_SCALE = 0.15f;	///< 壁走り中の重力の倍率
-	static constexpr float WALLRUN_STICK_SPEED = 50.0f;		///< 壁に押し付ける速さ
-	static constexpr float WALLRUN_MAX_TIME = 2.0f;			///< 落ちずに壁を走れる時間（秒）。過ぎるとゆっくりずり落ちる
-	static constexpr float WALL_JUMP_SPEED_UP = 600.0f;		///< 壁ジャンプで上に跳ぶ速さ
-	static constexpr float WALL_JUMP_SPEED_OUT = 400.0f;	///< 壁ジャンプで壁から離れる速さ
-	static constexpr float WALL_REATTACH_TIME = 0.3f;		///< 壁を離れてから、もう一度張り付けるまでの時間（秒）
-	static constexpr float GROUND_ACCEL = 3000.0f;			///< 地上で加速する量（1秒あたり）
-	static constexpr float GROUND_DECEL = 2000.0f;			///< 地上で減速する量（1秒あたり）
-	static constexpr float LOCK_MAX_DISTANCE = 3000.0f;		///< ロックできる距離
-	static constexpr float LOCK_MAX_ANGLE = 30.0f;			///< 画面の中央からの角度の上限（度）
-	static constexpr float LOCK_ANGLE_WEIGHT = 0.7f;		///< 角度の点の重み
-	static constexpr float LOCK_DISTANCE_WEIGHT = 0.3f;		///< 距離の点の重み
-	static constexpr float LOCK_KEEP_BONUS = 0.1f;			///< 今ロックしているアンカーに足すおまけの点
-	static constexpr float SWING_START_LIFT = 100.0f;		///< 地上でつかんだときに浮かせる上向きの速さ
-	static constexpr float SWING_PULL_RATE = 5.0f;			///< ロープが伸びた分を、1秒あたりに戻す割合
 	static constexpr float SWING_MIN_DISTANCE = 0.001f;		///< アンカーとの距離がこれより近いと、ロープの向きを出せない
-	static constexpr float WIRE_SHOOT_SPEED = 8000.0f;		///< ワイヤーの先が飛んでいく速さ（1秒あたり。3000 先まで約 0.4 秒）
-	static constexpr float SWING_REEL_SPEED = 1000.0f;		///< 巻き上げでアンカーへ引き寄せる速さ（1秒あたり）
-	static constexpr float SWING_MIN_ROPE_LENGTH = 300.0f;	///< 巻き上げを止めるロープの長さ。ここからは振り子だけ
-	static constexpr float SWING_REEL_EASE = 3.0f;			///< 最短の長さまでの残りに掛けて巻き上げの速さを決める（近いほど遅い）
-	static constexpr float SWING_PUMP_ACCEL = 800.0f;		///< グラップルで漕いだ時の加速（1秒あたり）
-	static constexpr float SWING_FACE_MIN_SPEED = 50.0f;	///< スイング中に体の向きを変える、横の速さの下限
-	static constexpr float SWING_MAX_SPEED = 2000.0f;		///< スイング中に出せる速さの上限
-	static constexpr float SWING_RELEASE_BOOST = 300.0f;	///< スイングを離したとき、進んでいる向きに足す速さ
-	static constexpr float SWING_RELEASE_LIFT = 200.0f;		///< スイングを離したとき、上に足す速さ
-	static constexpr float SWING_RELEASE_MIN_SPEED = 300.0f;	///< スイングを離したとき、これより遅いときはブーストしない
+
+	const PlayerParam& m_param = nsGameParam::Get().player;	///< 調整用の値（F5 で読み直すと中身が変わる）
 
 	int m_jumpCount = 0;			///< いま何回跳んだか
 	Vector3 m_wallNormal = Vector3::Zero;		///< 今の壁の向き（法線）。FindWall で書き換える

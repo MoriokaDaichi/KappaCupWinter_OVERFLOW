@@ -31,6 +31,12 @@
     <Filter Include="grapple">
       <UniqueIdentifier>{63ef6346-476d-4fe2-9bca-0371bc8825de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="param">
+      <UniqueIdentifier>{3b8e2c41-7d5a-4f0e-9c6b-2a1d8e4f5b70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdParty">
+      <UniqueIdentifier>{9a4f6d23-1c8b-4e7a-b5d2-6e3f0a9c8b14}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -44,6 +50,9 @@
     </ClCompile>
     <ClCompile Include="physics\Gravity.cpp">
       <Filter>physics</Filter>
+    </ClCompile>
+    <ClCompile Include="param\GameParam.cpp">
+      <Filter>param</Filter>
     </ClCompile>
     <ClCompile Include="actor\Player.cpp">
       <Filter>actor</Filter>
@@ -99,6 +108,12 @@
     </ClInclude>
     <ClInclude Include="physics\Gravity.h">
       <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="param\GameParam.h">
+      <Filter>param</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdParty\nlohmann\json.hpp">
+      <Filter>thirdParty</Filter>
     </ClInclude>
     <ClInclude Include="actor\Player.h">
       <Filter>actor</Filter>

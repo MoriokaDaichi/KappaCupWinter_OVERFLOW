@@ -1,0 +1,5 @@
+{
+    "gravity": 980.0,
+    "fallMultiplier": 1.5,
+    "maxFallSpeed": 1500.0
+}

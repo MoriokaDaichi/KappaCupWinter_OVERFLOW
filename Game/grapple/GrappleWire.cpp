@@ -50,7 +50,7 @@ void GrappleWire::UpdateTransform()
 	Quaternion rotation;
 	rotation.SetRotation(Vector3::AxisZ, dir);
 
-	Vector3 scale(THICKNESS_SCALE, THICKNESS_SCALE, length / MODEL_LENGTH);
+	Vector3 scale(m_param.thicknessScale, m_param.thicknessScale, length / MODEL_LENGTH);
 
 	//原点がモデルの端にあるので、位置は始点のままでいい
 	m_modelRender.SetTRS(m_start, rotation, scale);

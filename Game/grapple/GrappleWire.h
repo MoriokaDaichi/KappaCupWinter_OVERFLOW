@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "param/GameParam.h"
 
 /** グラップルのワイヤー。始点と終点を受け取って、細長いモデルを伸ばして描く */
 class GrappleWire : public IGameObject
@@ -24,8 +25,9 @@ private:
 
 private:
 	static constexpr float MODEL_LENGTH = 100.0f;		///< モデルの元の長さ（Z 方向。原点は片方の端）
-	static constexpr float THICKNESS_SCALE = 1.0f;		///< 太さの倍率（1 で直径 2）
 	static constexpr float MIN_LENGTH = 0.001f;			///< これより短いと向きを出せないので描かない
+
+	const GrappleWireParam& m_param = nsGameParam::Get().grappleWire;	///< 調整用の値（Assets/param/grappleWire.json）
 
 	ModelRender m_modelRender;					///< 見た目
 	Vector3 m_start = Vector3::Zero;			///< 始点（プレイヤーの手元）

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "param/GameParam.h"
 
 /** 重力処理。毎フレーム速度の y を減らす。プレイヤーと敵で共通に使う */
 class Gravity
@@ -13,9 +14,7 @@ public:
 	}
 
 private:
-	static constexpr float GRAVITY = 980.0f;		///< 重力の強さ（1秒あたりに増える落下速度）
-	static constexpr float FALL_MULTIPLIER = 1.5f;	///< 落ちているときに重力に掛ける倍率
-	static constexpr float MAX_FALL_SPEED = 1500.0f;	///< 落下速度の上限
+	const GravityParam& m_param = nsGameParam::Get().gravity;	///< 調整用の値（Assets/param/gravity.json）
 
 	float m_scale = 1.0f;		///< 重力の倍率
 };

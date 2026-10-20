@@ -1,0 +1,15 @@
+{
+    "distance": 300.0,
+    "targetHeight": 120.0,
+    "rotateSpeedX": 180.0,
+    "rotateSpeedY": 120.0,
+    "pitchMin": -60.0,
+    "pitchMax": 40.0,
+    "viewAngleNormal": 60.0,
+    "viewAngleMax": 80.0,
+    "viewAngleLerpRate": 5.0,
+    "maxSpeedForFov": 1500.0,
+    "collisionRadius": 10.0,
+    "nearClip": 1.0,
+    "farClip": 10000.0
+}

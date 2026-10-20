@@ -237,6 +237,7 @@
     <ClCompile Include="grapple\GrappleWire.cpp" />
     <ClCompile Include="input\InputManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="param\GameParam.cpp" />
     <ClCompile Include="physics\Gravity.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -261,7 +262,9 @@
     <ClInclude Include="gimmick\Anchor.h" />
     <ClInclude Include="grapple\GrappleWire.h" />
     <ClInclude Include="input\InputManager.h" />
+    <ClInclude Include="param\GameParam.h" />
     <ClInclude Include="physics\Gravity.h" />
+    <ClInclude Include="thirdParty\nlohmann\json.hpp" />
     <ClInclude Include="state\IState.h" />
     <ClInclude Include="state\StateMachine.h" />
     <ClInclude Include="stdafx.h" />

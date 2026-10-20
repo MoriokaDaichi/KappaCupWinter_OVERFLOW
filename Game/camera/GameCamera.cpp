@@ -5,11 +5,11 @@
 
 bool GameCamera::Start()
 {
-	m_collisionSolver.Init(COLLISION_RADIUS);
-	g_camera3D->SetNear(CAMERA_NEAR);
-	g_camera3D->SetFar(CAMERA_FAR);
+	m_collisionSolver.Init(m_param.collisionRadius);
+	g_camera3D->SetNear(m_param.nearClip);
+	g_camera3D->SetFar(m_param.farClip);
 
-	m_viewAngle = VIEW_ANGLE_NORMAL;
+	m_viewAngle = m_param.viewAngleNormal;
 
 	return true;
 }
@@ -33,17 +33,17 @@ void GameCamera::Rotate()
 	Vector2 stick = m_input->GetCamera();
 
 	float dt = g_gameTime->GetFrameDeltaTime();
-	m_yaw += stick.x * ROTATE_SPEED_X * dt;
-	m_pitch += stick.y * ROTATE_SPEED_Y * dt;
+	m_yaw += stick.x * m_param.rotateSpeedX * dt;
+	m_pitch += stick.y * m_param.rotateSpeedY * dt;
 
-	if (m_pitch < PITCH_MIN)
+	if (m_pitch < m_param.pitchMin)
 	{
-		m_pitch = PITCH_MIN;
+		m_pitch = m_param.pitchMin;
 	}
 	
-	if (m_pitch > PITCH_MAX)
+	if (m_pitch > m_param.pitchMax)
 	{
-		m_pitch = PITCH_MAX;
+		m_pitch = m_param.pitchMax;
 	}
 }
 
@@ -53,11 +53,11 @@ void GameCamera::UpdateViewAngle()
 	horizontal.y = 0.0f;
 	float speed = horizontal.Length();
 
-	float rate = speed / MAX_SPEED_FOR_FOV;
+	float rate = speed / m_param.maxSpeedForFov;
 	rate = min(rate, 1.0f);
-	float angle = Math::Lerp(rate, VIEW_ANGLE_NORMAL, VIEW_ANGLE_MAX);
+	float angle = Math::Lerp(rate, m_param.viewAngleNormal, m_param.viewAngleMax);
 
-	m_viewAngle = Math::Lerp(min(VIEW_ANGLE_LERP_RATE * g_gameTime->GetFrameDeltaTime(), 1.0f), m_viewAngle, angle);
+	m_viewAngle = Math::Lerp(min(m_param.viewAngleLerpRate * g_gameTime->GetFrameDeltaTime(), 1.0f), m_viewAngle, angle);
 
 	g_camera3D->SetViewAngle(Math::DegToRad(m_viewAngle));
 }
@@ -65,7 +65,7 @@ void GameCamera::UpdateViewAngle()
 void GameCamera::UpdatePosition()
 {
 	Vector3 target = m_player->GetPosition();
-	target.y += TARGET_HEIGHT;
+	target.y += m_param.targetHeight;
 
 	Vector3 toCamera(0.0f, 0.0f, -1.0f);
 
@@ -77,7 +77,7 @@ void GameCamera::UpdatePosition()
 	qPitch.Apply(toCamera);
 	qYaw.Apply(toCamera);
 
-	Vector3 position = target + toCamera * CAMERA_DISTANCE;
+	Vector3 position = target + toCamera * m_param.distance;
 
 	Vector3 result;
 	m_collisionSolver.Execute(result, position, target);

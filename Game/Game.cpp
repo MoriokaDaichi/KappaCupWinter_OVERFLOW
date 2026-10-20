@@ -3,6 +3,7 @@
 #include "actor/Player.h"
 #include "camera/GameCamera.h"
 #include "gimmick/Anchor.h"
+#include "param/GameParam.h"
 
 Game::~Game()
 {
@@ -16,6 +17,9 @@ Game::~Game()
 
 bool Game::Start()
 {
+	// 調整用の値を読む。ほかのオブジェクトが値を使う前に読んでおく
+	nsGameParam::Load();
+
 	// 仮の床（ステージができたら置き換える）
 	m_floorCollider.Create(Vector3(20000.0f, 10.0f, 20000.0f));
 
@@ -91,6 +95,16 @@ bool Game::Start()
 void Game::Update()
 {
 	m_input.Update();
+
+#ifdef K2_DEBUG
+	// F5 で JSON を読み直す（ゲームを止めずに値を調整するため）
+	bool isReloadKeyDown = (GetAsyncKeyState(VK_F5) & 0x8000) != 0;
+	if (isReloadKeyDown && !m_isReloadKeyDown)
+	{
+		nsGameParam::Reload();
+	}
+	m_isReloadKeyDown = isReloadKeyDown;
+#endif
 }
 
 void Game::Render(RenderContext& rc)

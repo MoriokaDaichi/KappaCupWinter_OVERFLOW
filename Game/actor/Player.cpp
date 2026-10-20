@@ -42,7 +42,7 @@ void Player::Move()
 	Vector3 moveDir = GetMoveDirection();
 
 	//速度に入れる
-	ApproachHorizontal(moveDir * MOVE_SPEED, GROUND_ACCEL);
+	ApproachHorizontal(moveDir * m_param.move.speed, m_param.move.groundAccel);
 
 	//スティックを倒しているときだけ向きを変える（離したときは今の向きを保つ）
 	if (moveDir.LengthSq() > MOVE_INPUT_THRESHOLD)
@@ -54,7 +54,7 @@ void Player::Move()
 void Player::Jump()
 {
 	// = で入れるので、落ちている途中に跳んでも同じ高さだけ上がる
-	m_moveSpeed.y = JUMP_SPEED;
+	m_moveSpeed.y = m_param.jump.speed;
 	m_jumpCount += 1;
 }
 
@@ -101,9 +101,9 @@ void Player::AirMove()
 	}
 
 	Vector3 moveDir = GetMoveDirection();
-	Vector3 target = moveDir * MOVE_SPEED;
+	Vector3 target = moveDir * m_param.move.speed;
 
-	float t = AIR_CONTROL * g_gameTime->GetFrameDeltaTime();
+	float t = m_param.move.airControl * g_gameTime->GetFrameDeltaTime();
 	if (t > 1.0f)
 	{
 		t = 1.0f;
@@ -146,12 +146,12 @@ bool Player::FindWall()
 	m_rotation.Apply(right);
 
 	Vector3 from = GetPosition();
-	from.y += WALL_CHECK_HEIGHT;
+	from.y += m_param.body.chestHeight;
 
 	const Vector3 dirs[] = { right, right * -1.0f };
 	for (const Vector3& dir : dirs)
 	{
-		Vector3 to = from + dir * WALL_CHECK_LENGTH;
+		Vector3 to = from + dir * m_param.wallRun.checkLength;
 		RayHitInfo hit = nsCollision::RayCast(from, to);
 
 		if (!hit.isHit)
@@ -159,7 +159,7 @@ bool Player::FindWall()
 			continue;
 		}
 
-		if (fabsf(hit.normal.y) >= WALL_NORMAL_Y_LIMIT)
+		if (fabsf(hit.normal.y) >= m_param.wallRun.normalYLimit)
 		{
 			continue;
 		}
@@ -177,7 +177,7 @@ bool Player::CanStartWallRun() const
 	horizontal.y = 0.0f;
 	float speed = horizontal.Length();
 
-	return IsMoveInput() && speed >= WALLRUN_MIN_SPEED && m_reattachTimer <= 0.0f;
+	return IsMoveInput() && speed >= m_param.wallRun.minSpeed && m_reattachTimer <= 0.0f;
 }
 
 void Player::StartWallRun()
@@ -185,7 +185,7 @@ void Player::StartWallRun()
 	m_wallRunTimer = 0.0f;
 	m_moveSpeed.y = 0.0f;
 
-	m_gravity.SetScale(WALLRUN_GRAVITY_SCALE);
+	m_gravity.SetScale(m_param.wallRun.gravityScale);
 	ResetJumpCount();
 }
 
@@ -199,7 +199,7 @@ void Player::WallRunMove()
 		along *= -1.0f;
 	}
 
-	Vector3 horizontalSpeed = along * WALLRUN_SPEED + m_wallNormal * -WALLRUN_STICK_SPEED;
+	Vector3 horizontalSpeed = along * m_param.wallRun.speed + m_wallNormal * -m_param.wallRun.stickSpeed;
 
 	m_moveSpeed.x = horizontalSpeed.x;
 	m_moveSpeed.z = horizontalSpeed.z;
@@ -218,20 +218,20 @@ void Player::WallRunMove()
 
 void Player::WallJump()
 {
-	m_moveSpeed += m_wallNormal * WALL_JUMP_SPEED_OUT;
-	m_moveSpeed.y = WALL_JUMP_SPEED_UP;
+	m_moveSpeed += m_wallNormal * m_param.wallRun.jumpSpeedOut;
+	m_moveSpeed.y = m_param.wallRun.jumpSpeedUp;
 	m_jumpCount += 1;
 }
 
 void Player::EndWallRun()
 {
 	m_gravity.SetScale(1.0f);
-	m_reattachTimer = WALL_REATTACH_TIME;
+	m_reattachTimer = m_param.wallRun.reattachTime;
 }
 
 bool Player::IsWallRunTimeOver() const
 {
-	return m_wallRunTimer >= WALLRUN_MAX_TIME;
+	return m_wallRunTimer >= m_param.wallRun.maxTime;
 }
 
 void Player::ApproachHorizontal(const Vector3& target, float rate)
@@ -255,7 +255,7 @@ void Player::ApproachHorizontal(const Vector3& target, float rate)
 
 void Player::Decelerate()
 {
-	ApproachHorizontal(Vector3::Zero, GROUND_DECEL);
+	ApproachHorizontal(Vector3::Zero, m_param.move.groundDecel);
 }
 
 bool Player::IsGrappleTrigger() const
@@ -314,16 +314,16 @@ void Player::SwingMove()
 
 	// 巻き上げ: 最短の長さに近いほどゆっくり引き寄せる（着いた勢いで飛び出さないように）
 	float reelSpeed = 0.0f;
-	if (m_ropeLength > SWING_MIN_ROPE_LENGTH)
+	if (m_ropeLength > m_param.swing.minRopeLength)
 	{
-		reelSpeed = min(SWING_REEL_SPEED, (distance - SWING_MIN_ROPE_LENGTH) * SWING_REEL_EASE);
+		reelSpeed = min(m_param.swing.reelSpeed, (distance - m_param.swing.minRopeLength) * m_param.swing.reelEase);
 
 		// 近づいた分だけロープも縮める（伸びることはない）
-		m_ropeLength = max(min(m_ropeLength, distance), SWING_MIN_ROPE_LENGTH);
+		m_ropeLength = max(min(m_ropeLength, distance), m_param.swing.minRopeLength);
 	}
 
 	// ロープが伸びた分を戻すのに必要な、内向きの速さ
-	float pullSpeed = max(distance - m_ropeLength, 0.0f) * SWING_PULL_RATE;
+	float pullSpeed = max(distance - m_ropeLength, 0.0f) * m_param.swing.pullRate;
 
 	// 内向きの速さが足りないときだけ足す（毎フレーム足し続けると、ばねのように跳ね飛ばされる）
 	// 横の速さ（振り子の勢い）はそのまま残すので、引き寄せられながら振れる
@@ -339,7 +339,7 @@ void Player::SwingMove()
 	Vector3 horizontal = m_moveSpeed;
 	horizontal.y = 0.0f;
 	
-	if (horizontal.LengthSq() > SWING_FACE_MIN_SPEED * SWING_FACE_MIN_SPEED)
+	if (horizontal.LengthSq() > m_param.swing.faceMinSpeed * m_param.swing.faceMinSpeed)
 	{
 		m_rotation.SetRotationYFromDirectionXZ(horizontal);
 	}
@@ -358,7 +358,7 @@ void Player::ShootWire()
 	Vector3 toAnchor = m_swingAnchor->GetPosition() - origin;
 	float distance = toAnchor.Length();
 
-	m_wireTipLength += WIRE_SHOOT_SPEED * g_gameTime->GetFrameDeltaTime();
+	m_wireTipLength += m_param.swing.wireShootSpeed * g_gameTime->GetFrameDeltaTime();
 
 	//届いた
 	if (m_wireTipLength >= distance)
@@ -392,7 +392,7 @@ void Player::HookAnchor(float ropeLength)
 	//地上でつかんだら少し浮かせる（すぐ「着地した」と判定されないように）
 	if (IsOnGround())
 	{
-		m_moveSpeed.y = SWING_START_LIFT;
+		m_moveSpeed.y = m_param.swing.startLift;
 	}
 }
 
@@ -404,15 +404,15 @@ void Player::ReleaseBoost()
 		return;
 	}
 
-	if (m_moveSpeed.LengthSq() < SWING_RELEASE_MIN_SPEED * SWING_RELEASE_MIN_SPEED)
+	if (m_moveSpeed.LengthSq() < m_param.swing.releaseMinSpeed * m_param.swing.releaseMinSpeed)
 	{
 		return;
 	}
 
 	Vector3 speed = m_moveSpeed;
 	speed.Normalize();
-	m_moveSpeed += speed * SWING_RELEASE_BOOST;
-	m_moveSpeed.y += SWING_RELEASE_LIFT;
+	m_moveSpeed += speed * m_param.swing.releaseBoost;
+	m_moveSpeed.y += m_param.swing.releaseLift;
 }
 
 void Player::UpdateAction()
@@ -449,7 +449,7 @@ void Player::UpdateLock()
 
 			if (anchor == m_lockedAnchor)
 			{
-				score += LOCK_KEEP_BONUS;
+				score += m_param.lock.keepBonus;
 			}
 
 			if (best == nullptr || score > bestScore)
@@ -483,7 +483,7 @@ float Player::CalcLockScore(const Anchor* anchor) const
 {
 	Vector3 toAnchor = anchor->GetPosition() - GetPosition();
 	float distance = toAnchor.Length();
-	if (distance > LOCK_MAX_DISTANCE)
+	if (distance > m_param.lock.maxDistance)
 	{
 		return -1.0f;
 	}
@@ -491,7 +491,7 @@ float Player::CalcLockScore(const Anchor* anchor) const
 	Vector3 camToAnchor = anchor->GetPosition() - g_camera3D->GetPosition();
 	camToAnchor.Normalize();
 	float dot = g_camera3D->GetForward().Dot(camToAnchor);
-	if (dot < cosf(Math::DegToRad(LOCK_MAX_ANGLE)))
+	if (dot < cosf(Math::DegToRad(m_param.lock.maxAngle)))
 	{
 		return -1.0f;
 	}
@@ -499,22 +499,22 @@ float Player::CalcLockScore(const Anchor* anchor) const
 	float angle = Math::RadToDeg(acosf(min(dot, 1.0f)));
 
 	Vector3 from = GetPosition();
-	from.y += WALL_CHECK_HEIGHT;		// 胸の高さから飛ばす（足元だと床に当たる）
+	from.y += m_param.body.chestHeight;		// 胸の高さから飛ばす（足元だと床に当たる）
 	if (nsCollision::RayCast(from, anchor->GetPosition()).isHit)
 	{
 		return -1.0f;
 	}
 
-	float angleScore = 1.0f - angle / LOCK_MAX_ANGLE;
-	float distanceScore = 1.0f - distance / LOCK_MAX_DISTANCE;
+	float angleScore = 1.0f - angle / m_param.lock.maxAngle;
+	float distanceScore = 1.0f - distance / m_param.lock.maxDistance;
 
-	return angleScore * LOCK_ANGLE_WEIGHT + distanceScore * LOCK_DISTANCE_WEIGHT;
+	return angleScore * m_param.lock.angleWeight + distanceScore * m_param.lock.distanceWeight;
 }
 
 Vector3 Player::GetRopeOrigin() const
 {
 	Vector3 position = GetPosition();
-	position.y += WALL_CHECK_HEIGHT;
+	position.y += m_param.body.chestHeight;
 
 	return position;
 }
@@ -535,15 +535,15 @@ void Player::SwingPump(const Vector3& ropeDir)
 	}
 
 	input.Normalize();
-	m_moveSpeed += input * SWING_PUMP_ACCEL * g_gameTime->GetFrameDeltaTime();
+	m_moveSpeed += input * m_param.swing.pumpAccel * g_gameTime->GetFrameDeltaTime();
 }
 
 void Player::ClampSwingSpeed()
 {
-	if (m_moveSpeed.LengthSq() > SWING_MAX_SPEED * SWING_MAX_SPEED)
+	if (m_moveSpeed.LengthSq() > m_param.swing.maxSpeed * m_param.swing.maxSpeed)
 	{
 		m_moveSpeed.Normalize();
-		m_moveSpeed *= SWING_MAX_SPEED;
+		m_moveSpeed *= m_param.swing.maxSpeed;
 	}
 }
 

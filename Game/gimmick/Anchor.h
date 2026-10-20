@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "param/GameParam.h"
 
 /** グラップルで狙える固定のアンカー。位置と見た目だけを持つ */
 class Anchor : public IGameObject
@@ -17,8 +18,7 @@ public:
 	void SetLocked(bool locked) { m_isLocked = locked; }
 
 private:
-	static constexpr float NORMAL_SCALE = 1.0f;		///< ふだんの大きさ（直径100）
-	static constexpr float LOCKED_SCALE = 1.5f;		///< ロック中の大きさ
+	const AnchorParam& m_param = nsGameParam::Get().anchor;	///< 調整用の値（Assets/param/anchor.json）
 
 	ModelRender m_modelRender;						///< 見た目
 	Vector3 m_position = Vector3::Zero;				///< 位置
