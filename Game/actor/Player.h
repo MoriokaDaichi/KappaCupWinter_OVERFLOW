@@ -94,6 +94,8 @@ private:
 	void ShootWire();
 	/** ワイヤーの先が届いたときに、アンカーをつかむ（ロープの長さを決める） */
 	void HookAnchor(float ropeLength);
+	/** スティックの向きのうち、ロープと直角な向きにだけ加速する（こぐ） */
+	void SwingPump(const Vector3& ropeDir);
 
 private:
 	const InputManager* m_input = nullptr;	///< 入力（読むだけ。止めるのは Game の役目）
@@ -132,6 +134,8 @@ private:
 	static constexpr float SWING_REEL_SPEED = 1000.0f;		///< 巻き上げでアンカーへ引き寄せる速さ（1秒あたり）
 	static constexpr float SWING_MIN_ROPE_LENGTH = 300.0f;	///< 巻き上げを止めるロープの長さ。ここからは振り子だけ
 	static constexpr float SWING_REEL_EASE = 3.0f;			///< 最短の長さまでの残りに掛けて巻き上げの速さを決める（近いほど遅い）
+	static constexpr float SWING_PUMP_ACCEL = 800.0f;		///< グラップルで漕いだ時の加速（1秒あたり）
+	static constexpr float SWING_FACE_MIN_SPEED = 50.0f;	///< スイング中に体の向きを変える、横の速さの下限
 
 	int m_jumpCount = 0;			///< いま何回跳んだか
 	Vector3 m_wallNormal = Vector3::Zero;		///< 今の壁の向き（法線）。FindWall で書き換える

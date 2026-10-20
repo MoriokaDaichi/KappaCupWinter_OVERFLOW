@@ -303,6 +303,8 @@ void Player::SwingMove()
 	Vector3 toPlayerDir = toPlayer;
 	toPlayerDir.Normalize();
 
+	SwingPump(toPlayerDir);
+
 	// ロープの外へ逃げる速さを消す（これで円を描く）
 	float outSpeed = m_moveSpeed.Dot(toPlayerDir);
 	if (distance >= m_ropeLength && outSpeed > 0.0f)
@@ -330,6 +332,14 @@ void Player::SwingMove()
 	if (inSpeed < needSpeed)
 	{
 		m_moveSpeed -= toPlayerDir * (needSpeed - inSpeed);
+	}
+
+	Vector3 horizontal = m_moveSpeed;
+	horizontal.y = 0.0f;
+	
+	if (horizontal.LengthSq() > SWING_FACE_MIN_SPEED * SWING_FACE_MIN_SPEED)
+	{
+		m_rotation.SetRotationYFromDirectionXZ(horizontal);
 	}
 }
 
@@ -383,6 +393,7 @@ void Player::HookAnchor(float ropeLength)
 		m_moveSpeed.y = SWING_START_LIFT;
 	}
 }
+
 
 void Player::UpdateAction()
 {
@@ -487,3 +498,23 @@ Vector3 Player::GetRopeOrigin() const
 
 	return position;
 }
+
+void Player::SwingPump(const Vector3& ropeDir)
+{
+	if (!IsMoveInput())
+	{
+		return;
+	}
+
+	Vector3 input = GetMoveDirection();
+	input -= ropeDir * input.Dot(ropeDir);
+
+	if (input.LengthSq() < MOVE_INPUT_THRESHOLD)
+	{
+		return;
+	}
+
+	input.Normalize();
+	m_moveSpeed += input * SWING_PUMP_ACCEL * g_gameTime->GetFrameDeltaTime();
+}
+
