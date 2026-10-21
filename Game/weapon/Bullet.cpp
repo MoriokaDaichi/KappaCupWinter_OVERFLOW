@@ -5,6 +5,7 @@
 
 bool Bullet::Start()
 {
+	m_modelRender.SetRaytracingWorld(false);
 	m_modelRender.Init("Assets/modelData/debug/debug_anchor.tkm");
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetScale(m_param.bulletScale, m_param.bulletScale, m_param.bulletScale);
