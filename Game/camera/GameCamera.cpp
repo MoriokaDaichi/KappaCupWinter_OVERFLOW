@@ -21,6 +21,7 @@ void GameCamera::Update()
 		return;
 	}
 
+	UpdateAimRate();
 	Rotate();
 	UpdateViewAngle();
 	UpdatePosition();
@@ -33,8 +34,10 @@ void GameCamera::Rotate()
 	Vector2 stick = m_input->GetCamera();
 
 	float dt = g_gameTime->GetFrameDeltaTime();
-	m_yaw += stick.x * m_param.rotateSpeedX * dt;
-	m_pitch += stick.y * m_param.rotateSpeedY * dt;
+	float scale = Math::Lerp(m_aimRate, 1.0f, m_param.aimRotateScale);
+
+	m_yaw += stick.x * m_param.rotateSpeedX * dt * scale;
+	m_pitch += stick.y * m_param.rotateSpeedY * dt * scale;
 
 	if (m_pitch < m_param.pitchMin)
 	{
@@ -59,11 +62,16 @@ void GameCamera::UpdateViewAngle()
 
 	m_viewAngle = Math::Lerp(min(m_param.viewAngleLerpRate * g_gameTime->GetFrameDeltaTime(), 1.0f), m_viewAngle, angle);
 
-	g_camera3D->SetViewAngle(Math::DegToRad(m_viewAngle));
+	float viewAngle = m_viewAngle - m_aimRate * m_param.aimViewAngleDown;
+
+	g_camera3D->SetViewAngle(Math::DegToRad(viewAngle));
 }
 
 void GameCamera::UpdatePosition()
 {
+	float distance = Math::Lerp(m_aimRate, m_param.distance, m_param.aimDistance);
+	float shoulderOffset = Math::Lerp(m_aimRate, m_param.shoulderOffset, m_param.aimShoulderOffset);
+
 	Vector3 pivot = m_player->GetPosition();
 	pivot.y += m_param.targetHeight;
 
@@ -80,7 +88,7 @@ void GameCamera::UpdatePosition()
 	Vector3 right(1.0f, 0.0f, 0.0f);
 	qYaw.Apply(right);
 
-	Vector3 shoulder = pivot + right * m_param.shoulderOffset;
+	Vector3 shoulder = pivot + right * shoulderOffset;
 	Vector3 shoulderResult;
 
 	// 壁に当たったら、肩の点を体の中心の方へ少し戻す
@@ -99,7 +107,7 @@ void GameCamera::UpdatePosition()
 		}
 	}
 
-	Vector3 position = shoulderResult + toCamera * m_param.distance;
+	Vector3 position = shoulderResult + toCamera * distance;
 
 	Vector3 result;
 	m_collisionSolver.Execute(result, position, shoulderResult);
@@ -112,4 +120,20 @@ void GameCamera::UpdatePosition()
 
 	g_camera3D->SetTarget(shoulderResult);
 	g_camera3D->SetPosition(result);
+}
+
+void GameCamera::UpdateAimRate()
+{
+	float step = g_gameTime->GetFrameDeltaTime() / m_param.aimTransitionTime;
+	float target = m_input->IsPress(EnInputAction::Aim) ? 1.0f : 0.0f;
+
+	m_aimRate += (target > m_aimRate ? step : -step);
+
+	if (m_aimRate < target)
+	{
+		m_aimRate = min(m_aimRate + step, target);
+		return;
+	}
+
+	m_aimRate = min(max(m_aimRate, 0.0f), 1.0f);
 }

@@ -420,6 +420,11 @@ bool Player::IsShootPress() const
 	return m_input->IsPress(EnInputAction::Shoot);
 }
 
+bool Player::IsAimPress() const
+{
+	return m_input->IsPress(EnInputAction::Aim);
+}
+
 void Player::UpdateAction()
 {
 	m_reattachTimer -= g_gameTime->GetFrameDeltaTime();
@@ -558,7 +563,7 @@ void Player::ClampSwingSpeed()
 void Player::FaceAimDirection()
 {
 	// 押した最初のフレームは、まだ Gun の構えのタイマーが入っていないので、ボタンも見る
-	bool isAiming = IsShootPress() || m_gun.IsAiming();
+	bool isAiming = IsShootPress() || m_gun.IsAiming() || IsAimPress();
 	if (!isAiming || m_stateMachine.IsCurrentState(EnPlayerState::WallRun))
 	{
 		return;

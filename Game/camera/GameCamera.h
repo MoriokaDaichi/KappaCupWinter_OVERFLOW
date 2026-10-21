@@ -25,6 +25,8 @@ private:
 	void UpdateViewAngle();
 	/** 注視点と位置を計算してカメラに渡す */
 	void UpdatePosition();
+	/** LT に合わせて、構えの割合を 0〜1 の間で動かす */
+	void UpdateAimRate();
 
 private:
 	const CameraParam& m_param = nsGameParam::Get().camera;	///< 調整用の値（Assets/param/camera.json）
@@ -40,4 +42,5 @@ private:
 	float m_viewAngle = 0.0f;				///< 今の視野角。目標の値に少しずつ近づけるので、値を持っておく
 	float m_pitch = 0.0f;					///< 上下の角度（度）。プラスで見上げる。pitchMin〜pitchMax に収める
 	float m_yaw = 0.0f;						///< 左右の角度（度）。0 でプレイヤーの後ろ（-Z 側）から見る
+	float m_aimRate = 0.0f;					///< 構えの割合（0 でふだん、1 で構えきった）
 };

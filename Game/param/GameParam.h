@@ -92,6 +92,11 @@ struct CameraParam
 	float nearClip = 0.0f;				///< 近くの描画の限界（Start でだけ使う）。near は Windows のマクロと重なるので使わない
 	float farClip = 0.0f;				///< 遠くの描画の限界（Start でだけ使う。ステージが広いので大きめ）
 	float shoulderOffset = 0.0f;		///< 注視点を右にずらす量
+	float aimDistance = 0.0f;			///< 構えたときの、注視点からカメラまでの距離
+	float aimShoulderOffset = 0.0f;		///< 構えたときの、肩のずらし量
+	float aimViewAngleDown = 0.0f;		///< 構えたときに視野角を狭める量（度）
+	float aimRotateScale = 0.0f;		///< 構えたときの感度の倍率
+	float aimTransitionTime = 0.0f;		///< 構える／戻すのにかかる時間（秒）
 };
 
 /** 重力の値（gravity.json） */

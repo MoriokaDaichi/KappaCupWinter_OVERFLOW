@@ -84,6 +84,8 @@ public:
 	void ReleaseBoost();
 	/** 射撃ボタンを押しているか */
 	bool IsShootPress() const;
+	/** エイムボタンを押しているか */
+	bool IsAimPress() const;
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
