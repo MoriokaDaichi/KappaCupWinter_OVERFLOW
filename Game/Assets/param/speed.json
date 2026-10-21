@@ -4,7 +4,7 @@
   "bonusMax": 600.0,
   "groundDecay": 300.0,
   "idleDecay": 1000.0,
-  "wallRunGain": 100.0,
+  "wallRunGain": 150.0,
   "levelUpSpeeds": [ 700.0, 1000.0, 1300.0, 1600.0 ],
   "maxSpeed": 1900.0
 }

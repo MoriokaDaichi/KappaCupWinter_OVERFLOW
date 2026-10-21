@@ -352,6 +352,15 @@ void Player::SwingMove()
 void Player::EndSwing()
 {
 	m_swingAnchor = nullptr;
+
+	// 離したときの速さを上乗せに残す（空中で減速しないように）
+	if (m_isHooked)
+	{
+		Vector3 horizontal = m_moveSpeed;
+		horizontal.y = 0.0f;
+		m_speed.RaiseBonusTo(horizontal.Length() - m_speed.GetBaseSpeed());
+	}
+
 	m_isHooked = false;
 	m_grappleWire->SetVisible(false);
 }
@@ -447,6 +456,7 @@ void Player::UpdateAction()
 	}
 
 	m_stateMachine.Update();
+	UpdateSpeedBonus();
 	// 銃口は体の向きから決めるので、先に体を向けてから撃つ
 	FaceAimDirection();
 	m_gun.Update(IsShootPress(), GetChestPosition(), m_rotation);
@@ -605,4 +615,22 @@ void Player::UpdateDebugKey()
 
 	m_isBaseDownKeyDown = isBaseDownKeyDown;
 #endif // K2_DEBUG
+}
+
+void Player::UpdateSpeedBonus()
+{
+	switch (m_stateMachine.GetCurrentState())
+	{
+	case EnPlayerState::WallRun:
+		m_speed.AddBonusPerSecond(m_speedParam.wallRunGain);
+		break;
+	case EnPlayerState::Run:
+		m_speed.AddBonusPerSecond(-m_speedParam.groundDecay);
+		break;
+	case EnPlayerState::Idle:
+		m_speed.AddBonusPerSecond(-m_speedParam.idleDecay);
+		break;
+	default:
+		break;
+	}
 }

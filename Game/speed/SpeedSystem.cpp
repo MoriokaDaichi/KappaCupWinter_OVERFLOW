@@ -57,3 +57,8 @@ float SpeedSystem::GetLevelRate() const
 
 	return min(max(levelRate, 0.0f), 1.0f);
 }
+
+void SpeedSystem::AddBonusPerSecond(float perSecond)
+{
+	AddBonus(perSecond * g_gameTime->GetFrameDeltaTime());
+}

@@ -23,6 +23,8 @@ public:
 	int GetLevel() const;
 	/** 今の Lv の中での進み具合（0〜1）。HUD の針に使う */
 	float GetLevelRate() const;
+	/** 上乗せを1秒あたり perSecond だけ増やす（マイナスで減らす）。毎フレーム呼ぶ */
+	void AddBonusPerSecond(float perSecond);
 
 private:
 	static constexpr int MAX_LEVEL = 5;							///< スピードレベルの最大
