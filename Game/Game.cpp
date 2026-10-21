@@ -4,7 +4,6 @@
 #include "camera/GameCamera.h"
 #include "gimmick/Anchor.h"
 #include "param/GameParam.h"
-#include "speed/SpeedSystem.h"
 
 Game::~Game()
 {
@@ -81,7 +80,6 @@ bool Game::Start()
 	}
 
 	m_crosshairRender.Init("Assets/sprite/debug/debug_crosshair.DDS", 48.0f, 48.0f);
-	m_debugFont.SetPosition(-900.0f, 500.0f, 0.0f);
 
 	// 当たり判定の形を線で表示する（デバッグ用）
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
@@ -93,6 +91,8 @@ bool Game::Start()
 	m_gameCamera->SetTarget(m_player);
 	m_gameCamera->SetInput(&m_input);
 
+	m_debugManager.Init(m_player);
+
 	return true;
 }
 
@@ -100,20 +100,7 @@ void Game::Update()
 {
 	m_input.Update();
 
-#ifdef K2_DEBUG
-	// F5 で JSON を読み直す（ゲームを止めずに値を調整するため）
-	bool isReloadKeyDown = (GetAsyncKeyState(VK_F5) & 0x8000) != 0;
-	if (isReloadKeyDown && !m_isReloadKeyDown)
-	{
-		nsGameParam::Reload();
-	}
-	m_isReloadKeyDown = isReloadKeyDown;
-#endif
-
-	const SpeedSystem& speed = m_player->GetSpeedSystem();
-	wchar_t text[64];
-	swprintf_s(text, L"base %.0f  bonus %.0f  Lv%d (%.2f)", speed.GetBaseSpeed(), speed.GetBonusSpeed(), speed.GetLevel(), speed.GetLevelRate());
-	m_debugFont.SetText(text);
+	m_debugManager.Update();
 }
 
 void Game::Render(RenderContext& rc)
@@ -126,6 +113,4 @@ void Game::Render(RenderContext& rc)
 	}
 
 	m_crosshairRender.Draw(rc);
-
-	m_debugFont.Draw(rc);
 }

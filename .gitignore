@@ -46,5 +46,7 @@ imgui.ini
 # 上の Debug/ に巻き込まれないように、仮のモデルと画像の置き場は Git に入れる
 !/Game/Assets/modelData/debug/
 !/Game/Assets/sprite/debug/
+# デバッグマネージャーのコード（Game/debug）も同じ理由で入れる
+!/Game/debug/
 # Visual Studio が文字コードを変えて保存するときの一時フォルダ
 enc_temp_folder/

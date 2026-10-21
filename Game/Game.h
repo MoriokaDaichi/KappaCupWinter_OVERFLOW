@@ -2,6 +2,7 @@
 
 #include "Level3DRender/LevelRender.h"
 #include "input/InputManager.h"
+#include "debug/DebugManager.h"
 
 class Player;
 class GameCamera;
@@ -31,8 +32,7 @@ private:
 	ModelRender m_wallRender[WALL_NUM];		//仮の壁（ステージができたら置き換える）
 	BoxCollider m_wallCollider[WALL_NUM];
 	RigidBody m_wallBody[WALL_NUM];
-	bool m_isReloadKeyDown = false;		///< 前のフレームで F5 を押していたか（押した瞬間だけ読み直すため）
 	SpriteRender m_crosshairRender;		///< 仮の照準（HUD ができたら置き換える）
-	FontRender m_debugFont;			///< 速度の確認用の表示（HUD ができたら消す）
+	DebugManager m_debugManager;		///< デバッグ画面（ImGui のパネル。F1 で隠せる）
 };
 

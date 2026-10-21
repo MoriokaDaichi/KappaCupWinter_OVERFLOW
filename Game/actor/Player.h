@@ -89,6 +89,12 @@ public:
 	bool IsAimPress() const;
 	/** 速度を返す（HUD やデバッグ表示で読む） */
 	const SpeedSystem& GetSpeedSystem() const { return m_speed; }
+	/** 速度を返す（書き換えられる。デバッグ画面用） */
+	SpeedSystem& GetSpeedSystem() { return m_speed; }
+	/** 今の状態を返す（デバッグ画面の表示用） */
+	EnPlayerState GetCurrentState() const { return m_stateMachine.GetCurrentState(); }
+	/** position へ瞬間移動する。速さを 0 にして空中の状態から始める（デバッグ画面・チェックポイント用） */
+	void Warp(const Vector3& position);
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -111,8 +117,6 @@ private:
 	void ClampSwingSpeed();
 	/** 構えている間、体をカメラの前向きに向ける */
 	void FaceAimDirection();
-	/** F1／F2 で基礎速度を増やす・減らす（デバッグ用。Debug ビルドだけ動く） */
-	void UpdateDebugKey();
 	/** 今の状態に合わせて、上乗せの速さを増やす・減らす（壁走りで増え、地上で減る） */
 	void UpdateSpeedBonus();
 
@@ -139,6 +143,4 @@ private:
 	float m_ropeLength = 0.0f;		///< ロープの長さ。つかんだときの距離を入れ、巻き上げで縮める
 	float m_wireTipLength = 0.0f;	///< 手元から飛んでいるワイヤーの先までの長さ
 	bool m_isHooked = false;		///< ワイヤーの先がアンカーに届いたか
-	bool m_isBaseUpKeyDown = false;	///< 前のフレームで F1 を押していたか（押した瞬間だけ増やすため）
-	bool m_isBaseDownKeyDown = false;	///< 前のフレームで F2 を押していたか（押した瞬間だけ減らすため）
 };

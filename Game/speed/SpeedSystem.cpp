@@ -62,3 +62,9 @@ void SpeedSystem::AddBonusPerSecond(float perSecond)
 {
 	AddBonus(perSecond * g_gameTime->GetFrameDeltaTime());
 }
+
+void SpeedSystem::SetForDebug(float base, float bonus)
+{
+	m_baseSpeed = min(max(base, m_param.baseMin), m_param.baseMax);
+	m_bonusSpeed = min(max(bonus, 0.0f), m_param.bonusMax);
+}

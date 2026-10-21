@@ -25,6 +25,8 @@ public:
 	float GetLevelRate() const;
 	/** 上乗せを1秒あたり perSecond だけ増やす（マイナスで減らす）。毎フレーム呼ぶ */
 	void AddBonusPerSecond(float perSecond);
+	/** 基礎速度と上乗せを直接決める（デバッグ画面用）。範囲には収める */
+	void SetForDebug(float base, float bonus);
 
 private:
 	static constexpr int MAX_LEVEL = 5;							///< スピードレベルの最大

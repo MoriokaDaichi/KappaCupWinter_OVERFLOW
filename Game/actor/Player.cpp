@@ -440,8 +440,6 @@ bool Player::IsAimPress() const
 
 void Player::UpdateAction()
 {
-	UpdateDebugKey();
-
 	m_reattachTimer -= g_gameTime->GetFrameDeltaTime();
 	if (m_reattachTimer < 0.0f)
 	{
@@ -596,27 +594,6 @@ void Player::FaceAimDirection()
 	m_rotation.SetRotationYFromDirectionXZ(dir);
 }
 
-void Player::UpdateDebugKey()
-{
-#ifdef K2_DEBUG
-	bool isBaseUpKeyDown = (GetAsyncKeyState(VK_F1) & 0x8000) != 0;
-	if (isBaseUpKeyDown && !m_isBaseUpKeyDown)
-	{
-		m_speed.AddBase(100.0f);
-	}
-
-	m_isBaseUpKeyDown = isBaseUpKeyDown;
-
-	bool isBaseDownKeyDown = (GetAsyncKeyState(VK_F2) & 0x8000) != 0;
-	if (isBaseDownKeyDown && !m_isBaseDownKeyDown)
-	{
-		m_speed.AddBase(-100.0f);
-	}
-
-	m_isBaseDownKeyDown = isBaseDownKeyDown;
-#endif // K2_DEBUG
-}
-
 void Player::UpdateSpeedBonus()
 {
 	switch (m_stateMachine.GetCurrentState())
@@ -633,4 +610,12 @@ void Player::UpdateSpeedBonus()
 	default:
 		break;
 	}
+}
+
+void Player::Warp(const Vector3& position)
+{
+	// 状態より先に速さを消す（スイング中だと、状態を変えたときに EndSwing が今の速さを上乗せに残してしまうため）
+	m_moveSpeed = Vector3::Zero;
+	ChangeState(EnPlayerState::Air);
+	m_charaCon.SetPosition(position);
 }

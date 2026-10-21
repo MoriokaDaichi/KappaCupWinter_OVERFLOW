@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include <array>
+#include <string>
+#include <vector>
 
 /**
  * 調整用の値。Assets/param/ の JSON から読む
@@ -146,6 +148,19 @@ struct SpeedParam
 	float maxSpeed = 0.0f;				///< メーターが振り切る速さ
 };
 
+/** デバッグ画面の値（debug.json） */
+struct DebugParam
+{
+	/** ワープ先 */
+	struct WarpPoint
+	{
+		std::string name;					///< ボタンに出す名前
+		std::array<float, 3> position = {};	///< 足元の位置（x, y, z）
+	};
+
+	std::vector<WarpPoint> warpPoints;		///< ワープ先の一覧（チェックポイントができたら置き換える）
+};
+
 /** すべての調整値 */
 struct GameParam
 {
@@ -156,6 +171,7 @@ struct GameParam
 	GrappleWireParam grappleWire;
 	GunParam gun;
 	SpeedParam speed;
+	DebugParam debug;
 };
 
 namespace nsGameParam
