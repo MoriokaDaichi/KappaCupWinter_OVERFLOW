@@ -10,7 +10,7 @@
 
 // JSON → 構造体の対応。at() で読むので、キーがなければ例外になる（既定値で黙って動かない）
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Body, chestHeight)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Move, speed, groundAccel, groundDecel, airControl)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Move, groundAccel, groundDecel, airControl)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Jump, speed, maxCount)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::WallRun, checkLength, normalYLimit, speed, minSpeed, gravityScale,
 	stickSpeed, maxTime, jumpSpeedUp, jumpSpeedOut, reattachTime)

@@ -44,7 +44,7 @@ void Player::Move()
 	Vector3 moveDir = GetMoveDirection();
 
 	//速度に入れる
-	ApproachHorizontal(moveDir * m_param.move.speed, m_param.move.groundAccel);
+	ApproachHorizontal(moveDir * m_speed.GetSpeed(), m_param.move.groundAccel);
 
 	//スティックを倒しているときだけ向きを変える（離したときは今の向きを保つ）
 	if (moveDir.LengthSq() > MOVE_INPUT_THRESHOLD)
@@ -103,7 +103,7 @@ void Player::AirMove()
 	}
 
 	Vector3 moveDir = GetMoveDirection();
-	Vector3 target = moveDir * m_param.move.speed;
+	Vector3 target = moveDir * m_speed.GetSpeed();
 
 	float t = m_param.move.airControl * g_gameTime->GetFrameDeltaTime();
 	if (t > 1.0f)
@@ -201,7 +201,9 @@ void Player::WallRunMove()
 		along *= -1.0f;
 	}
 
-	Vector3 horizontalSpeed = along * m_param.wallRun.speed + m_wallNormal * -m_param.wallRun.stickSpeed;
+	// 壁走りは最低でも wallRun.speed。速度システムの値がそれより速ければ、その速さで走る
+	const float runSpeed = max(m_param.wallRun.speed, m_speed.GetSpeed());
+	Vector3 horizontalSpeed = along * runSpeed + m_wallNormal * -m_param.wallRun.stickSpeed;
 
 	m_moveSpeed.x = horizontalSpeed.x;
 	m_moveSpeed.z = horizontalSpeed.z;

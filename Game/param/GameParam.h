@@ -17,7 +17,6 @@ struct PlayerParam
 	/** 地上・空中の移動 */
 	struct Move
 	{
-		float speed = 0.0f;				///< 走る速さ
 		float groundAccel = 0.0f;		///< 地上で加速する量（1秒あたり）
 		float groundDecel = 0.0f;		///< 地上で減速する量（1秒あたり）
 		float airControl = 0.0f;		///< 空中で、目標の速さに1秒あたりに近づく割合
@@ -33,7 +32,7 @@ struct PlayerParam
 	{
 		float checkLength = 0.0f;		///< 壁を探すレイの長さ
 		float normalYLimit = 0.0f;		///< 壁の向き（法線）の y の絶対値がこれより小さければ壁とみなす
-		float speed = 0.0f;				///< 壁を走る速さ
+		float speed = 0.0f;				///< 壁を走る最低の速さ（速度システムの値のほうが速ければ、そちらで走る）
 		float minSpeed = 0.0f;			///< 壁走りを始めるのに必要な横の速さ
 		float gravityScale = 0.0f;		///< 壁走り中の重力の倍率
 		float stickSpeed = 0.0f;		///< 壁に押し付ける速さ

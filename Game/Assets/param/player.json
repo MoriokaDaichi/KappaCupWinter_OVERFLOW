@@ -3,7 +3,6 @@
         "chestHeight": 50.0
     },
     "move": {
-        "speed": 400.0,
         "groundAccel": 3000.0,
         "groundDecel": 2000.0,
         "airControl": 1.5
