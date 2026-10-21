@@ -4,6 +4,7 @@
 #include "actor/playerState/PlayerState.h"
 #include "weapon/Gun.h"
 #include "param/GameParam.h"
+#include "speed/SpeedSystem.h"
 
 class InputManager;
 class Anchor;
@@ -86,6 +87,8 @@ public:
 	bool IsShootPress() const;
 	/** エイムボタンを押しているか */
 	bool IsAimPress() const;
+	/** 速度を返す（HUD やデバッグ表示で読む） */
+	const SpeedSystem& GetSpeedSystem() const { return m_speed; }
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -108,6 +111,8 @@ private:
 	void ClampSwingSpeed();
 	/** 構えている間、体をカメラの前向きに向ける */
 	void FaceAimDirection();
+	/** F1／F2 で基礎速度を増やす・減らす（デバッグ用。Debug ビルドだけ動く） */
+	void UpdateDebugKey();
 
 private:
 	const InputManager* m_input = nullptr;	///< 入力（読むだけ。止めるのは Game の役目）
@@ -116,6 +121,7 @@ private:
 	Anchor* m_swingAnchor = nullptr;		///< スイングに使うアンカー
 	GrappleWire* m_grappleWire = nullptr;	///< ワイヤーの見た目。スイング中だけ表示する
 	Gun m_gun;								///< 銃。RT で弾を撃つ
+	SpeedSystem m_speed;					///< スピードシステム（基礎速度と上乗せ速度をもつ）
 
 	// 調整する値は Assets/param/player.json（意味は param/GameParam.h の PlayerParam）。ここには計算のための値だけ置く
 	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;	///< スティックを倒したとみなす境目（長さの2乗）
@@ -130,4 +136,6 @@ private:
 	float m_ropeLength = 0.0f;		///< ロープの長さ。つかんだときの距離を入れ、巻き上げで縮める
 	float m_wireTipLength = 0.0f;	///< 手元から飛んでいるワイヤーの先までの長さ
 	bool m_isHooked = false;		///< ワイヤーの先がアンカーに届いたか
+	bool m_isBaseUpKeyDown = false;	///< 前のフレームで F1 を押していたか（押した瞬間だけ増やすため）
+	bool m_isBaseDownKeyDown = false;	///< 前のフレームで F2 を押していたか（押した瞬間だけ減らすため）
 };

@@ -24,6 +24,8 @@ bool Player::Start()
 {
 	InitCharacter("Assets/modelData/unityChan.tkm", 25.0f, 75.0f, Vector3(0.0f, 300.0f, 0.0f));
 
+	m_speed.Reset();
+
 	m_stateMachine.AddState<PlayerIdleState>(EnPlayerState::Idle);
 	m_stateMachine.AddState<PlayerRunState>(EnPlayerState::Run);
 	m_stateMachine.AddState<PlayerAirState>(EnPlayerState::Air);
@@ -427,6 +429,8 @@ bool Player::IsAimPress() const
 
 void Player::UpdateAction()
 {
+	UpdateDebugKey();
+
 	m_reattachTimer -= g_gameTime->GetFrameDeltaTime();
 	if (m_reattachTimer < 0.0f)
 	{
@@ -580,3 +584,23 @@ void Player::FaceAimDirection()
 	m_rotation.SetRotationYFromDirectionXZ(dir);
 }
 
+void Player::UpdateDebugKey()
+{
+#ifdef K2_DEBUG
+	bool isBaseUpKeyDown = (GetAsyncKeyState(VK_F1) & 0x8000) != 0;
+	if (isBaseUpKeyDown && !m_isBaseUpKeyDown)
+	{
+		m_speed.AddBase(100.0f);
+	}
+
+	m_isBaseUpKeyDown = isBaseUpKeyDown;
+
+	bool isBaseDownKeyDown = (GetAsyncKeyState(VK_F2) & 0x8000) != 0;
+	if (isBaseDownKeyDown && !m_isBaseDownKeyDown)
+	{
+		m_speed.AddBase(-100.0f);
+	}
+
+	m_isBaseDownKeyDown = isBaseDownKeyDown;
+#endif // K2_DEBUG
+}

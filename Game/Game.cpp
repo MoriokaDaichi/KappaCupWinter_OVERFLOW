@@ -4,6 +4,7 @@
 #include "camera/GameCamera.h"
 #include "gimmick/Anchor.h"
 #include "param/GameParam.h"
+#include "speed/SpeedSystem.h"
 
 Game::~Game()
 {
@@ -80,6 +81,7 @@ bool Game::Start()
 	}
 
 	m_crosshairRender.Init("Assets/sprite/debug/debug_crosshair.DDS", 48.0f, 48.0f);
+	m_debugFont.SetPosition(-900.0f, 500.0f, 0.0f);
 
 	// 当たり判定の形を線で表示する（デバッグ用）
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
@@ -107,6 +109,11 @@ void Game::Update()
 	}
 	m_isReloadKeyDown = isReloadKeyDown;
 #endif
+
+	const SpeedSystem& speed = m_player->GetSpeedSystem();
+	wchar_t text[64];
+	swprintf_s(text, L"base %.0f  bonus %.0f  Lv%d (%.2f)", speed.GetBaseSpeed(), speed.GetBonusSpeed(), speed.GetLevel(), speed.GetLevelRate());
+	m_debugFont.SetText(text);
 }
 
 void Game::Render(RenderContext& rc)
@@ -119,4 +126,6 @@ void Game::Render(RenderContext& rc)
 	}
 
 	m_crosshairRender.Draw(rc);
+
+	m_debugFont.Draw(rc);
 }
