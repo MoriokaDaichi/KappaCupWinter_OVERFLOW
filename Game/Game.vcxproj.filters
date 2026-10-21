@@ -40,6 +40,9 @@
     <Filter Include="weapon">
       <UniqueIdentifier>{78a322bf-28fc-4c4a-b823-ac1542c0223d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="speed">
+      <UniqueIdentifier>{41beed99-bb98-4b31-ae02-b04a91ad6c3d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -95,6 +98,9 @@
     </ClCompile>
     <ClCompile Include="weapon\Bullet.cpp">
       <Filter>weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="speed\SpeedSystem.cpp">
+      <Filter>speed</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +171,9 @@
     </ClInclude>
     <ClInclude Include="weapon\Bullet.h">
       <Filter>weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="speed\SpeedSystem.h">
+      <Filter>speed</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -26,6 +26,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnchorParam, normalScale, lockedScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GrappleWireParam, thicknessScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam, shootInterval, range, bulletSpeed, bulletLifeTime, bulletScale, aimHoldTime,
 	muzzleRight, muzzleForward)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpeedParam, baseMin, baseMax, bonusMax, groundDecay, idleDecay, wallRunGain, levelUpSpeeds, maxSpeed)
 
 namespace
 {
@@ -60,6 +61,7 @@ namespace
 		ReadFile("Assets/param/anchor.json", out.anchor);
 		ReadFile("Assets/param/grappleWire.json", out.grappleWire);
 		ReadFile("Assets/param/gun.json", out.gun);
+		ReadFile("Assets/param/speed.json", out.speed);
 	}
 }
 

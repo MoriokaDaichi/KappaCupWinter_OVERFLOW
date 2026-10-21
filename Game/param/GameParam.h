@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <array>
 
 /**
  * 調整用の値。Assets/param/ の JSON から読む
@@ -133,6 +134,19 @@ struct GrappleWireParam
 	float thicknessScale = 0.0f;		///< 太さの倍率（1 で直径 2）
 };
 
+/** 速度システムの値（speed.json） */
+struct SpeedParam
+{
+	float baseMin = 0.0f;				///< 基礎速度の下限
+	float baseMax = 0.0f;				///< 基礎速度の上限
+	float bonusMax = 0.0f;				///< 上乗せの上限
+	float groundDecay = 0.0f;			///< 地上にいるときに、上乗せが1秒あたりに減る量
+	float idleDecay = 0.0f;				///< 止まっているときに、上乗せが1秒あたりに減る量
+	float wallRunGain = 0.0f;			///< 壁走り中に、上乗せが1秒あたりに増える量
+	std::array<float, 4> levelUpSpeeds = {};	///< Lv2・3・4・5 になる速さ
+	float maxSpeed = 0.0f;				///< メーターが振り切る速さ
+};
+
 /** すべての調整値 */
 struct GameParam
 {
@@ -142,6 +156,7 @@ struct GameParam
 	AnchorParam anchor;
 	GrappleWireParam grappleWire;
 	GunParam gun;
+	SpeedParam speed;
 };
 
 namespace nsGameParam

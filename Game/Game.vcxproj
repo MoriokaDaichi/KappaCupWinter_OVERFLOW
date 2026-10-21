@@ -239,6 +239,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="param\GameParam.cpp" />
     <ClCompile Include="physics\Gravity.cpp" />
+    <ClCompile Include="speed\SpeedSystem.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -266,6 +267,7 @@
     <ClInclude Include="input\InputManager.h" />
     <ClInclude Include="param\GameParam.h" />
     <ClInclude Include="physics\Gravity.h" />
+    <ClInclude Include="speed\SpeedSystem.h" />
     <ClInclude Include="thirdParty\nlohmann\json.hpp" />
     <ClInclude Include="state\IState.h" />
     <ClInclude Include="state\StateMachine.h" />
