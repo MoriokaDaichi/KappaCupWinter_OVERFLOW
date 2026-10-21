@@ -79,6 +79,8 @@ bool Game::Start()
 		m_anchor[i]->SetPosition(anchorPos[i]);
 	}
 
+	m_crosshairRender.Init("Assets/sprite/debug/debug_crosshair.DDS", 48.0f, 48.0f);
+
 	// 当たり判定の形を線で表示する（デバッグ用）
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 
@@ -110,8 +112,11 @@ void Game::Update()
 void Game::Render(RenderContext& rc)
 {
 	m_floorRender.Draw(rc);
+
 	for (int i = 0; i < WALL_NUM; i++)
 	{
 		m_wallRender[i].Draw(rc);
 	}
+
+	m_crosshairRender.Draw(rc);
 }
