@@ -99,14 +99,14 @@
     <ClCompile Include="weapon\Gun.cpp">
       <Filter>weapon</Filter>
     </ClCompile>
-    <ClCompile Include="weapon\Bullet.cpp">
-      <Filter>weapon</Filter>
-    </ClCompile>
     <ClCompile Include="debug\DebugManager.cpp">
       <Filter>debug</Filter>
     </ClCompile>
     <ClCompile Include="speed\SpeedSystem.cpp">
       <Filter>speed</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon\BulletManager.cpp">
+      <Filter>weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -175,14 +175,14 @@
     <ClInclude Include="weapon\Gun.h">
       <Filter>weapon</Filter>
     </ClInclude>
-    <ClInclude Include="weapon\Bullet.h">
-      <Filter>weapon</Filter>
-    </ClInclude>
     <ClInclude Include="debug\DebugManager.h">
       <Filter>debug</Filter>
     </ClInclude>
     <ClInclude Include="speed\SpeedSystem.h">
       <Filter>speed</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon\BulletManager.h">
+      <Filter>weapon</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

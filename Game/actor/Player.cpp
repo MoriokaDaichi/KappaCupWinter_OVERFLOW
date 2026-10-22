@@ -10,6 +10,7 @@
 #include "collision/RayCast.h"
 #include "gimmick/Anchor.h"
 #include "grapple/GrappleWire.h"
+#include "weapon/BulletManager.h"
 
 Player::Player() : m_stateMachine(this)
 {
@@ -35,6 +36,8 @@ bool Player::Start()
 	ChangeState(EnPlayerState::Idle);
 
 	m_grappleWire = NewGO<GrappleWire>(0, "grappleWire");
+
+	m_gun.Init(FindGO<BulletManager>("bulletManager"));
 
 	return true;
 }

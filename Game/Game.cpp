@@ -4,11 +4,13 @@
 #include "camera/GameCamera.h"
 #include "gimmick/Anchor.h"
 #include "param/GameParam.h"
+#include "weapon/BulletManager.h"
 
 Game::~Game()
 {
 	DeleteGO(m_player);
 	DeleteGO(m_gameCamera);
+	DeleteGO(m_bulletManager);
 	for (int i = 0; i < ANCHOR_NUM; i++)
 	{
 		DeleteGO(m_anchor[i]);
@@ -83,6 +85,8 @@ bool Game::Start()
 
 	// 当たり判定の形を線で表示する（デバッグ用）
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
+
+	m_bulletManager = NewGO<BulletManager>(0, "bulletManager");
 
 	m_player = NewGO<Player>(0, "player");
 	m_player->SetInput(&m_input);

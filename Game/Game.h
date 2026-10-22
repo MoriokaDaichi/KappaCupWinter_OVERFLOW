@@ -7,6 +7,7 @@
 class Player;
 class GameCamera;
 class Anchor;
+class BulletManager;
 
 class Game : public IGameObject
 {
@@ -20,6 +21,7 @@ public:
 private:
 	Player* m_player = nullptr;
 	GameCamera* m_gameCamera = nullptr;
+	BulletManager* m_bulletManager = nullptr;
 
 	static constexpr int WALL_NUM = 2;
 	static constexpr int ANCHOR_NUM = 8;

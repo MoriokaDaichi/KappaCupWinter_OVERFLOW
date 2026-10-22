@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "weapon/Gun.h"
 
-#include "weapon/Bullet.h"
+#include "weapon/BulletManager.h"
 #include "collision/RayCast.h"
 
 void Gun::Update(bool isShootPress, const Vector3& chest, const Quaternion& rotation)
@@ -25,6 +25,11 @@ void Gun::Update(bool isShootPress, const Vector3& chest, const Quaternion& rota
 
 void Gun::Shoot(const Vector3& muzzle)
 {
+	if (m_bulletManager == nullptr)
+	{
+		return;
+	}
+
 	Vector3 dir = CalcAimPoint() - muzzle;
 	if (dir.Length() < AIM_MIN_DISTANCE)
 	{
@@ -32,8 +37,7 @@ void Gun::Shoot(const Vector3& muzzle)
 	}
 
 	dir.Normalize();
-	Bullet* bullet = NewGO<Bullet>(0, "bullet");
-	bullet->Init(muzzle, dir * m_param.bulletSpeed);
+	m_bulletManager->Fire(muzzle, dir * m_param.bulletSpeed);
 }
 
 Vector3 Gun::CalcAimPoint() const
