@@ -11,7 +11,7 @@ public:
 
 public:
 	/** 空いている枠を探して弾を出す。空きがなければ撃たない */
-	void Fire(const Vector3& position, const Vector3& velocity);
+	void Fire(const Vector3& position, const Vector3& velocity, const GunParam::Level& levelParam);
 
 private:
 	/** 弾を消して空きに戻す（描かれないように大きさ 0 にする） */
@@ -25,6 +25,9 @@ private:
 		Vector3 position;			///< 今の位置
 		Vector3 velocity;			///< 速度
 		float lifeTimer = 0.0f;		///< 消えるまでの残り時間
+		float scale = 0.0f;			///< 大きさ
+		bool pierce = false;		///< 弾が貫通するかどうか
+		float explosionRadius = 0.0f;	///< 爆発の半径（0 なら爆発しない）
 	};
 
 	static constexpr int MAX_BULLET = 128;					///< 同時に飛べる弾の数（連射 0.08 秒 × 寿命 2 秒 ≒ 25 発に余裕を持たせる）

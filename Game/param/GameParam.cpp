@@ -24,8 +24,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraParam, distance, targetHeight, rotateSp
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GravityParam, gravity, fallMultiplier, maxFallSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnchorParam, normalScale, lockedScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GrappleWireParam, thicknessScale)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam, shootInterval, range, bulletSpeed, bulletLifeTime, bulletScale, aimHoldTime,
-	muzzleRight, muzzleForward)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam::Level, shootInterval, bulletSpeed, bulletScale, pierce, explosionRadius)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam, range, bulletLifeTime, aimHoldTime, muzzleRight, muzzleForward, levels)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpeedParam, baseMin, baseMax, bonusMax, groundDecay, idleDecay, wallRunGain, levelUpSpeeds, maxSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam::WarpPoint, name, position)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam, warpPoints)
@@ -65,6 +65,14 @@ namespace
 		ReadFile("Assets/param/gun.json", out.gun);
 		ReadFile("Assets/param/speed.json", out.speed);
 		ReadFile("Assets/param/debug.json", out.debug);
+
+		const size_t speedLevelCount = out.speed.levelUpSpeeds.size() + 1;
+		const size_t gunLevelCount = out.gun.levels.size();
+		// 銃の Lv ごとの値は、速度の Lv の数だけ必要（足りないと配列の外を読む）
+		if (speedLevelCount != gunLevelCount)
+		{
+			throw std::runtime_error("gun.json: levels count is wrong");
+		}
 	}
 }
 

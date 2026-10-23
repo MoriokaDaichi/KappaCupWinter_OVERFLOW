@@ -9,14 +9,14 @@ class Gun
 public:
 	/** 弾を出す BulletManager を受け取る（借りているだけ。消すのは Game） */
 	void Init(BulletManager* bulletManager) { m_bulletManager = bulletManager; }
-	/** 毎フレーム Player が呼ぶ。押していて間隔が空いていれば撃つ。chest は胸の位置、rotation は体の向き（銃口の位置を決める） */
-	void Update(bool isShootPress, const Vector3& chest, const Quaternion& rotation);
+	/** 毎フレーム Player が呼ぶ。押していて間隔が空いていれば撃つ。level は今の速度 Lv（1〜5）。chest は胸の位置、rotation は体の向き（銃口の位置を決める） */
+	void Update(bool isShootPress, int level, const Vector3& chest, const Quaternion& rotation);
 	/** 構えているか（撃っている間と、やめてから aimHoldTime 秒の間） */
 	bool IsAiming() const { return m_aimTimer > 0.0f; }
 
 private:
 	/** 照準の先へ向けて弾を1発出す */
-	void Shoot(const Vector3& muzzle);
+	void Shoot(const Vector3& muzzle, const GunParam::Level& levelParam);
 	/** 画面の中央の先にある、狙う点を返す */
 	Vector3 CalcAimPoint() const;
 	/** 銃口の位置を返す（胸から体の右前へずらした点）。壁に埋まるときは胸を返す */

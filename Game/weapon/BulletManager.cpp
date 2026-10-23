@@ -47,12 +47,12 @@ void BulletManager::Update()
 		}
 
 		bullet.position = nextPos;
-		const float scale = m_param.bulletScale;
+		const float scale = bullet.scale;
 		m_modelRender.UpdateInstancingData(i, bullet.position, Quaternion::Identity, Vector3(scale, scale, scale));
 	}
 }
 
-void BulletManager::Fire(const Vector3& position, const Vector3& velocity)
+void BulletManager::Fire(const Vector3& position, const Vector3& velocity, const GunParam::Level& levelParam)
 {
 	for (int i = 0; i < MAX_BULLET; i++)
 	{
@@ -64,6 +64,9 @@ void BulletManager::Fire(const Vector3& position, const Vector3& velocity)
 			bullet.position = position;
 			bullet.velocity = velocity;
 			bullet.lifeTimer = m_param.bulletLifeTime;
+			bullet.scale = levelParam.bulletScale;
+			bullet.pierce = levelParam.pierce;
+			bullet.explosionRadius = levelParam.explosionRadius;
 
 			return;
 		}

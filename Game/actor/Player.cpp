@@ -460,7 +460,7 @@ void Player::UpdateAction()
 	UpdateSpeedBonus();
 	// 銃口は体の向きから決めるので、先に体を向けてから撃つ
 	FaceAimDirection();
-	m_gun.Update(IsShootPress(), GetChestPosition(), m_rotation);
+	m_gun.Update(IsShootPress(), m_speed.GetLevel(), GetChestPosition(), m_rotation);
 }
 
 void Player::UpdateLock()

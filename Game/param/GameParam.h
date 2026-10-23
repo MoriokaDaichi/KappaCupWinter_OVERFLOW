@@ -119,14 +119,22 @@ struct AnchorParam
 /** 銃と弾の値（gun.json） */
 struct GunParam
 {
-	float shootInterval = 0.0f;			///< 射撃間隔
 	float range = 0.0f;					///< 有効射程
-	float bulletSpeed = 0.0f;			///< 弾丸の速さ
 	float bulletLifeTime = 0.0f;		///< 弾丸が何秒残るか
-	float bulletScale = 0.0f;			///< 弾丸の大きさ
 	float aimHoldTime = 0.0f;			///< 撃つのをやめてから、体を前に向けておく時間・秒
 	float muzzleRight = 0.0f;			///< 銃口の位置。胸から体の右へずらす量
 	float muzzleForward = 0.0f;			///< 銃口の位置。胸から体の前へずらす量
+
+	struct Level
+	{
+		float shootInterval = 0.0f;			///< 射撃間隔（秒）
+		float bulletSpeed = 0.0f;			///< 弾丸の速さ
+		float bulletScale = 0.0f;			///< 弾丸の大きさ
+		bool pierce = false;				///< 弾が貫通するかどうか
+		float explosionRadius = 0.0f;		///< 爆発の半径（0 なら爆発しない）
+	};
+
+	std::vector<Level> levels;				///< レベルの一覧
 };
 
 /** グラップルのワイヤーの値（grappleWire.json） */

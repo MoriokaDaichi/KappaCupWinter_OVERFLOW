@@ -1,10 +1,14 @@
 {
-  "shootInterval": 0.15,
   "range": 10000.0,
-  "bulletSpeed": 8000.0,
   "bulletLifeTime": 2.0,
-  "bulletScale": 0.2,
   "aimHoldTime": 0.5,
   "muzzleRight": 20.0,
-  "muzzleForward": 30.0
+  "muzzleForward": 30.0,
+  "levels": [
+    { "shootInterval": 0.15, "bulletSpeed": 8000.0,  "bulletScale": 0.2,  "pierce": false, "explosionRadius": 0.0 },
+    { "shootInterval": 0.10, "bulletSpeed": 9000.0,  "bulletScale": 0.2,  "pierce": false, "explosionRadius": 0.0 },
+    { "shootInterval": 0.08, "bulletSpeed": 10000.0,  "bulletScale": 0.2,  "pierce": false, "explosionRadius": 0.0 },
+    { "shootInterval": 0.08, "bulletSpeed": 12000.0,  "bulletScale": 0.25,  "pierce": true,  "explosionRadius": 0.0 },
+    { "shootInterval": 0.08, "bulletSpeed": 12000.0,  "bulletScale": 0.35,  "pierce": true,  "explosionRadius": 300.0 }
+]
 }

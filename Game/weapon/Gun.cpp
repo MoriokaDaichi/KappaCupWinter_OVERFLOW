@@ -4,8 +4,11 @@
 #include "weapon/BulletManager.h"
 #include "collision/RayCast.h"
 
-void Gun::Update(bool isShootPress, const Vector3& chest, const Quaternion& rotation)
+void Gun::Update(bool isShootPress, int level, const Vector3& chest, const Quaternion& rotation)
 {
+	const int index = max(0, min(level - 1, static_cast<int>(m_param.levels.size()) - 1));
+	const GunParam::Level& levelParam = m_param.levels[index];
+
 	if (isShootPress)
 	{
 		m_aimTimer = m_param.aimHoldTime;
@@ -19,11 +22,11 @@ void Gun::Update(bool isShootPress, const Vector3& chest, const Quaternion& rota
 		return;
 	}
 
-	Shoot(CalcMuzzle(chest, rotation));
-	m_shootTimer = m_param.shootInterval;
+	Shoot(CalcMuzzle(chest, rotation), levelParam);
+	m_shootTimer = levelParam.shootInterval;
 }
 
-void Gun::Shoot(const Vector3& muzzle)
+void Gun::Shoot(const Vector3& muzzle, const GunParam::Level& levelParam)
 {
 	if (m_bulletManager == nullptr)
 	{
@@ -37,7 +40,7 @@ void Gun::Shoot(const Vector3& muzzle)
 	}
 
 	dir.Normalize();
-	m_bulletManager->Fire(muzzle, dir * m_param.bulletSpeed);
+	m_bulletManager->Fire(muzzle, dir * levelParam.bulletSpeed, levelParam);
 }
 
 Vector3 Gun::CalcAimPoint() const
