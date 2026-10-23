@@ -23,7 +23,11 @@ Player::~Player()
 
 bool Player::Start()
 {
-	InitCharacter("Assets/modelData/unityChan.tkm", 25.0f, 75.0f, Vector3(0.0f, 300.0f, 0.0f));
+	LoadAnimation();
+	InitCharacter("Assets/modelData/player/medea.tkm", m_animClips.data(), static_cast<int>(m_animClips.size()),
+		m_param.body.radius, m_param.body.height, Vector3(0.0f, 300.0f, 0.0f));
+	m_leftHandBoneId = m_modelRender.FindBoneID(L"mixamorig:LeftHand");
+	m_rightHandBoneId = m_modelRender.FindBoneID(L"mixamorig:RightHand");
 
 	m_speed.Reset();
 
@@ -61,6 +65,8 @@ void Player::Jump()
 	// = で入れるので、落ちている途中に跳んでも同じ高さだけ上がる
 	m_moveSpeed.y = m_param.jump.speed;
 	m_jumpCount += 1;
+	// 2段目のジャンプでも、踏み切りから流し直す
+	PlayAnimation(EnPlayerAnim::JumpUp, true);
 }
 
 bool Player::IsJumpTrigger() const
@@ -78,6 +84,177 @@ bool Player::IsMoveInput() const
 void Player::ChangeState(EnPlayerState id)
 {
 	m_stateMachine.ChangeState(id);
+	PlayStateAnimation(id);
+}
+
+void Player::LoadAnimation()
+{
+	struct ClipInfo
+	{
+		EnPlayerAnim anim;
+		const char* filePath;
+		bool isLoop;
+	};
+	const ClipInfo CLIPS[] = {
+		{ EnPlayerAnim::Idle,   "Assets/animData/player/idle.tka",    true },
+		{ EnPlayerAnim::Run,    "Assets/animData/player/run.tka",     true },
+		{ EnPlayerAnim::JumpUp, "Assets/animData/player/jump_up.tka", false },
+		{ EnPlayerAnim::Fall,     "Assets/animData/player/fall_idle.tka", true },
+		{ EnPlayerAnim::FallFast, "Assets/animData/player/fall_long.tka", true },
+		{ EnPlayerAnim::Land,     "Assets/animData/player/land.tka",      false },
+		{ EnPlayerAnim::Swing,  "Assets/animData/player/swing.tka",   true },
+	};
+	static_assert(std::size(CLIPS) == static_cast<int>(EnPlayerAnim::Num), "CLIPS を EnPlayerAnim に合わせてください");
+
+	for (const ClipInfo& clip : CLIPS)
+	{
+		AnimationClip& animClip = m_animClips[static_cast<int>(clip.anim)];
+		animClip.Load(clip.filePath);
+		animClip.SetLoopFlag(clip.isLoop);
+	}
+}
+
+void Player::PlayStateAnimation(EnPlayerState state)
+{
+	// 状態ごとのアニメーション（EnPlayerState と同じ順に並べる）。壁走り専用はないので run を使う
+	const EnPlayerAnim STATE_TO_ANIM[] = {
+		EnPlayerAnim::Idle,		// Idle
+		EnPlayerAnim::Run,		// Run
+		EnPlayerAnim::Fall,		// Air（実際は SelectAirAnimation で選ぶ）
+		EnPlayerAnim::Run,		// WallRun（体を傾けて、壁を走って見せる）
+		EnPlayerAnim::Swing,	// Swing
+	};
+	static_assert(std::size(STATE_TO_ANIM) == static_cast<int>(EnPlayerState::Num), "STATE_TO_ANIM を EnPlayerState に合わせてください");
+
+	if (state == EnPlayerState::Air)
+	{
+		PlayAnimation(SelectAirAnimation());
+		return;
+	}
+
+	// 止まって着地したときだけ、着地の動きを流す（走りながらの着地は、足が止まって見えるので run のまま）
+	const bool isFromAir = m_currentAnim == EnPlayerAnim::JumpUp || m_currentAnim == EnPlayerAnim::Fall || m_currentAnim == EnPlayerAnim::FallFast;
+	if (state == EnPlayerState::Idle && isFromAir && m_airFallSpeed > m_param.jump.landAnimMinSpeed)
+	{
+		PlayAnimation(EnPlayerAnim::Land);
+		return;
+	}
+
+	PlayAnimation(STATE_TO_ANIM[static_cast<int>(state)]);
+}
+
+void Player::UpdateAnimation()
+{
+	if (GetCurrentState() == EnPlayerState::Air)
+	{
+		m_airFallSpeed = max(-m_moveSpeed.y, 0.0f);
+		PlayAnimation(SelectAirAnimation());
+		return;
+	}
+
+	if (m_currentAnim == EnPlayerAnim::Land && !m_modelRender.IsPlayingAnimation())
+	{
+		PlayAnimation(EnPlayerAnim::Idle);
+	}
+}
+
+EnPlayerAnim Player::SelectAirAnimation() const
+{
+	// 踏み切り（Jump で流し始める）は最後まで流す。Jump の後に Air に入るので、ここで消さないようにする
+	if (m_currentAnim == EnPlayerAnim::JumpUp && m_modelRender.IsPlayingAnimation())
+	{
+		return EnPlayerAnim::JumpUp;
+	}
+
+	// 高いところから落ちて、速さがついてきた
+	if (m_moveSpeed.y < -m_param.jump.fastFallAnimSpeed)
+	{
+		return EnPlayerAnim::FallFast;
+	}
+
+	return EnPlayerAnim::Fall;
+}
+
+void Player::PlayAnimation(EnPlayerAnim anim, bool isRestart)
+{
+	// 壁走り→走るのように同じアニメーションが続くときは、最初から流し直さない
+	if (anim == m_currentAnim && !isRestart)
+	{
+		return;
+	}
+
+	m_modelRender.PlayAnimation(static_cast<int>(anim), ANIM_INTERPOLATE_TIME);
+	m_currentAnim = anim;
+}
+
+Vector3 Player::GetRopeHandPosition() const
+{
+	if (m_leftHandBoneId < 0 || m_rightHandBoneId < 0)
+	{
+		return GetChestPosition();
+	}
+
+	const Matrix& left = m_modelRender.GetBone(m_leftHandBoneId)->GetWorldMatrix();
+	const Matrix& right = m_modelRender.GetBone(m_rightHandBoneId)->GetWorldMatrix();
+	return Vector3(
+		(left.m[3][0] + right.m[3][0]) * 0.5f,
+		(left.m[3][1] + right.m[3][1]) * 0.5f,
+		(left.m[3][2] + right.m[3][2]) * 0.5f);
+}
+
+void Player::UpdateBodyTilt()
+{
+	Quaternion target = Quaternion::Identity;
+	const EnPlayerState state = GetCurrentState();
+
+	if (state == EnPlayerState::Swing && m_swingAnchor != nullptr && m_isHooked)
+	{
+		// 体の上をアンカーに向ける（ロープにぶら下がって見えるように）。胸を中心に回す
+		target.SetRotation(Vector3::Up, m_swingAnchor->GetPosition() - GetChestPosition());
+		m_modelTiltPivotHeight = m_param.body.chestHeight;
+	}
+	else if (state == EnPlayerState::WallRun)
+	{
+		// 体の上を壁から離れる向きへ傾け、足を壁につける。壁の向きから決めるので、左右どちらの壁でも同じ
+		Vector3 away = m_wallNormal;
+		away.y = 0.0f;
+		away.Normalize();
+		const float angle = Math::DegToRad(m_param.wallRun.tiltAngle);
+		target.SetRotation(Vector3::Up, Vector3::Up * cosf(angle) + away * sinf(angle));
+		// 回す中心を「傾けたときに足が壁（カプセルの端）に届く高さ」にする
+		m_modelTiltPivotHeight = m_param.body.radius / max(sinf(angle), TILT_MIN_SIN);
+	}
+
+	// 入るとき・抜けるときに急に傾かないように、少しずつ近づける
+	const float rate = min(m_param.body.tiltLerpRate * g_gameTime->GetFrameDeltaTime(), 1.0f);
+	m_modelTilt.Slerp(rate, m_modelTilt, target);
+}
+
+void Player::UpdateWireEnds()
+{
+	if (m_swingAnchor == nullptr)
+	{
+		return;
+	}
+
+	const Vector3 hand = GetRopeHandPosition();
+	const Vector3 anchorPosition = m_swingAnchor->GetPosition();
+	if (m_isHooked)
+	{
+		m_grappleWire->SetEnds(hand, anchorPosition);
+		return;
+	}
+
+	// 飛んでいる途中は、手元から先までだけ描く
+	Vector3 toAnchor = anchorPosition - hand;
+	const float length = min(m_wireTipLength, toAnchor.Length());
+	toAnchor.Normalize();
+	m_grappleWire->SetEnds(hand, hand + toAnchor * length);
+}
+
+void Player::OnBodyUpdated()
+{
+	UpdateWireEnds();
 }
 
 void Player::ResetJumpCount()
@@ -300,8 +477,6 @@ void Player::SwingMove()
 	Vector3 toPlayer = GetChestPosition() - m_swingAnchor->GetPosition();
 	float distance = toPlayer.Length();
 
-	m_grappleWire->SetEnds(GetChestPosition(), m_swingAnchor->GetPosition());
-
 	if (distance < SWING_MIN_DISTANCE)
 	{
 		return;
@@ -379,15 +554,11 @@ void Player::ShootWire()
 	//届いた
 	if (m_wireTipLength >= distance)
 	{
-		m_grappleWire->SetEnds(origin, m_swingAnchor->GetPosition());
 		HookAnchor(distance);
 		return;
 	}
 
-	//飛んでいる途中は、手元から先までだけ描く
-	toAnchor.Normalize();
-	m_grappleWire->SetEnds(origin, origin + toAnchor * m_wireTipLength);
-
+	// ワイヤーの見た目は、骨が動いた後の OnBodyUpdated で手から描く
 	//まだつかんでいないので、いつもどおり動く（床の上では重力をかけない）
 	if (IsOnGround())
 	{
@@ -457,6 +628,8 @@ void Player::UpdateAction()
 	}
 
 	m_stateMachine.Update();
+	UpdateBodyTilt();
+	UpdateAnimation();
 	UpdateSpeedBonus();
 	// 銃口は体の向きから決めるので、先に体を向けてから撃つ
 	FaceAimDirection();

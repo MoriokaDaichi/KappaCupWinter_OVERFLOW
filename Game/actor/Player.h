@@ -99,6 +99,8 @@ public:
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
 	void UpdateAction() override;
+	/** 体を動かした後（骨の位置が決まった後）に、ワイヤーの見た目を合わせる */
+	void OnBodyUpdated() override;
 
 private:
 	/** 毎フレーム、一番いいアンカーを選んで m_lockedAnchor に入れる */
@@ -119,6 +121,22 @@ private:
 	void FaceAimDirection();
 	/** 今の状態に合わせて、上乗せの速さを増やす・減らす（壁走りで増え、地上で減る） */
 	void UpdateSpeedBonus();
+	/** アニメーションを読み込む（InitCharacter の前に呼ぶ） */
+	void LoadAnimation();
+	/** 状態に合ったアニメーションに切り替える */
+	void PlayStateAnimation(EnPlayerState state);
+	/** アニメーションを切り替える。同じアニメーションなら、isRestart が true のときだけ最初から流し直す */
+	void PlayAnimation(EnPlayerAnim anim, bool isRestart = false);
+	/** 空中にいる間は速さに合わせて切り替え、着地のアニメーションが終わったら待機につなぐ */
+	void UpdateAnimation();
+	/** 空中のアニメーションを選ぶ。踏み切りの途中ならそのまま、速く落ちていれば FallFast、それ以外は Fall */
+	EnPlayerAnim SelectAirAnimation() const;
+	/** ロープを持つ手の位置（両手の間）。骨が見つからないときは胸の位置 */
+	Vector3 GetRopeHandPosition() const;
+	/** 体の見た目を傾ける。スイングではアンカーの方へ、壁走りでは壁から離れる向きへ。ほかの状態ではまっすぐに戻す */
+	void UpdateBodyTilt();
+	/** ワイヤーの見た目を、手からアンカー（飛んでいる途中は先まで）に合わせる */
+	void UpdateWireEnds();
 
 private:
 	const InputManager* m_input = nullptr;	///< 入力（読むだけ。止めるのは Game の役目）
@@ -128,10 +146,17 @@ private:
 	GrappleWire* m_grappleWire = nullptr;	///< ワイヤーの見た目。スイング中だけ表示する
 	Gun m_gun;								///< 銃。RT で弾を撃つ
 	SpeedSystem m_speed;					///< スピードシステム（基礎速度と上乗せ速度をもつ）
+	std::array<AnimationClip, static_cast<int>(EnPlayerAnim::Num)> m_animClips;	///< アニメーション（ModelRender が借りるので、ここで持つ）
+	EnPlayerAnim m_currentAnim = EnPlayerAnim::Num;	///< 今流しているアニメーション（Num はまだ流していない）
+	float m_airFallSpeed = 0.0f;			///< 空中で最後に見た、落ちる速さ（着地すると速さが 0 になるので、着地のアニメーションを流すかの判定用に覚えておく）
+	int m_leftHandBoneId = -1;				///< 左手の骨の番号（ロープの手元に使う。見つからなければ -1）
+	int m_rightHandBoneId = -1;				///< 右手の骨の番号
 
 	// 調整する値は Assets/param/player.json（意味は param/GameParam.h の PlayerParam）。ここには計算のための値だけ置く
 	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;	///< スティックを倒したとみなす境目（長さの2乗）
 	static constexpr float SWING_MIN_DISTANCE = 0.001f;		///< アンカーとの距離がこれより近いと、ロープの向きを出せない
+	static constexpr float TILT_MIN_SIN = 0.1f;				///< 壁走りの傾きの中心を出すときの割る数の下限（角度が 0 に近いと中心が無限に高くなるため）
+	static constexpr float ANIM_INTERPOLATE_TIME = 0.2f;	///< アニメーションを切り替えるときに、前のものとなめらかにつなぐ時間（秒）。調整は遷移のタスクで JSON に出す
 
 	const PlayerParam& m_param = nsGameParam::Get().player;	///< 調整用の値（F5 で読み直すと中身が変わる）
 	const SpeedParam& m_speedParam = nsGameParam::Get().speed;		///< 速度の調整値（speed.json）

@@ -9,11 +9,11 @@
 #include "thirdParty/nlohmann/json.hpp"
 
 // JSON → 構造体の対応。at() で読むので、キーがなければ例外になる（既定値で黙って動かない）
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Body, chestHeight)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Body, radius, height, chestHeight, tiltLerpRate)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Move, groundAccel, groundDecel, airControl)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Jump, speed, maxCount)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Jump, speed, maxCount, fastFallAnimSpeed, landAnimMinSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::WallRun, checkLength, normalYLimit, speed, minSpeed, gravityScale,
-	stickSpeed, maxTime, jumpSpeedUp, jumpSpeedOut, reattachTime)
+	stickSpeed, maxTime, jumpSpeedUp, jumpSpeedOut, reattachTime, tiltAngle)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Lock, maxDistance, maxAngle, angleWeight, distanceWeight, keepBonus)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Swing, wireShootSpeed, startLift, pullRate, reelSpeed, minRopeLength,
 	reelEase, pumpAccel, faceMinSpeed, maxSpeed, releaseBoost, releaseLift, releaseMinSpeed)

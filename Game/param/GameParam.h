@@ -14,7 +14,10 @@ struct PlayerParam
 	/** 体 */
 	struct Body
 	{
+		float radius = 0.0f;			///< 当たり判定のカプセルの半径
+		float height = 0.0f;			///< カプセルの筒の部分の長さ（全体の高さは height + radius × 2。Medea の身長 165 に合わせる）
 		float chestHeight = 0.0f;		///< 足元から胸までの高さ。壁を探すレイ・ロープの手元・ロックの視線に使う
+		float tiltLerpRate = 0.0f;		///< 体の見た目の傾き（スイング・壁走り）を目標に近づける速さ。1秒あたりの割合
 	};
 	/** 地上・空中の移動 */
 	struct Move
@@ -28,6 +31,8 @@ struct PlayerParam
 	{
 		float speed = 0.0f;				///< 跳んだ瞬間の上向きの速さ
 		int maxCount = 0;				///< 何回ジャンプできるか
+		float fastFallAnimSpeed = 0.0f;	///< 落ちる速さがこれを超えたら、手足をばたつかせる落下アニメーションにする（重力の maxFallSpeed より小さくする）
+		float landAnimMinSpeed = 0.0f;	///< 着地したときの落ちる速さがこれを超えたら、着地のアニメーションを流す（小さな段差では流さない）
 	};
 	/** ウォールラン */
 	struct WallRun
@@ -42,6 +47,7 @@ struct PlayerParam
 		float jumpSpeedUp = 0.0f;		///< 壁ジャンプで上に跳ぶ速さ
 		float jumpSpeedOut = 0.0f;		///< 壁ジャンプで壁から離れる速さ
 		float reattachTime = 0.0f;		///< 壁を離れてから、もう一度張り付けるまでの時間（秒）
+		float tiltAngle = 0.0f;			///< 壁走り中に、体を壁から離す向きへ傾ける角度（度）。足が壁につく高さを中心に回す
 	};
 	/** アンカーの自動ロック */
 	struct Lock

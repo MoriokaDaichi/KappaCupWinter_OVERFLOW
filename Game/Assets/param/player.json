@@ -1,6 +1,9 @@
 {
     "body": {
-        "chestHeight": 50.0
+        "radius": 30.0,
+        "height": 105.0,
+        "chestHeight": 115.0,
+        "tiltLerpRate": 12.0
     },
     "move": {
         "groundAccel": 3000.0,
@@ -9,7 +12,9 @@
     },
     "jump": {
         "speed": 600.0,
-        "maxCount": 2
+        "maxCount": 2,
+        "fastFallAnimSpeed": 900.0,
+        "landAnimMinSpeed": 500.0
     },
     "wallRun": {
         "checkLength": 50.0,
@@ -21,7 +26,8 @@
         "maxTime": 2.0,
         "jumpSpeedUp": 600.0,
         "jumpSpeedOut": 400.0,
-        "reattachTime": 0.3
+        "reattachTime": 0.3,
+        "tiltAngle": 30.0
     },
     "lock": {
         "maxDistance": 3000.0,
