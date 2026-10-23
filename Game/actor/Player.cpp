@@ -28,6 +28,7 @@ bool Player::Start()
 		m_param.body.radius, m_param.body.height, Vector3(0.0f, 300.0f, 0.0f));
 	m_leftHandBoneId = m_modelRender.FindBoneID(L"mixamorig:LeftHand");
 	m_rightHandBoneId = m_modelRender.FindBoneID(L"mixamorig:RightHand");
+	m_rightMiddleBoneId = m_modelRender.FindBoneID(L"mixamorig:RightHandMiddle1");
 
 	m_speed.Reset();
 
@@ -42,6 +43,7 @@ bool Player::Start()
 	m_grappleWire = NewGO<GrappleWire>(0, "grappleWire");
 
 	m_gun.Init(FindGO<BulletManager>("bulletManager"));
+	m_gunModel.Init();
 
 	return true;
 }
@@ -252,9 +254,32 @@ void Player::UpdateWireEnds()
 	m_grappleWire->SetEnds(hand, hand + toAnchor * length);
 }
 
+void Player::UpdateGunModel()
+{
+	if (m_rightHandBoneId < 0 || m_rightMiddleBoneId < 0)
+	{
+		return;
+	}
+
+	const Matrix& hand = m_modelRender.GetBone(m_rightHandBoneId)->GetWorldMatrix();
+	const Matrix& middle = m_modelRender.GetBone(m_rightMiddleBoneId)->GetWorldMatrix();
+	const Vector3 grip(
+		(hand.m[3][0] + middle.m[3][0]) * 0.5f,
+		(hand.m[3][1] + middle.m[3][1]) * 0.5f,
+		(hand.m[3][2] + middle.m[3][2]) * 0.5f);
+	m_gunModel.Update(hand, grip);
+}
+
 void Player::OnBodyUpdated()
 {
 	UpdateWireEnds();
+	UpdateGunModel();
+}
+
+void Player::Render(RenderContext& rc)
+{
+	Character::Render(rc);
+	m_gunModel.Draw(rc);
 }
 
 void Player::ResetJumpCount()

@@ -249,6 +249,7 @@
     <ClCompile Include="system\system.cpp" />
     <ClCompile Include="weapon\BulletManager.cpp" />
     <ClCompile Include="weapon\Gun.cpp" />
+    <ClCompile Include="weapon\GunModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="actor\Character.h" />
@@ -277,6 +278,7 @@
     <ClInclude Include="system\system.h" />
     <ClInclude Include="weapon\BulletManager.h" />
     <ClInclude Include="weapon\Gun.h" />
+    <ClInclude Include="weapon\GunModel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

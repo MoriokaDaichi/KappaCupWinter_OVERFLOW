@@ -99,6 +99,9 @@
     <ClCompile Include="weapon\Gun.cpp">
       <Filter>weapon</Filter>
     </ClCompile>
+    <ClCompile Include="weapon\GunModel.cpp">
+      <Filter>weapon</Filter>
+    </ClCompile>
     <ClCompile Include="debug\DebugManager.cpp">
       <Filter>debug</Filter>
     </ClCompile>
@@ -173,6 +176,9 @@
       <Filter>actor\playerState</Filter>
     </ClInclude>
     <ClInclude Include="weapon\Gun.h">
+      <Filter>weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon\GunModel.h">
       <Filter>weapon</Filter>
     </ClInclude>
     <ClInclude Include="debug\DebugManager.h">

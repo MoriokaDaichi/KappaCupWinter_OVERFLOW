@@ -3,6 +3,7 @@
 #include "state/StateMachine.h"
 #include "actor/playerState/PlayerState.h"
 #include "weapon/Gun.h"
+#include "weapon/GunModel.h"
 #include "param/GameParam.h"
 #include "speed/SpeedSystem.h"
 
@@ -99,8 +100,10 @@ public:
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
 	void UpdateAction() override;
-	/** 体を動かした後（骨の位置が決まった後）に、ワイヤーの見た目を合わせる */
+	/** 体を動かした後（骨の位置が決まった後）に、ワイヤーと銃の見た目を合わせる */
 	void OnBodyUpdated() override;
+	/** 体と、手に持つ銃を描く */
+	void Render(RenderContext& rc) override;
 
 private:
 	/** 毎フレーム、一番いいアンカーを選んで m_lockedAnchor に入れる */
@@ -137,6 +140,8 @@ private:
 	void UpdateBodyTilt();
 	/** ワイヤーの見た目を、手からアンカー（飛んでいる途中は先まで）に合わせる */
 	void UpdateWireEnds();
+	/** 銃の見た目を右手に持たせる（握る位置は、手首と中指の付け根の間＝手のひら） */
+	void UpdateGunModel();
 
 private:
 	const InputManager* m_input = nullptr;	///< 入力（読むだけ。止めるのは Game の役目）
@@ -145,12 +150,14 @@ private:
 	Anchor* m_swingAnchor = nullptr;		///< スイングに使うアンカー
 	GrappleWire* m_grappleWire = nullptr;	///< ワイヤーの見た目。スイング中だけ表示する
 	Gun m_gun;								///< 銃。RT で弾を撃つ
+	GunModel m_gunModel;					///< 右手に持つ銃の見た目
 	SpeedSystem m_speed;					///< スピードシステム（基礎速度と上乗せ速度をもつ）
 	std::array<AnimationClip, static_cast<int>(EnPlayerAnim::Num)> m_animClips;	///< アニメーション（ModelRender が借りるので、ここで持つ）
 	EnPlayerAnim m_currentAnim = EnPlayerAnim::Num;	///< 今流しているアニメーション（Num はまだ流していない）
 	float m_airFallSpeed = 0.0f;			///< 空中で最後に見た、落ちる速さ（着地すると速さが 0 になるので、着地のアニメーションを流すかの判定用に覚えておく）
 	int m_leftHandBoneId = -1;				///< 左手の骨の番号（ロープの手元に使う。見つからなければ -1）
 	int m_rightHandBoneId = -1;				///< 右手の骨の番号
+	int m_rightMiddleBoneId = -1;			///< 右手の中指の付け根の骨の番号（銃を握る位置に使う）
 
 	// 調整する値は Assets/param/player.json（意味は param/GameParam.h の PlayerParam）。ここには計算のための値だけ置く
 	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;	///< スティックを倒したとみなす境目（長さの2乗）
