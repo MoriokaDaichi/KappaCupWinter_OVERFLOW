@@ -6,8 +6,9 @@
 #include "weapon/GunModel.h"
 #include "param/GameParam.h"
 #include "speed/SpeedSystem.h"
+#include "actor/CharacterCommand.h"
 
-class InputManager;
+class IController;
 class Anchor;
 class GrappleWire;
 
@@ -20,11 +21,8 @@ public:
 	bool Start();
 
 public:
-	/** 入力を受け取る先を設定する。Game が持っている InputManager を渡す */
-	void SetInput(const InputManager* input)
-	{
-		m_input = input;
-	}
+	/** コマンドを作る係を設定する */
+	void SetController(const IController* controller) { m_controller = controller; }
 
 	/** スティックの向きに移動し、進む方向に体を向ける */
 	void Move();
@@ -144,7 +142,8 @@ private:
 	void UpdateGunModel();
 
 private:
-	const InputManager* m_input = nullptr;	///< 入力（読むだけ。止めるのは Game の役目）
+	const IController* m_controller = nullptr;	///< コマンドを作る係（Game が持っている）
+	CharacterCommand m_command;				///< このフレームのコマンド
 	StateMachine<Player, EnPlayerState> m_stateMachine;		///< 状態の切り替え役
 	Anchor* m_lockedAnchor = nullptr;		///< ロック中のアンカー
 	Anchor* m_swingAnchor = nullptr;		///< スイングに使うアンカー

@@ -3,6 +3,7 @@
 #include "Level3DRender/LevelRender.h"
 #include "input/InputManager.h"
 #include "debug/DebugManager.h"
+#include "controller/PlayerController.h"
 
 class Player;
 class GameCamera;
@@ -36,5 +37,6 @@ private:
 	RigidBody m_wallBody[WALL_NUM];
 	SpriteRender m_crosshairRender;		///< 仮の照準（HUD ができたら置き換える）
 	DebugManager m_debugManager;		///< デバッグ画面（ImGui のパネル。F1 で隠せる）
+	PlayerController m_playerController;	///< 入力からプレイヤーのコマンドを作る
 };
 

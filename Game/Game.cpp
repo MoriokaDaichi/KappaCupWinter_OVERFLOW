@@ -89,7 +89,8 @@ bool Game::Start()
 	m_bulletManager = NewGO<BulletManager>(0, "bulletManager");
 
 	m_player = NewGO<Player>(0, "player");
-	m_player->SetInput(&m_input);
+	m_playerController.SetInput(&m_input);
+	m_player->SetController(&m_playerController);
 
 	m_gameCamera = NewGO<GameCamera>(1, "gameCamera");
 	m_gameCamera->SetTarget(m_player);

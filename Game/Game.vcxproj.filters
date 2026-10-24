@@ -46,6 +46,9 @@
     <Filter Include="speed">
       <UniqueIdentifier>{41beed99-bb98-4b31-ae02-b04a91ad6c3d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="controller">
+      <UniqueIdentifier>{9c44615a-3fc5-4f21-965c-d38e353b3529}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -110,6 +113,9 @@
     </ClCompile>
     <ClCompile Include="weapon\BulletManager.cpp">
       <Filter>weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="controller\PlayerController.cpp">
+      <Filter>controller</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +195,15 @@
     </ClInclude>
     <ClInclude Include="weapon\BulletManager.h">
       <Filter>weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="controller\IController.h">
+      <Filter>controller</Filter>
+    </ClInclude>
+    <ClInclude Include="controller\PlayerController.h">
+      <Filter>controller</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\CharacterCommand.h">
+      <Filter>actor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

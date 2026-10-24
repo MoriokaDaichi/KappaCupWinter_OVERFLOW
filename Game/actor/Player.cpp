@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "actor/Player.h"
 
-#include "input/InputManager.h"
+#include "controller/IController.h"
 #include "actor/playerState/PlayerIdleState.h"
 #include "actor/playerState/PlayerRunState.h"
 #include "actor/playerState/PlayerAirState.h"
@@ -73,14 +73,12 @@ void Player::Jump()
 
 bool Player::IsJumpTrigger() const
 {
-	return m_input->IsTrigger(EnInputAction::Jump);
+	return m_command.jumpTrigger;
 }
 
 bool Player::IsMoveInput() const
 {
-	Vector2 stick = m_input->GetMove();
-	float length = stick.x * stick.x + stick.y * stick.y;
-	return length > MOVE_INPUT_THRESHOLD;
+	return m_command.moveDir.LengthSq() > MOVE_INPUT_THRESHOLD;
 }
 
 void Player::ChangeState(EnPlayerState id)
@@ -325,26 +323,7 @@ void Player::AirMove()
 
 Vector3 Player::GetMoveDirection() const
 {
-	//スティックの入力
-	Vector2 stick = m_input->GetMove();
-
-	//カメラの前向き・右向き（地面と平行にする）
-	Vector3 forward = g_camera3D->GetForward();
-	forward.y = 0.0f;
-	forward.Normalize();
-	Vector3 right = g_camera3D->GetRight();
-	right.y = 0.0f;
-	right.Normalize();
-
-	//移動方向の決定
-	Vector3 moveDir = forward * stick.y + right * stick.x;
-
-	//キーボードだと斜めの長さが 0.7 くらいになるので、長さを 1 にそろえる（入力がないときは 0 のまま）
-	if (moveDir.LengthSq() > MOVE_INPUT_THRESHOLD)
-	{
-		moveDir.Normalize();
-	}
-	return moveDir;
+	return m_command.moveDir;
 }
 
 bool Player::FindWall()
@@ -469,12 +448,12 @@ void Player::Decelerate()
 
 bool Player::IsGrappleTrigger() const
 {
-	return m_input->IsTrigger(EnInputAction::Grapple);
+	return m_command.grappleTrigger;
 }
 
 bool Player::IsGrappleRelease() const
 {
-	return m_input->IsRelease(EnInputAction::Grapple);
+	return m_command.grappleRelease;
 }
 
 void Player::StartSwing()
@@ -629,16 +608,21 @@ void Player::ReleaseBoost()
 
 bool Player::IsShootPress() const
 {
-	return m_input->IsPress(EnInputAction::Shoot);
+	return m_command.shootPress;
 }
 
 bool Player::IsAimPress() const
 {
-	return m_input->IsPress(EnInputAction::Aim);
+	return m_command.aimPress;
 }
 
 void Player::UpdateAction()
 {
+	if (m_controller != nullptr)
+	{
+		m_controller->MakeCommand(m_command);
+	}
+
 	m_reattachTimer -= g_gameTime->GetFrameDeltaTime();
 	if (m_reattachTimer < 0.0f)
 	{
@@ -716,9 +700,9 @@ float Player::CalcLockScore(const Anchor* anchor) const
 		return -1.0f;
 	}
 
-	Vector3 camToAnchor = anchor->GetPosition() - g_camera3D->GetPosition();
+	Vector3 camToAnchor = anchor->GetPosition() - m_command.aimOrigin;
 	camToAnchor.Normalize();
-	float dot = g_camera3D->GetForward().Dot(camToAnchor);
+	float dot = m_command.aimDirection.Dot(camToAnchor);
 	if (dot < cosf(Math::DegToRad(m_param.lock.maxAngle)))
 	{
 		return -1.0f;
@@ -784,7 +768,7 @@ void Player::FaceAimDirection()
 		return;
 	}
 
-	Vector3 dir = g_camera3D->GetForward();
+	Vector3 dir = m_command.aimDirection;
 	dir.y = 0.0f;
 
 	if (dir.LengthSq() < MOVE_INPUT_THRESHOLD)
