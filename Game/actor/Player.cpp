@@ -56,16 +56,13 @@ void Player::Move()
 	ApproachHorizontal(moveDir * m_speed.GetSpeed(), m_param.move.groundAccel);
 
 	//スティックを倒しているときだけ向きを変える（離したときは今の向きを保つ）
-	if (moveDir.LengthSq() > MOVE_INPUT_THRESHOLD)
-	{
-		m_rotation.SetRotationYFromDirectionXZ(moveDir);
-	}
+	FaceDirection(moveDir);
 }
 
 void Player::Jump()
 {
 	// = で入れるので、落ちている途中に跳んでも同じ高さだけ上がる
-	m_moveSpeed.y = m_param.jump.speed;
+	SetVerticalSpeed(m_param.jump.speed);
 	m_jumpCount += 1;
 	// 2段目のジャンプでも、踏み切りから流し直す
 	PlayAnimation(EnPlayerAnim::JumpUp, true);
@@ -285,11 +282,6 @@ void Player::ResetJumpCount()
 	m_jumpCount = 0;
 }
 
-bool Player::IsFalling() const
-{
-	return m_moveSpeed.y <= 0.0f;
-}
-
 void Player::ConsumeGroundJump()
 {
 	if (m_jumpCount == 0)
@@ -318,7 +310,7 @@ void Player::AirMove()
 	m_moveSpeed.x += (target.x - m_moveSpeed.x) * t;
 	m_moveSpeed.z += (target.z - m_moveSpeed.z) * t;
 
-	m_rotation.SetRotationYFromDirectionXZ(moveDir);
+	FaceDirection(moveDir);
 }
 
 Vector3 Player::GetMoveDirection() const
@@ -369,7 +361,7 @@ bool Player::CanStartWallRun() const
 void Player::StartWallRun()
 {
 	m_wallRunTimer = 0.0f;
-	m_moveSpeed.y = 0.0f;
+	SetVerticalSpeed(0.0f);
 
 	m_gravity.SetScale(m_param.wallRun.gravityScale);
 	ResetJumpCount();
@@ -392,11 +384,11 @@ void Player::WallRunMove()
 	m_moveSpeed.x = horizontalSpeed.x;
 	m_moveSpeed.z = horizontalSpeed.z;
 
-	m_rotation.SetRotationYFromDirectionXZ(along);
+	FaceDirection(along);
 	m_wallRunTimer += g_gameTime->GetFrameDeltaTime();
 	if (!IsWallRunTimeOver())
 	{
-		m_moveSpeed.y = 0.0f;
+		SetVerticalSpeed(0.0f);
 	}
 	else
 	{
@@ -406,8 +398,8 @@ void Player::WallRunMove()
 
 void Player::WallJump()
 {
-	m_moveSpeed += m_wallNormal * m_param.wallRun.jumpSpeedOut;
-	m_moveSpeed.y = m_param.wallRun.jumpSpeedUp;
+	AddMoveSpeed(m_wallNormal * m_param.wallRun.jumpSpeedOut);
+	SetVerticalSpeed(m_param.wallRun.jumpSpeedUp);
 	m_jumpCount += 1;
 }
 
@@ -420,25 +412,6 @@ void Player::EndWallRun()
 bool Player::IsWallRunTimeOver() const
 {
 	return m_wallRunTimer >= m_param.wallRun.maxTime;
-}
-
-void Player::ApproachHorizontal(const Vector3& target, float rate)
-{
-	Vector3 diff = target - m_moveSpeed;
-	diff.y = 0.0f;
-
-	float step = rate * g_gameTime->GetFrameDeltaTime();
-
-	if (diff.Length() <= step)
-	{
-		m_moveSpeed.x = target.x;
-		m_moveSpeed.z = target.z;
-		return;
-	}
-
-	diff.Normalize();
-	m_moveSpeed.x += diff.x * step;
-	m_moveSpeed.z += diff.z * step;
 }
 
 void Player::Decelerate()
@@ -524,10 +497,10 @@ void Player::SwingMove()
 
 	Vector3 horizontal = m_moveSpeed;
 	horizontal.y = 0.0f;
-	
+
 	if (horizontal.LengthSq() > m_param.swing.faceMinSpeed * m_param.swing.faceMinSpeed)
 	{
-		m_rotation.SetRotationYFromDirectionXZ(horizontal);
+		FaceDirection(horizontal);
 	}
 }
 
@@ -583,7 +556,7 @@ void Player::HookAnchor(float ropeLength)
 	//地上でつかんだら少し浮かせる（すぐ「着地した」と判定されないように）
 	if (IsOnGround())
 	{
-		m_moveSpeed.y = m_param.swing.startLift;
+		SetVerticalSpeed(m_param.swing.startLift);
 	}
 }
 
@@ -602,8 +575,8 @@ void Player::ReleaseBoost()
 
 	Vector3 speed = m_moveSpeed;
 	speed.Normalize();
-	m_moveSpeed += speed * m_param.swing.releaseBoost;
-	m_moveSpeed.y += m_param.swing.releaseLift;
+	AddMoveSpeed(speed * m_param.swing.releaseBoost);
+	AddMoveSpeed(Vector3::Up * m_param.swing.releaseLift);
 }
 
 bool Player::IsShootPress() const
@@ -768,15 +741,7 @@ void Player::FaceAimDirection()
 		return;
 	}
 
-	Vector3 dir = m_command.aimDirection;
-	dir.y = 0.0f;
-
-	if (dir.LengthSq() < MOVE_INPUT_THRESHOLD)
-	{
-		return;
-	}
-
-	m_rotation.SetRotationYFromDirectionXZ(dir);
+	FaceDirection(m_command.aimDirection);
 }
 
 void Player::UpdateSpeedBonus()
@@ -800,7 +765,7 @@ void Player::UpdateSpeedBonus()
 void Player::Warp(const Vector3& position)
 {
 	// 状態より先に速さを消す（スイング中だと、状態を変えたときに EndSwing が今の速さを上乗せに残してしまうため）
-	m_moveSpeed = Vector3::Zero;
+	SetMoveSpeed(Vector3::Zero);
 	ChangeState(EnPlayerState::Air);
 	m_charaCon.SetPosition(position);
 }

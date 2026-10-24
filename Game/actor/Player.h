@@ -38,8 +38,6 @@ public:
 	void ChangeState(EnPlayerState id);
 	/** ジャンプの回数を 0 に戻す */
 	void ResetJumpCount();
-	/** 下に向かっているか */
-	bool IsFalling() const;
 	/** 地上のジャンプを使ったことにする（まだ跳んでいなければ回数を 1 にする） */
 	void ConsumeGroundJump();
 	/** 空中での移動。スティックの向きへ少しずつ曲がる（離すと勢いのまま） */
@@ -60,8 +58,6 @@ public:
 	void EndWallRun();
 	/** 落ちずに走れる時間を過ぎたか */
 	bool IsWallRunTimeOver() const;
-	/** 横の速さを target に、1秒あたり rate だけ近づける */
-	void ApproachHorizontal(const Vector3& target, float rate);
 	/** 止まるまで減速する（Idle から呼ぶ） */
 	void Decelerate();
 	/** スイングに使うロック中のアンカーを返す */
