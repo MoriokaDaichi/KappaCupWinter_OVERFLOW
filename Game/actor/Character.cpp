@@ -66,6 +66,12 @@ void Character::FaceDirection(const Vector3& dir)
 	m_rotation.SetRotationYFromDirectionXZ(faceDir);
 }
 
+void Character::SetHorizontalSpeed(const Vector3& speed)
+{
+	m_moveSpeed.x = speed.x;
+	m_moveSpeed.z = speed.z;
+}
+
 void Character::InitCharacter(const char* filePath, AnimationClip* clips, int clipCount, float radius, float height, const Vector3& position)
 {
 	m_modelRender.Init(filePath, clips, clipCount);

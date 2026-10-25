@@ -358,44 +358,6 @@ bool Player::CanStartWallRun() const
 	return IsMoveInput() && speed >= m_param.wallRun.minSpeed && m_reattachTimer <= 0.0f;
 }
 
-void Player::StartWallRun()
-{
-	m_wallRunTimer = 0.0f;
-	SetVerticalSpeed(0.0f);
-
-	m_gravity.SetScale(m_param.wallRun.gravityScale);
-	ResetJumpCount();
-}
-
-void Player::WallRunMove()
-{
-	Vector3 along = Cross(m_wallNormal, Vector3::Up);
-	along.Normalize();
-
-	if (along.Dot(m_moveSpeed) < 0.0f)
-	{
-		along *= -1.0f;
-	}
-
-	// 壁走りは最低でも wallRun.speed。速度システムの値がそれより速ければ、その速さで走る
-	const float runSpeed = max(m_param.wallRun.speed, m_speed.GetSpeed());
-	Vector3 horizontalSpeed = along * runSpeed + m_wallNormal * -m_param.wallRun.stickSpeed;
-
-	m_moveSpeed.x = horizontalSpeed.x;
-	m_moveSpeed.z = horizontalSpeed.z;
-
-	FaceDirection(along);
-	m_wallRunTimer += g_gameTime->GetFrameDeltaTime();
-	if (!IsWallRunTimeOver())
-	{
-		SetVerticalSpeed(0.0f);
-	}
-	else
-	{
-		ApplyGravity();
-	}
-}
-
 void Player::WallJump()
 {
 	AddMoveSpeed(m_wallNormal * m_param.wallRun.jumpSpeedOut);
@@ -407,11 +369,6 @@ void Player::EndWallRun()
 {
 	m_gravity.SetScale(1.0f);
 	m_reattachTimer = m_param.wallRun.reattachTime;
-}
-
-bool Player::IsWallRunTimeOver() const
-{
-	return m_wallRunTimer >= m_param.wallRun.maxTime;
 }
 
 void Player::Decelerate()

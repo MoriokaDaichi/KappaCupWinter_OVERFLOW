@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "state/IState.h"
+#include "param/GameParam.h"
 
 class Player;
 
@@ -15,4 +16,12 @@ public:
 	void Update() override;
 	/** 壁走りの片付け（重力を戻す・しばらく同じ壁に張り付けないようにする） */
 	void Exit() override;
+
+private:
+	/** 壁に沿って走る。時間内は落ちず、過ぎたらずり落ちる */
+	void Move();
+
+private:
+	float m_runTime = 0.0f;				///< 壁を走り始めてからの時間
+	const PlayerParam::WallRun& m_param = nsGameParam::Get().player.wallRun;		///< 調整用の値のうち、壁走りの分（Assets/param/player.json）
 };

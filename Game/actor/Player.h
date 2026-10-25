@@ -48,16 +48,10 @@ public:
 	bool FindWall();
 	/** 壁走りを始められるか */
 	bool CanStartWallRun() const;
-	/** 壁に沿って走る */
-	void WallRunMove();
 	/** 壁から跳ねる */
 	void WallJump();
-	/** 壁走りを始めるときの準備 */
-	void StartWallRun();
 	/** 壁走りを終わるときの片付け */
 	void EndWallRun();
-	/** 落ちずに走れる時間を過ぎたか */
-	bool IsWallRunTimeOver() const;
 	/** 止まるまで減速する（Idle から呼ぶ） */
 	void Decelerate();
 	/** スイングに使うロック中のアンカーを返す */
@@ -90,6 +84,8 @@ public:
 	EnPlayerState GetCurrentState() const { return m_stateMachine.GetCurrentState(); }
 	/** position へ瞬間移動する。速さを 0 にして空中の状態から始める（デバッグ画面・チェックポイント用） */
 	void Warp(const Vector3& position);
+	/** 今の壁の向き（法線）を返す。壁の向きをステートに移すまでの仮（3-2 で消す） */
+	const Vector3& GetWallNormal() const {return m_wallNormal;}
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -165,7 +161,6 @@ private:
 
 	int m_jumpCount = 0;			///< いま何回跳んだか
 	Vector3 m_wallNormal = Vector3::Zero;		///< 今の壁の向き（法線）。FindWall で書き換える
-	float m_wallRunTimer = 0.0f;	///< 壁を走り始めてからの時間
 	float m_reattachTimer = 0.0f;	///< もう一度張り付けるまでの残り時間
 	float m_ropeLength = 0.0f;		///< ロープの長さ。つかんだときの距離を入れ、巻き上げで縮める
 	float m_wireTipLength = 0.0f;	///< 手元から飛んでいるワイヤーの先までの長さ
