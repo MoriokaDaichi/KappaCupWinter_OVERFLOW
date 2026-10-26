@@ -20,8 +20,13 @@ public:
 private:
 	/** 壁に沿って走る。時間内は落ちず、過ぎたらずり落ちる */
 	void Move();
+	/** 壁から離れる向きへ体を傾けるよう、体に伝える */
+	void UpdateTilt(const Vector3& wallNormal);
 
 private:
+	static constexpr float TILT_MIN_SIN = 0.1f;				///< 壁走りの傾きの中心を出すときの割る数の下限（角度が 0 に近いと中心が無限に高くなるため）
+
 	float m_runTime = 0.0f;				///< 壁を走り始めてからの時間
 	const PlayerParam::WallRun& m_param = nsGameParam::Get().player.wallRun;		///< 調整用の値のうち、壁走りの分（Assets/param/player.json）
+	const PlayerParam::Body& m_bodyParam = nsGameParam::Get().player.body;			///< 調整用の値のうち、体の大きさの分（Assets/param/player.json）
 };

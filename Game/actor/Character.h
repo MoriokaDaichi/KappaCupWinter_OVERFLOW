@@ -35,6 +35,8 @@ public:
 	void SetHorizontalSpeed(const Vector3& speed);
 	/** 重力の係数を決める */
 	void SetGravityScale(float scale) { m_gravity.SetScale(scale); }
+	/** 渡された目標の傾きを覚えておく */
+	void SetModelTiltTarget(const Quaternion& target, float pivotHeight);
 
 protected:
 	/** 子クラスが書く（Player ならステートマシン） */
@@ -59,6 +61,7 @@ protected:
 	ModelRender m_modelRender;		///< 見た目
 	Quaternion m_rotation;			///< 向き
 	Quaternion m_modelTilt = Quaternion::Identity;	///< 見た目だけの傾き。m_rotation の後にかける（当たり判定や向きの計算には使わない）
+	Quaternion m_modelTiltTarget = Quaternion::Identity;		///< 目標の傾き。State が毎フレーム SetModelTiltTarget で決め、出さなければまっすぐに戻る
 	float m_modelTiltPivotHeight = 0.0f;			///< 傾けるときの中心の、足元からの高さ
 
 private:

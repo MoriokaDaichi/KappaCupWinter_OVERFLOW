@@ -207,24 +207,16 @@ void Player::UpdateBodyTilt()
 	if (state == EnPlayerState::Swing && m_swingAnchor != nullptr && m_isHooked)
 	{
 		// 体の上をアンカーに向ける（ロープにぶら下がって見えるように）。胸を中心に回す
+		Quaternion target;
 		target.SetRotation(Vector3::Up, m_swingAnchor->GetPosition() - GetChestPosition());
-		m_modelTiltPivotHeight = m_param.body.chestHeight;
-	}
-	else if (state == EnPlayerState::WallRun)
-	{
-		// 体の上を壁から離れる向きへ傾け、足を壁につける。壁の向きから決めるので、左右どちらの壁でも同じ
-		Vector3 away = m_wallNormal;
-		away.y = 0.0f;
-		away.Normalize();
-		const float angle = Math::DegToRad(m_param.wallRun.tiltAngle);
-		target.SetRotation(Vector3::Up, Vector3::Up * cosf(angle) + away * sinf(angle));
-		// 回す中心を「傾けたときに足が壁（カプセルの端）に届く高さ」にする
-		m_modelTiltPivotHeight = m_param.body.radius / max(sinf(angle), TILT_MIN_SIN);
+
+		SetModelTiltTarget(target, m_param.body.chestHeight);
 	}
 
 	// 入るとき・抜けるときに急に傾かないように、少しずつ近づける
 	const float rate = min(m_param.body.tiltLerpRate * g_gameTime->GetFrameDeltaTime(), 1.0f);
-	m_modelTilt.Slerp(rate, m_modelTilt, target);
+	m_modelTilt.Slerp(rate, m_modelTilt,m_modelTiltTarget);
+	m_modelTiltTarget = Quaternion::Identity;
 }
 
 void Player::UpdateWireEnds()

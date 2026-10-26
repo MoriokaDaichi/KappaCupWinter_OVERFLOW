@@ -69,4 +69,22 @@ void PlayerWallRunState::Move()
 	{
 		m_owner->ApplyGravity();
 	}
+
+	UpdateTilt(wallNormal);
+}
+
+void PlayerWallRunState::UpdateTilt(const Vector3& wallNormal)
+{
+	// 体の上を壁から離れる向きへ傾け、足を壁につける。壁の向きから決めるので、左右どちらの壁でも同じ
+	Vector3 away = wallNormal;
+	away.y = 0.0f;
+	away.Normalize();
+	const float angle = Math::DegToRad(m_param.tiltAngle);
+	Quaternion target;
+	target.SetRotation(Vector3::Up, Vector3::Up * cosf(angle) + away * sinf(angle));
+
+	// 回す中心を「傾けたときに足が壁（カプセルの端）に届く高さ」にする
+	const float pivotHeight = m_bodyParam.radius / max(sinf(angle), TILT_MIN_SIN);
+
+	m_owner->SetModelTiltTarget(target, pivotHeight);
 }

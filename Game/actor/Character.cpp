@@ -72,6 +72,12 @@ void Character::SetHorizontalSpeed(const Vector3& speed)
 	m_moveSpeed.z = speed.z;
 }
 
+void Character::SetModelTiltTarget(const Quaternion& target, float pivotHeight)
+{
+	m_modelTiltTarget = target;
+	m_modelTiltPivotHeight = pivotHeight;
+}
+
 void Character::InitCharacter(const char* filePath, AnimationClip* clips, int clipCount, float radius, float height, const Vector3& position)
 {
 	m_modelRender.Init(filePath, clips, clipCount);
