@@ -27,7 +27,7 @@ private:
 	/** JSON の読み直しのボタン */
 	void DrawParam();
 	/** 速度を決めて、固定しているなら固定する値も変える */
-	void SetSpeed(float base, float bonus);
+	void SetSpeed(const float base, const float bonus);
 
 private:
 	const DebugParam& m_param = nsGameParam::Get().debug;	///< ワープ先など（debug.json）

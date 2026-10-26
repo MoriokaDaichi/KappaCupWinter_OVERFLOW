@@ -17,7 +17,7 @@ public:
 		m_end = end;
 	}
 	/** 表示するかどうかを決める。スイングを始めたら true、終わったら false */
-	void SetVisible(bool visible) { m_isVisible = visible; }
+	void SetVisible(const bool visible) { m_isVisible = visible; }
 
 private:
 	/** 両端から、モデルの位置・向き・大きさを決める */

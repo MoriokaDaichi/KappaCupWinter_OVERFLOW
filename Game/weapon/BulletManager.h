@@ -15,7 +15,7 @@ public:
 
 private:
 	/** 弾を消して空きに戻す（描かれないように大きさ 0 にする） */
-	void Deactivate(int index);
+	void Deactivate(const int index);
 
 private:
 	/** 弾1発分 */

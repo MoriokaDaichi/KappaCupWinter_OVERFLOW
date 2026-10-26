@@ -7,19 +7,19 @@ void SpeedSystem::Reset()
 	m_bonusSpeed = 0.0f;
 }
 
-void SpeedSystem::AddBase(float amount)
+void SpeedSystem::AddBase(const float amount)
 {
 	m_baseSpeed += amount;
 	m_baseSpeed = min(max(m_baseSpeed, m_param.baseMin), m_param.baseMax);
 }
 
-void SpeedSystem::AddBonus(float amount)
+void SpeedSystem::AddBonus(const float amount)
 {
 	m_bonusSpeed += amount;
 	m_bonusSpeed = min(max(m_bonusSpeed, 0.0f), m_param.bonusMax);
 }
 
-void SpeedSystem::RaiseBonusTo(float bonus)
+void SpeedSystem::RaiseBonusTo(const float bonus)
 {
 	m_bonusSpeed = max(m_bonusSpeed, bonus);
 	m_bonusSpeed = min(m_bonusSpeed, m_param.bonusMax);
@@ -58,12 +58,12 @@ float SpeedSystem::GetLevelRate() const
 	return min(max(levelRate, 0.0f), 1.0f);
 }
 
-void SpeedSystem::AddBonusPerSecond(float perSecond)
+void SpeedSystem::AddBonusPerSecond(const float perSecond)
 {
 	AddBonus(perSecond * g_gameTime->GetFrameDeltaTime());
 }
 
-void SpeedSystem::SetForDebug(float base, float bonus)
+void SpeedSystem::SetForDebug(const float base, const float bonus)
 {
 	m_baseSpeed = min(max(base, m_param.baseMin), m_param.baseMax);
 	m_bonusSpeed = min(max(bonus, 0.0f), m_param.bonusMax);

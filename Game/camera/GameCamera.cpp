@@ -31,10 +31,10 @@ void GameCamera::Update()
 
 void GameCamera::Rotate()
 {
-	Vector2 stick = m_input->GetCamera();
+	const Vector2 stick = m_input->GetCamera();
 
-	float dt = g_gameTime->GetFrameDeltaTime();
-	float scale = Math::Lerp(m_aimRate, 1.0f, m_param.aimRotateScale);
+	const float dt = g_gameTime->GetFrameDeltaTime();
+	const float scale = Math::Lerp(m_aimRate, 1.0f, m_param.aimRotateScale);
 
 	m_yaw += stick.x * m_param.rotateSpeedX * dt * scale;
 	m_pitch += stick.y * m_param.rotateSpeedY * dt * scale;
@@ -54,23 +54,23 @@ void GameCamera::UpdateViewAngle()
 {
 	Vector3 horizontal = m_player->GetMoveSpeed();
 	horizontal.y = 0.0f;
-	float speed = horizontal.Length();
+	const float speed = horizontal.Length();
 
 	float rate = speed / m_param.maxSpeedForFov;
 	rate = min(rate, 1.0f);
-	float angle = Math::Lerp(rate, m_param.viewAngleNormal, m_param.viewAngleMax);
+	const float angle = Math::Lerp(rate, m_param.viewAngleNormal, m_param.viewAngleMax);
 
 	m_viewAngle = Math::Lerp(min(m_param.viewAngleLerpRate * g_gameTime->GetFrameDeltaTime(), 1.0f), m_viewAngle, angle);
 
-	float viewAngle = m_viewAngle - m_aimRate * m_param.aimViewAngleDown;
+	const float viewAngle = m_viewAngle - m_aimRate * m_param.aimViewAngleDown;
 
 	g_camera3D->SetViewAngle(Math::DegToRad(viewAngle));
 }
 
 void GameCamera::UpdatePosition()
 {
-	float distance = Math::Lerp(m_aimRate, m_param.distance, m_param.aimDistance);
-	float shoulderOffset = Math::Lerp(m_aimRate, m_param.shoulderOffset, m_param.aimShoulderOffset);
+	const float distance = Math::Lerp(m_aimRate, m_param.distance, m_param.aimDistance);
+	const float shoulderOffset = Math::Lerp(m_aimRate, m_param.shoulderOffset, m_param.aimShoulderOffset);
 
 	Vector3 pivot = m_player->GetPosition();
 	pivot.y += m_param.targetHeight;
@@ -88,7 +88,7 @@ void GameCamera::UpdatePosition()
 	Vector3 right(1.0f, 0.0f, 0.0f);
 	qYaw.Apply(right);
 
-	Vector3 shoulder = pivot + right * shoulderOffset;
+	const Vector3 shoulder = pivot + right * shoulderOffset;
 	Vector3 shoulderResult;
 
 	// 壁に当たったら、肩の点を体の中心の方へ少し戻す
@@ -107,7 +107,7 @@ void GameCamera::UpdatePosition()
 		}
 	}
 
-	Vector3 position = shoulderResult + toCamera * distance;
+	const Vector3 position = shoulderResult + toCamera * distance;
 
 	Vector3 result;
 	m_collisionSolver.Execute(result, position, shoulderResult);
@@ -124,8 +124,8 @@ void GameCamera::UpdatePosition()
 
 void GameCamera::UpdateAimRate()
 {
-	float step = g_gameTime->GetFrameDeltaTime() / m_param.aimTransitionTime;
-	float target = m_input->IsPress(EnInputAction::Aim) ? 1.0f : 0.0f;
+	const float step = g_gameTime->GetFrameDeltaTime() / m_param.aimTransitionTime;
+	const float target = m_input->IsPress(EnInputAction::Aim) ? 1.0f : 0.0f;
 
 	m_aimRate += (target > m_aimRate ? step : -step);
 

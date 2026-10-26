@@ -15,7 +15,7 @@ public:
 	/** 位置を返す。Player がロックの判定やスイングに使う */
 	const Vector3& GetPosition() const { return m_position; }
 	/** ロック中かどうかを受け取る。見た目の大きさに使う */
-	void SetLocked(bool locked) { m_isLocked = locked; }
+	void SetLocked(const bool locked) { m_isLocked = locked; }
 
 private:
 	const AnchorParam& m_param = nsGameParam::Get().anchor;	///< 調整用の値（Assets/param/anchor.json）

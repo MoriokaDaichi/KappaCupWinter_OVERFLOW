@@ -18,11 +18,11 @@ public:
 	/** 重力をかける。空中でだけ呼ぶ（床の上でかけると、毎フレーム床にめり込んでガタガタする） */
 	void ApplyGravity();
 	/** 横の速さを target に、1秒あたり rate だけ近づける */
-	void ApproachHorizontal(const Vector3& target, float rate);
+	void ApproachHorizontal(const Vector3& target, const float rate);
 	/** 速度をわたす */
 	const Vector3& GetMoveSpeed()const { return m_moveSpeed; }
 	/** 上下の速さを決める（= で入れるので、落ちている途中でも同じ速さになる） */
-	void SetVerticalSpeed(float speed) { m_moveSpeed.y = speed; }
+	void SetVerticalSpeed(const float speed) { m_moveSpeed.y = speed; }
 	/** 速さを足す（跳ね返り・加速など） */
 	void AddMoveSpeed(const Vector3& add) { m_moveSpeed += add; }
 	/** 速さを決める（全部入れ替える） */
@@ -36,9 +36,9 @@ public:
 	/** 水平方向の速度を決める（ x と z だけを入れ替え、y はそのまま） */
 	void SetHorizontalSpeed(const Vector3& speed);
 	/** 重力の係数を決める */
-	void SetGravityScale(float scale) { m_gravity.SetScale(scale); }
+	void SetGravityScale(const float scale) { m_gravity.SetScale(scale); }
 	/** 渡された目標の傾きを覚えておく */
-	void SetModelTiltTarget(const Quaternion& target, float pivotHeight);
+	void SetModelTiltTarget(const Quaternion& target, const float pivotHeight);
 
 protected:
 	/** 子クラスが書く（Player ならステートマシン） */
@@ -50,7 +50,7 @@ protected:
 	 * clips はアニメーション（なければ nullptr と 0）。ModelRender は借りるだけなので、子クラスのメンバに持たせておく
 	 * カプセルの高さは height + radius × 2（position は足元）
 	 */
-	void InitCharacter(const char* filePath, AnimationClip* clips, int clipCount, float radius, float height, const Vector3& position);
+	void InitCharacter(const char* filePath, AnimationClip* clips, const int clipCount, const float radius, const float height, const Vector3& position);
 
 private:
 	/** キャラクター共通（Execute → モデルに位置と向きを反映 → モデル更新） */

@@ -50,7 +50,7 @@ bool Player::Start()
 
 void Player::Move()
 {
-	Vector3 moveDir = GetMoveDirection();
+	const Vector3 moveDir = GetMoveDirection();
 
 	//速度に入れる
 	ApproachHorizontal(moveDir * m_speed.GetSpeed(), m_param.move.groundAccel);
@@ -78,7 +78,7 @@ bool Player::IsMoveInput() const
 	return m_command.moveDir.LengthSq() > MOVE_INPUT_THRESHOLD;
 }
 
-void Player::ChangeState(EnPlayerState id)
+void Player::ChangeState(const EnPlayerState id)
 {
 	m_stateMachine.ChangeState(id);
 	PlayStateAnimation(id);
@@ -111,7 +111,7 @@ void Player::LoadAnimation()
 	}
 }
 
-void Player::PlayStateAnimation(EnPlayerState state)
+void Player::PlayStateAnimation(const EnPlayerState state)
 {
 	// 状態ごとのアニメーション（EnPlayerState と同じ順に並べる）。壁走り専用はないので run を使う
 	const EnPlayerAnim STATE_TO_ANIM[] = {
@@ -172,7 +172,7 @@ EnPlayerAnim Player::SelectAirAnimation() const
 	return EnPlayerAnim::Fall;
 }
 
-void Player::PlayAnimation(EnPlayerAnim anim, bool isRestart)
+void Player::PlayAnimation(const EnPlayerAnim anim, const bool isRestart)
 {
 	// 壁走り→走るのように同じアニメーションが続くときは、最初から流し直さない
 	if (anim == m_currentAnim && !isRestart)
@@ -201,7 +201,6 @@ Vector3 Player::GetRopeHandPosition() const
 
 void Player::UpdateBodyTilt()
 {
-	Quaternion target = Quaternion::Identity;
 	const EnPlayerState state = GetCurrentState();
 
 	if (state == EnPlayerState::Swing && m_swingAnchor != nullptr && m_isHooked)
@@ -215,7 +214,7 @@ void Player::UpdateBodyTilt()
 
 	// 入るとき・抜けるときに急に傾かないように、少しずつ近づける
 	const float rate = min(m_param.body.tiltLerpRate * g_gameTime->GetFrameDeltaTime(), 1.0f);
-	m_modelTilt.Slerp(rate, m_modelTilt,m_modelTiltTarget);
+	m_modelTilt.Slerp(rate, m_modelTilt, m_modelTiltTarget);
 	m_modelTiltTarget = Quaternion::Identity;
 }
 
@@ -294,8 +293,8 @@ void Player::AirMove()
 		return;
 	}
 
-	Vector3 moveDir = GetMoveDirection();
-	Vector3 target = moveDir * m_speed.GetSpeed();
+	const Vector3 moveDir = GetMoveDirection();
+	const Vector3 target = moveDir * m_speed.GetSpeed();
 
 	float t = m_param.move.airControl * g_gameTime->GetFrameDeltaTime();
 	if (t > 1.0f)
@@ -319,7 +318,7 @@ bool Player::CanStartWallRun() const
 {
 	Vector3 horizontal = GetMoveSpeed();
 	horizontal.y = 0.0f;
-	float speed = horizontal.Length();
+	const float speed = horizontal.Length();
 
 	return IsMoveInput() && speed >= m_param.wallRun.minSpeed && IsCooldownOver(EnCooldown::WallRun);
 }
@@ -361,8 +360,8 @@ void Player::SwingMove()
 
 	ApplyGravity();
 
-	Vector3 toPlayer = GetChestPosition() - m_swingAnchor->GetPosition();
-	float distance = toPlayer.Length();
+	const Vector3 toPlayer = GetChestPosition() - m_swingAnchor->GetPosition();
+	const float distance = toPlayer.Length();
 
 	if (distance < SWING_MIN_DISTANCE)
 	{
@@ -375,7 +374,7 @@ void Player::SwingMove()
 	SwingPump(toPlayerDir);
 
 	// ロープの外へ逃げる速さを消す（これで円を描く）
-	float outSpeed = m_moveSpeed.Dot(toPlayerDir);
+	const float outSpeed = m_moveSpeed.Dot(toPlayerDir);
 	if (distance >= m_ropeLength && outSpeed > 0.0f)
 	{
 		m_moveSpeed -= toPlayerDir * outSpeed;
@@ -392,12 +391,12 @@ void Player::SwingMove()
 	}
 
 	// ロープが伸びた分を戻すのに必要な、内向きの速さ
-	float pullSpeed = max(distance - m_ropeLength, 0.0f) * m_param.swing.pullRate;
+	const float pullSpeed = max(distance - m_ropeLength, 0.0f) * m_param.swing.pullRate;
 
 	// 内向きの速さが足りないときだけ足す（毎フレーム足し続けると、ばねのように跳ね飛ばされる）
 	// 横の速さ（振り子の勢い）はそのまま残すので、引き寄せられながら振れる
-	float needSpeed = max(reelSpeed, pullSpeed);
-	float inSpeed = -m_moveSpeed.Dot(toPlayerDir);
+	const float needSpeed = max(reelSpeed, pullSpeed);
+	const float inSpeed = -m_moveSpeed.Dot(toPlayerDir);
 	if (inSpeed < needSpeed)
 	{
 		m_moveSpeed -= toPlayerDir * (needSpeed - inSpeed);
@@ -432,9 +431,9 @@ void Player::EndSwing()
 
 void Player::ShootWire()
 {
-	Vector3 origin = GetChestPosition();
-	Vector3 toAnchor = m_swingAnchor->GetPosition() - origin;
-	float distance = toAnchor.Length();
+	const Vector3 origin = GetChestPosition();
+	const Vector3 toAnchor = m_swingAnchor->GetPosition() - origin;
+	const float distance = toAnchor.Length();
 
 	m_wireTipLength += m_param.swing.wireShootSpeed * g_gameTime->GetFrameDeltaTime();
 
@@ -458,7 +457,7 @@ void Player::ShootWire()
 	}
 }
 
-void Player::HookAnchor(float ropeLength)
+void Player::HookAnchor(const float ropeLength)
 {
 	m_isHooked = true;
 	m_ropeLength = ropeLength;
@@ -499,12 +498,12 @@ bool Player::IsAimPress() const
 	return m_command.aimPress;
 }
 
-void Player::StartCooldown(EnCooldown id, float seconds)
+void Player::StartCooldown(const EnCooldown id, const float seconds)
 {
 	m_cooldownTimers[static_cast<int>(id)] = seconds;
 }
 
-bool Player::IsCooldownOver(EnCooldown id) const
+bool Player::IsCooldownOver(const EnCooldown id) const
 {
 	return m_cooldownTimers[static_cast<int>(id)] <= 0.0f;
 }
@@ -581,8 +580,8 @@ void Player::UpdateLock()
 
 float Player::CalcLockScore(const Anchor* anchor) const
 {
-	Vector3 toAnchor = anchor->GetPosition() - GetPosition();
-	float distance = toAnchor.Length();
+	const Vector3 toAnchor = anchor->GetPosition() - GetPosition();
+	const float distance = toAnchor.Length();
 	if (distance > m_param.lock.maxDistance)
 	{
 		return -1.0f;
@@ -590,13 +589,13 @@ float Player::CalcLockScore(const Anchor* anchor) const
 
 	Vector3 camToAnchor = anchor->GetPosition() - m_command.aimOrigin;
 	camToAnchor.Normalize();
-	float dot = m_command.aimDirection.Dot(camToAnchor);
+	const float dot = m_command.aimDirection.Dot(camToAnchor);
 	if (dot < cosf(Math::DegToRad(m_param.lock.maxAngle)))
 	{
 		return -1.0f;
 	}
 
-	float angle = Math::RadToDeg(acosf(min(dot, 1.0f)));
+	const float angle = Math::RadToDeg(acosf(min(dot, 1.0f)));
 
 	Vector3 from = GetPosition();
 	from.y += m_param.body.chestHeight;		// 胸の高さから飛ばす（足元だと床に当たる）
@@ -605,8 +604,8 @@ float Player::CalcLockScore(const Anchor* anchor) const
 		return -1.0f;
 	}
 
-	float angleScore = 1.0f - angle / m_param.lock.maxAngle;
-	float distanceScore = 1.0f - distance / m_param.lock.maxDistance;
+	const float angleScore = 1.0f - angle / m_param.lock.maxAngle;
+	const float distanceScore = 1.0f - distance / m_param.lock.maxDistance;
 
 	return angleScore * m_param.lock.angleWeight + distanceScore * m_param.lock.distanceWeight;
 }
@@ -650,7 +649,7 @@ void Player::ClampSwingSpeed()
 void Player::FaceAimDirection()
 {
 	// 押した最初のフレームは、まだ Gun の構えのタイマーが入っていないので、ボタンも見る
-	bool isAiming = IsShootPress() || m_gun.IsAiming() || IsAimPress();
+	const bool isAiming = IsShootPress() || m_gun.IsAiming() || IsAimPress();
 	if (!isAiming || m_stateMachine.IsCurrentState(EnPlayerState::WallRun))
 	{
 		return;

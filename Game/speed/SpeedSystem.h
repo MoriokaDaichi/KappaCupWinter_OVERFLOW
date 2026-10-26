@@ -8,11 +8,11 @@ public:
 	/** 基礎速度をbaseMinに、上乗せ速度を0にする（Player の Start で呼ぶ） */
 	void Reset();
 	/** 基礎速度を増やす（マイナスで減らす）baseMin～baseMaxに収める */
-	void AddBase(float amount);
+	void AddBase(const float amount);
 	/** 上乗せを増やす（マイナスで減らす）0～bonusMaxに収める */
-	void AddBonus(float amount);
+	void AddBonus(const float amount);
 	/** 上乗せが bonus より小さいときだけ、bonus にする（スイングを離したときに使う。上限で収める） */
-	void RaiseBonusTo(float bonus);
+	void RaiseBonusTo(const float bonus);
 	/** 基礎速度 ＋ 上乗せ */
 	float GetSpeed() const { return m_baseSpeed + m_bonusSpeed; }
 	/** 基礎速度を返す（表示用） */
@@ -24,9 +24,9 @@ public:
 	/** 今の Lv の中での進み具合（0〜1）。HUD の針に使う */
 	float GetLevelRate() const;
 	/** 上乗せを1秒あたり perSecond だけ増やす（マイナスで減らす）。毎フレーム呼ぶ */
-	void AddBonusPerSecond(float perSecond);
+	void AddBonusPerSecond(const float perSecond);
 	/** 基礎速度と上乗せを直接決める（デバッグ画面用）。範囲には収める */
-	void SetForDebug(float base, float bonus);
+	void SetForDebug(const float base, const float bonus);
 
 private:
 	static constexpr int MAX_LEVEL = 5;							///< スピードレベルの最大

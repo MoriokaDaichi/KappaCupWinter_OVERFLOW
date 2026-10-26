@@ -8,7 +8,7 @@ public:
 	/** velocity の y を重力の分だけ減らす。落ちているときは強め、落下速度には上限あり */
 	void Apply(Vector3& velocity) const;
 	/** 重力の倍率を変える。1 で通常、0 で重力なし（ウォールランやスイング中に使う） */
-	void SetScale(float scale)
+	void SetScale(const float scale)
 	{
 		m_scale = scale;
 	}

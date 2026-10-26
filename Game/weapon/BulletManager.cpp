@@ -37,9 +37,9 @@ void BulletManager::Update()
 			continue;
 		}
 
-		Vector3 nextPos = bullet.position + bullet.velocity * dt;
+		const Vector3 nextPos = bullet.position + bullet.velocity * dt;
 		// 今の位置から次の位置まで線で調べる（速いので、点で調べると薄い壁をすり抜ける）
-		RayHitInfo hit = nsCollision::RayCast(bullet.position, nextPos);
+		const RayHitInfo hit = nsCollision::RayCast(bullet.position, nextPos);
 		if (hit.isHit)
 		{
 			Deactivate(i);
@@ -73,7 +73,7 @@ void BulletManager::Fire(const Vector3& position, const Vector3& velocity, const
 	}
 }
 
-void BulletManager::Deactivate(int index)
+void BulletManager::Deactivate(const int index)
 {
 	m_bullets[index].isActive = false;
 	m_modelRender.RemoveInstance(index);

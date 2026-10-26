@@ -16,13 +16,13 @@ public:
 
 public:
     /**押した瞬間*/
-    bool IsTrigger(EnInputAction a) const;
+    bool IsTrigger(const EnInputAction a) const;
     /**押している間*/
-    bool IsPress(EnInputAction a) const;
+    bool IsPress(const EnInputAction a) const;
     /**離した瞬間*/
-    bool IsRelease(EnInputAction a) const;
+    bool IsRelease(const EnInputAction a) const;
     /**押し続けている秒数*/
-    float GetHoldTime(EnInputAction a) const;
+    float GetHoldTime(const EnInputAction a) const;
 
 public:
     /**左スティック*/
@@ -32,7 +32,7 @@ public:
 
 public:
     /**入力を止める・戻す*/
-    void SetEnable(bool enable);
+    void SetEnable(const bool enable);
 
 private:
     static constexpr int ACTION_NUM = static_cast<int>(EnInputAction::Num);
@@ -43,6 +43,6 @@ private:
     bool m_enable = true;
 
     /** 操作を配列の添え字に変える */
-    static int ToIndex(EnInputAction a);
+    static int ToIndex(const EnInputAction a);
 };
 

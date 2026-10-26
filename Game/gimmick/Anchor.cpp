@@ -11,7 +11,7 @@ bool Anchor::Start()
 
 void Anchor::Update()
 {
-	float scale = m_isLocked ? m_param.lockedScale : m_param.normalScale;
+	const float scale = m_isLocked ? m_param.lockedScale : m_param.normalScale;
 	m_modelRender.SetScale(scale, scale, scale);
 	m_modelRender.Update();
 }

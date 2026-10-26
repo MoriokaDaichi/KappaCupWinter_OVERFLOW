@@ -45,22 +45,22 @@ void InputManager::Update()
     }
 }
 
-bool InputManager::IsTrigger(EnInputAction a) const
+bool InputManager::IsTrigger(const EnInputAction a) const
 {
     return m_press[ToIndex(a)] && !m_prevPress[ToIndex(a)];
 }
 
-bool InputManager::IsPress(EnInputAction a) const
+bool InputManager::IsPress(const EnInputAction a) const
 {
     return m_press[ToIndex(a)];
 }
 
-bool InputManager::IsRelease(EnInputAction a) const
+bool InputManager::IsRelease(const EnInputAction a) const
 {
     return !m_press[ToIndex(a)] && m_prevPress[ToIndex(a)];
 }
 
-float InputManager::GetHoldTime(EnInputAction a) const
+float InputManager::GetHoldTime(const EnInputAction a) const
 {
     return m_holdTime[ToIndex(a)];
 }
@@ -83,12 +83,12 @@ Vector2 InputManager::GetCamera() const
     return Vector2(g_pad[0]->GetRStickXF(), g_pad[0]->GetRStickYF());
 }
 
-void InputManager::SetEnable(bool enable)
+void InputManager::SetEnable(const bool enable)
 {
     m_enable = enable;
 }
 
-int InputManager::ToIndex(EnInputAction a)
+int InputManager::ToIndex(const EnInputAction a)
 {
     const int i = static_cast<int>(a);
     K2_ASSERT(i >= 0 && i < ACTION_NUM, "EnInputAction の範囲外です");

@@ -27,7 +27,7 @@ void PlayerController::MakeCommand(CharacterCommand& command) const
 Vector3 PlayerController::CalcMoveDirection() const
 {
 	//スティックの入力
-	Vector2 stick = m_input->GetMove();
+	const Vector2 stick = m_input->GetMove();
 
 	//カメラの前向き・右向き（地面と平行にする）
 	Vector3 forward = g_camera3D->GetForward();

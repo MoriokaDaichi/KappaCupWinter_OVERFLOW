@@ -43,7 +43,7 @@ public:
 	/** スティックが倒れているか */
 	bool IsMoveInput() const;
 	/** 状態を切り替える */
-	void ChangeState(EnPlayerState id);
+	void ChangeState(const EnPlayerState id);
 	/** ジャンプの回数を 0 に戻す */
 	void ResetJumpCount();
 	/** ジャンプの回数を 1 増やす */
@@ -89,9 +89,9 @@ public:
 	/** position へ瞬間移動する。速さを 0 にして空中の状態から始める（デバッグ画面・チェックポイント用） */
 	void Warp(const Vector3& position);
 	/** クールダウンのカウントをはじめる。（seconds 秒たつまで使えなくする） */
-	void StartCooldown(EnCooldown id, float seconds);
+	void StartCooldown(const EnCooldown id, const float seconds);
 	/** クールダウン時間を超えたかどうか */
-	bool IsCooldownOver(EnCooldown id) const;
+	bool IsCooldownOver(const EnCooldown id) const;
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -111,7 +111,7 @@ private:
 	/** ワイヤーの先を手元からアンカーへ飛ばす。届いたらつかむ。飛んでいる間は普通に動く */
 	void ShootWire();
 	/** ワイヤーの先が届いたときに、アンカーをつかむ（ロープの長さを決める） */
-	void HookAnchor(float ropeLength);
+	void HookAnchor(const float ropeLength);
 	/** スティックの向きのうち、ロープと直角な向きにだけ加速する（こぐ） */
 	void SwingPump(const Vector3& ropeDir);
 	/** 速さが上限を超えていたら、向きはそのまま長さを上限にそろえる */
@@ -123,9 +123,9 @@ private:
 	/** アニメーションを読み込む（InitCharacter の前に呼ぶ） */
 	void LoadAnimation();
 	/** 状態に合ったアニメーションに切り替える */
-	void PlayStateAnimation(EnPlayerState state);
+	void PlayStateAnimation(const EnPlayerState state);
 	/** アニメーションを切り替える。同じアニメーションなら、isRestart が true のときだけ最初から流し直す */
-	void PlayAnimation(EnPlayerAnim anim, bool isRestart = false);
+	void PlayAnimation(const EnPlayerAnim anim, const bool isRestart = false);
 	/** 空中にいる間は速さに合わせて切り替え、着地のアニメーションが終わったら待機につなぐ */
 	void UpdateAnimation();
 	/** 空中のアニメーションを選ぶ。踏み切りの途中ならそのまま、速く落ちていれば FallFast、それ以外は Fall */

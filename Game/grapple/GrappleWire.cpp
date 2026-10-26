@@ -34,8 +34,8 @@ void GrappleWire::Render(RenderContext& rc)
 
 void GrappleWire::UpdateTransform()
 {
-	Vector3 toEnd = m_end - m_start;
-	float length = toEnd.Length();
+	const Vector3 toEnd = m_end - m_start;
+	const float length = toEnd.Length();
 
 	m_canDraw = length >= MIN_LENGTH;
 	if (!m_canDraw)
@@ -50,7 +50,7 @@ void GrappleWire::UpdateTransform()
 	Quaternion rotation;
 	rotation.SetRotation(Vector3::AxisZ, dir);
 
-	Vector3 scale(m_param.thicknessScale, m_param.thicknessScale, length / MODEL_LENGTH);
+	const Vector3 scale(m_param.thicknessScale, m_param.thicknessScale, length / MODEL_LENGTH);
 
 	//原点がモデルの端にあるので、位置は始点のままでいい
 	m_modelRender.SetTRS(m_start, rotation, scale);

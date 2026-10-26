@@ -57,8 +57,8 @@ bool PlayerWallRunState::FindWall(const Player& owner, Vector3& outNormal)
 	const Vector3 dirs[] = { right, right * -1.0f };
 	for (const Vector3& dir : dirs)
 	{
-		Vector3 to = from + dir * param.wallRun.checkLength;
-		RayHitInfo hit = nsCollision::RayCast(from, to);
+		const Vector3 to = from + dir * param.wallRun.checkLength;
+		const RayHitInfo hit = nsCollision::RayCast(from, to);
 
 		if (!hit.isHit)
 		{
@@ -89,7 +89,7 @@ void PlayerWallRunState::Move()
 
 	// 壁走りは最低でも wallRun.speed。速度システムの値がそれより速ければ、その速さで走る
 	const float runSpeed = max(m_param.speed, m_owner->GetSpeedSystem().GetSpeed());
-	Vector3 horizontalSpeed = along * runSpeed + m_wallNormal * -m_param.stickSpeed;
+	const Vector3 horizontalSpeed = along * runSpeed + m_wallNormal * -m_param.stickSpeed;
 
 	m_owner->SetHorizontalSpeed(horizontalSpeed);
 

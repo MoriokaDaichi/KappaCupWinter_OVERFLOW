@@ -25,7 +25,7 @@ void DebugManager::Init(Player* player)
 void DebugManager::Update()
 {
 	// F5 で JSON を読み直す（ゲームを止めずに値を調整するため）
-	bool isReloadKeyDown = (GetAsyncKeyState(VK_F5) & 0x8000) != 0;
+	const bool isReloadKeyDown = (GetAsyncKeyState(VK_F5) & 0x8000) != 0;
 	if (isReloadKeyDown && !m_isReloadKeyDown)
 	{
 		nsGameParam::Reload();
@@ -159,7 +159,7 @@ void DebugManager::DrawParam()
 	}
 }
 
-void DebugManager::SetSpeed(float base, float bonus)
+void DebugManager::SetSpeed(const float base, const float bonus)
 {
 	SpeedSystem& speed = m_player->GetSpeedSystem();
 	speed.SetForDebug(base, bonus);
