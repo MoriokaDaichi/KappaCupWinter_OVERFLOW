@@ -26,6 +26,10 @@ private:
 
 	static constexpr int WALL_NUM = 2;
 	static constexpr int ANCHOR_NUM = 8;
+	static constexpr float FLOOR_WIDTH = 20000.0f;		///< 仮の床の幅と奥行き
+	static constexpr float FLOOR_THICKNESS = 10.0f;		///< 仮の床の厚さ
+	static constexpr float DEBUG_MODEL_SIZE = 100.0f;	///< 仮の壁のモデル（debug_wall.tkm）の 1 辺の長さ。これで割って何倍に広げるかを出す
+	static constexpr float CROSSHAIR_SIZE = 48.0f;		///< 仮の照準の画像の大きさ（縦横）
 
 	Anchor* m_anchor[ANCHOR_NUM] = {};
 	InputManager m_input;

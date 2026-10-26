@@ -25,7 +25,7 @@ bool Player::Start()
 {
 	LoadAnimation();
 	InitCharacter("Assets/modelData/player/medea.tkm", m_animClips.data(), static_cast<int>(m_animClips.size()),
-		m_param.body.radius, m_param.body.height, Vector3(0.0f, 300.0f, 0.0f));
+		m_param.body.radius, m_param.body.height, Vector3(0.0f, START_HEIGHT, 0.0f));
 	m_leftHandBoneId = m_modelRender.FindBoneID(L"mixamorig:LeftHand");
 	m_rightHandBoneId = m_modelRender.FindBoneID(L"mixamorig:RightHand");
 	m_rightMiddleBoneId = m_modelRender.FindBoneID(L"mixamorig:RightHandMiddle1");
