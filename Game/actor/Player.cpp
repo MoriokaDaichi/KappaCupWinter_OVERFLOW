@@ -355,7 +355,7 @@ bool Player::CanStartWallRun() const
 	horizontal.y = 0.0f;
 	float speed = horizontal.Length();
 
-	return IsMoveInput() && speed >= m_param.wallRun.minSpeed && m_reattachTimer <= 0.0f;
+	return IsMoveInput() && speed >= m_param.wallRun.minSpeed && IsCooldownOver(EnCooldown::WallRun);
 }
 
 void Player::WallJump()
@@ -368,7 +368,7 @@ void Player::WallJump()
 void Player::EndWallRun()
 {
 	m_gravity.SetScale(1.0f);
-	m_reattachTimer = m_param.wallRun.reattachTime;
+	StartCooldown(EnCooldown::WallRun, m_param.wallRun.reattachTime);
 }
 
 void Player::Decelerate()
@@ -546,6 +546,16 @@ bool Player::IsAimPress() const
 	return m_command.aimPress;
 }
 
+void Player::StartCooldown(EnCooldown id, float seconds)
+{
+	m_cooldownTimers[static_cast<int>(id)] = seconds;
+}
+
+bool Player::IsCooldownOver(EnCooldown id) const
+{
+	return m_cooldownTimers[static_cast<int>(id)] <= 0.0f;
+}
+
 void Player::UpdateAction()
 {
 	if (m_controller != nullptr)
@@ -553,12 +563,7 @@ void Player::UpdateAction()
 		m_controller->MakeCommand(m_command);
 	}
 
-	m_reattachTimer -= g_gameTime->GetFrameDeltaTime();
-	if (m_reattachTimer < 0.0f)
-	{
-		m_reattachTimer = 0.0f;
-	}
-
+	UpdateCooldown();
 	UpdateLock();
 
 	if (IsGrappleTrigger() && CanStartSwing())
@@ -725,4 +730,16 @@ void Player::Warp(const Vector3& position)
 	SetMoveSpeed(Vector3::Zero);
 	ChangeState(EnPlayerState::Air);
 	m_charaCon.SetPosition(position);
+}
+
+void Player::UpdateCooldown()
+{
+	for (float& timer : m_cooldownTimers)
+	{
+		timer -= g_gameTime->GetFrameDeltaTime();
+		if (timer < 0.0f)
+		{
+			timer = 0.0f;
+		}
+	}
 }

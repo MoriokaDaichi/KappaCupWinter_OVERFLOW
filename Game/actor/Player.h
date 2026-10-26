@@ -7,10 +7,18 @@
 #include "param/GameParam.h"
 #include "speed/SpeedSystem.h"
 #include "actor/CharacterCommand.h"
+#include <array>
 
 class IController;
 class Anchor;
 class GrappleWire;
+
+/** 待ち時間の種類 */
+enum class EnCooldown
+{
+	WallRun,		///< 壁走り：離れてから、もう一度張り付けるまで
+	Num				///< 種類の数（いちばん最後に置く）
+};
 
 /** プレイヤー。移動・ジャンプ・射撃などを行う */
 class Player : public Character
@@ -86,6 +94,10 @@ public:
 	void Warp(const Vector3& position);
 	/** 今の壁の向き（法線）を返す。壁の向きをステートに移すまでの仮（3-2 で消す） */
 	const Vector3& GetWallNormal() const {return m_wallNormal;}
+	/** クールダウンのカウントをはじめる。（seconds 秒たつまで使えなくする） */
+	void StartCooldown(EnCooldown id, float seconds);
+	/** クールダウン時間を超えたかどうか */
+	bool IsCooldownOver(EnCooldown id) const;
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -132,6 +144,8 @@ private:
 	void UpdateWireEnds();
 	/** 銃の見た目を右手に持たせる（握る位置は、手首と中指の付け根の間＝手のひら） */
 	void UpdateGunModel();
+	/** クールダウンを更新する */
+	void UpdateCooldown();
 
 private:
 	const IController* m_controller = nullptr;	///< コマンドを作る係（Game が持っている）
@@ -155,14 +169,15 @@ private:
 	static constexpr float SWING_MIN_DISTANCE = 0.001f;		///< アンカーとの距離がこれより近いと、ロープの向きを出せない
 	static constexpr float TILT_MIN_SIN = 0.1f;				///< 壁走りの傾きの中心を出すときの割る数の下限（角度が 0 に近いと中心が無限に高くなるため）
 	static constexpr float ANIM_INTERPOLATE_TIME = 0.2f;	///< アニメーションを切り替えるときに、前のものとなめらかにつなぐ時間（秒）。調整は遷移のタスクで JSON に出す
+	static constexpr int COOLDOWN_NUM = static_cast<int>(EnCooldown::Num);		///< 待ち時間の種類の数
 
 	const PlayerParam& m_param = nsGameParam::Get().player;	///< 調整用の値（F5 で読み直すと中身が変わる）
 	const SpeedParam& m_speedParam = nsGameParam::Get().speed;		///< 速度の調整値（speed.json）
 
 	int m_jumpCount = 0;			///< いま何回跳んだか
 	Vector3 m_wallNormal = Vector3::Zero;		///< 今の壁の向き（法線）。FindWall で書き換える
-	float m_reattachTimer = 0.0f;	///< もう一度張り付けるまでの残り時間
 	float m_ropeLength = 0.0f;		///< ロープの長さ。つかんだときの距離を入れ、巻き上げで縮める
 	float m_wireTipLength = 0.0f;	///< 手元から飛んでいるワイヤーの先までの長さ
 	bool m_isHooked = false;		///< ワイヤーの先がアンカーに届いたか
+	std::array<float, COOLDOWN_NUM> m_cooldownTimers = {};		///< 待ち時間の残り（秒）
 };
