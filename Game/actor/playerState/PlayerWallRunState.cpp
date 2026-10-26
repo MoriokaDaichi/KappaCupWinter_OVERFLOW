@@ -40,7 +40,8 @@ void PlayerWallRunState::Update()
 
 void PlayerWallRunState::Exit()
 {
-	m_owner->EndWallRun();
+	m_owner->SetGravityScale(1.0f);
+	m_owner->StartCooldown(EnCooldown::WallRun, m_param.reattachTime);
 }
 
 bool PlayerWallRunState::FindWall(const Player& owner, Vector3& outNormal)

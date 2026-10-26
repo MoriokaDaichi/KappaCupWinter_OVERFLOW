@@ -56,8 +56,6 @@ public:
 	Vector3 GetMoveDirection() const;
 	/** 壁走りを始められるか */
 	bool CanStartWallRun() const;
-	/** 壁走りを終わるときの片付け */
-	void EndWallRun();
 	/** 止まるまで減速する（Idle から呼ぶ） */
 	void Decelerate();
 	/** スイングに使うロック中のアンカーを返す */

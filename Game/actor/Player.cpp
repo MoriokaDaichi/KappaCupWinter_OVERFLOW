@@ -324,12 +324,6 @@ bool Player::CanStartWallRun() const
 	return IsMoveInput() && speed >= m_param.wallRun.minSpeed && IsCooldownOver(EnCooldown::WallRun);
 }
 
-void Player::EndWallRun()
-{
-	m_gravity.SetScale(1.0f);
-	StartCooldown(EnCooldown::WallRun, m_param.wallRun.reattachTime);
-}
-
 void Player::Decelerate()
 {
 	ApproachHorizontal(Vector3::Zero, m_param.move.groundDecel);
