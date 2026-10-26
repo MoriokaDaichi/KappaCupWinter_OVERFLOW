@@ -2,6 +2,7 @@
 #include "actor/playerState/PlayerAirState.h"
 
 #include "actor/Player.h"
+#include "actor/playerState/PlayerWallRunState.h"
 
 void PlayerAirState::Enter()
 {
@@ -24,7 +25,9 @@ void PlayerAirState::Update()
 		return;
 	}
 
-	if (m_owner->CanStartWallRun() && m_owner->FindWall())
+	Vector3 wallNormal;
+	// 仮: State から別の State を呼んでいる。ステップ 6 で切り替え表の条件に移す
+	if (m_owner->CanStartWallRun() && PlayerWallRunState::FindWall(*m_owner, wallNormal))
 	{
 		m_owner->ChangeState(EnPlayerState::WallRun);
 		return;

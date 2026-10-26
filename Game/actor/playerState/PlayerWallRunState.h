@@ -17,15 +17,21 @@ public:
 	/** 壁走りの片付け（重力を戻す・しばらく同じ壁に張り付けないようにする） */
 	void Exit() override;
 
+	/** 左右にレイを飛ばして壁を探す。見つかったら outNormal に壁の向きを入れて true を返す */
+	static bool FindWall(const Player& owner, Vector3& outNormal);
+
 private:
 	/** 壁に沿って走る。時間内は落ちず、過ぎたらずり落ちる */
 	void Move();
 	/** 壁から離れる向きへ体を傾けるよう、体に伝える */
 	void UpdateTilt(const Vector3& wallNormal);
+	/** 壁からジャンプで離れる */
+	void WallJump();
 
 private:
 	static constexpr float TILT_MIN_SIN = 0.1f;				///< 壁走りの傾きの中心を出すときの割る数の下限（角度が 0 に近いと中心が無限に高くなるため）
 
+	Vector3 m_wallNormal = Vector3::Zero;					///< 今の壁の向き（法線）。FindWall で書き換える
 	float m_runTime = 0.0f;				///< 壁を走り始めてからの時間
 	const PlayerParam::WallRun& m_param = nsGameParam::Get().player.wallRun;		///< 調整用の値のうち、壁走りの分（Assets/param/player.json）
 	const PlayerParam::Body& m_bodyParam = nsGameParam::Get().player.body;			///< 調整用の値のうち、体の大きさの分（Assets/param/player.json）

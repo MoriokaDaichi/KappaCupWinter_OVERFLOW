@@ -46,18 +46,16 @@ public:
 	void ChangeState(EnPlayerState id);
 	/** ジャンプの回数を 0 に戻す */
 	void ResetJumpCount();
+	/** ジャンプの回数を 1 増やす */
+	void AddJumpCount();
 	/** 地上のジャンプを使ったことにする（まだ跳んでいなければ回数を 1 にする） */
 	void ConsumeGroundJump();
 	/** 空中での移動。スティックの向きへ少しずつ曲がる（離すと勢いのまま） */
 	void AirMove();
 	/** スティックとカメラから進行方向を決める */
 	Vector3 GetMoveDirection() const;
-	/** 左右にレイを飛ばして壁を探す。見つかったら m_wallNormal に入れて true を返す */
-	bool FindWall();
 	/** 壁走りを始められるか */
 	bool CanStartWallRun() const;
-	/** 壁から跳ねる */
-	void WallJump();
 	/** 壁走りを終わるときの片付け */
 	void EndWallRun();
 	/** 止まるまで減速する（Idle から呼ぶ） */
@@ -92,8 +90,6 @@ public:
 	EnPlayerState GetCurrentState() const { return m_stateMachine.GetCurrentState(); }
 	/** position へ瞬間移動する。速さを 0 にして空中の状態から始める（デバッグ画面・チェックポイント用） */
 	void Warp(const Vector3& position);
-	/** 今の壁の向き（法線）を返す。壁の向きをステートに移すまでの仮（3-2 で消す） */
-	const Vector3& GetWallNormal() const {return m_wallNormal;}
 	/** クールダウンのカウントをはじめる。（seconds 秒たつまで使えなくする） */
 	void StartCooldown(EnCooldown id, float seconds);
 	/** クールダウン時間を超えたかどうか */
@@ -174,7 +170,6 @@ private:
 	const SpeedParam& m_speedParam = nsGameParam::Get().speed;		///< 速度の調整値（speed.json）
 
 	int m_jumpCount = 0;			///< いま何回跳んだか
-	Vector3 m_wallNormal = Vector3::Zero;		///< 今の壁の向き（法線）。FindWall で書き換える
 	float m_ropeLength = 0.0f;		///< ロープの長さ。つかんだときの距離を入れ、巻き上げで縮める
 	float m_wireTipLength = 0.0f;	///< 手元から飛んでいるワイヤーの先までの長さ
 	bool m_isHooked = false;		///< ワイヤーの先がアンカーに届いたか

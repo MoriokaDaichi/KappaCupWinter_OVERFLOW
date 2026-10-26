@@ -274,6 +274,11 @@ void Player::ResetJumpCount()
 	m_jumpCount = 0;
 }
 
+void Player::AddJumpCount()
+{
+	m_jumpCount += 1;
+}
+
 void Player::ConsumeGroundJump()
 {
 	if (m_jumpCount == 0)
@@ -310,37 +315,6 @@ Vector3 Player::GetMoveDirection() const
 	return m_command.moveDir;
 }
 
-bool Player::FindWall()
-{
-	Vector3 right = Vector3::Right;
-	m_rotation.Apply(right);
-
-	Vector3 from = GetPosition();
-	from.y += m_param.body.chestHeight;
-
-	const Vector3 dirs[] = { right, right * -1.0f };
-	for (const Vector3& dir : dirs)
-	{
-		Vector3 to = from + dir * m_param.wallRun.checkLength;
-		RayHitInfo hit = nsCollision::RayCast(from, to);
-
-		if (!hit.isHit)
-		{
-			continue;
-		}
-
-		if (fabsf(hit.normal.y) >= m_param.wallRun.normalYLimit)
-		{
-			continue;
-		}
-
-		m_wallNormal = hit.normal;
-		return true;
-	}
-
-	return false;
-}
-
 bool Player::CanStartWallRun() const
 {
 	Vector3 horizontal = GetMoveSpeed();
@@ -348,13 +322,6 @@ bool Player::CanStartWallRun() const
 	float speed = horizontal.Length();
 
 	return IsMoveInput() && speed >= m_param.wallRun.minSpeed && IsCooldownOver(EnCooldown::WallRun);
-}
-
-void Player::WallJump()
-{
-	AddMoveSpeed(m_wallNormal * m_param.wallRun.jumpSpeedOut);
-	SetVerticalSpeed(m_param.wallRun.jumpSpeedUp);
-	m_jumpCount += 1;
 }
 
 void Player::EndWallRun()

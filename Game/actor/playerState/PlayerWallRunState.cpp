@@ -2,9 +2,11 @@
 #include "actor/playerState/PlayerWallRunState.h"
 
 #include "actor/Player.h"
+#include "collision/RayCast.h"
 
 void PlayerWallRunState::Enter()
 {
+	FindWall(*m_owner, m_wallNormal);
 	m_runTime = 0.0f;
 	m_owner->SetVerticalSpeed(0.0f);
 
@@ -16,7 +18,7 @@ void PlayerWallRunState::Update()
 {
 	if (m_owner->IsJumpTrigger())
 	{
-		m_owner->WallJump();
+		WallJump();
 		m_owner->ChangeState(EnPlayerState::Air);
 		return;
 	}
@@ -27,7 +29,7 @@ void PlayerWallRunState::Update()
 		return;
 	}
 
-	if (!m_owner->FindWall())
+	if (!FindWall(*m_owner, m_wallNormal))
 	{
 		m_owner->ChangeState(EnPlayerState::Air);
 		return;
@@ -41,11 +43,42 @@ void PlayerWallRunState::Exit()
 	m_owner->EndWallRun();
 }
 
+bool PlayerWallRunState::FindWall(const Player& owner, Vector3& outNormal)
+{
+	const PlayerParam& param = nsGameParam::Get().player;
+
+	Vector3 right = Vector3::Right;
+	owner.GetRotation().Apply(right);
+
+	Vector3 from = owner.GetPosition();
+	from.y += param.body.chestHeight;
+
+	const Vector3 dirs[] = { right, right * -1.0f };
+	for (const Vector3& dir : dirs)
+	{
+		Vector3 to = from + dir * param.wallRun.checkLength;
+		RayHitInfo hit = nsCollision::RayCast(from, to);
+
+		if (!hit.isHit)
+		{
+			continue;
+		}
+
+		if (fabsf(hit.normal.y) >= param.wallRun.normalYLimit)
+		{
+			continue;
+		}
+
+		outNormal = hit.normal;
+		return true;
+	}
+
+	return false;
+}
+
 void PlayerWallRunState::Move()
 {
-	const Vector3& wallNormal = m_owner->GetWallNormal();
-
-	Vector3 along = Cross(wallNormal, Vector3::Up);
+	Vector3 along = Cross(m_wallNormal, Vector3::Up);
 	along.Normalize();
 
 	if (along.Dot(m_owner->GetMoveSpeed()) < 0.0f)
@@ -55,7 +88,7 @@ void PlayerWallRunState::Move()
 
 	// 壁走りは最低でも wallRun.speed。速度システムの値がそれより速ければ、その速さで走る
 	const float runSpeed = max(m_param.speed, m_owner->GetSpeedSystem().GetSpeed());
-	Vector3 horizontalSpeed = along * runSpeed + wallNormal * -m_param.stickSpeed;
+	Vector3 horizontalSpeed = along * runSpeed + m_wallNormal * -m_param.stickSpeed;
 
 	m_owner->SetHorizontalSpeed(horizontalSpeed);
 
@@ -70,7 +103,7 @@ void PlayerWallRunState::Move()
 		m_owner->ApplyGravity();
 	}
 
-	UpdateTilt(wallNormal);
+	UpdateTilt(m_wallNormal);
 }
 
 void PlayerWallRunState::UpdateTilt(const Vector3& wallNormal)
@@ -87,4 +120,11 @@ void PlayerWallRunState::UpdateTilt(const Vector3& wallNormal)
 	const float pivotHeight = m_bodyParam.radius / max(sinf(angle), TILT_MIN_SIN);
 
 	m_owner->SetModelTiltTarget(target, pivotHeight);
+}
+
+void PlayerWallRunState::WallJump()
+{
+	m_owner->AddMoveSpeed(m_wallNormal * m_param.jumpSpeedOut);
+	m_owner->SetVerticalSpeed(m_param.jumpSpeedUp);
+	m_owner->AddJumpCount();
 }

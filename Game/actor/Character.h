@@ -29,6 +29,8 @@ public:
 	void SetMoveSpeed(const Vector3& speed) { m_moveSpeed = speed; }
 	/** 位置をわたす */
 	const Vector3& GetPosition() const { return m_charaCon.GetPosition(); }
+	/** 体の向きを返す */
+	const Quaternion& GetRotation() const { return m_rotation; }
 	/** dir の横の向き（y は見ない）に体を向ける。短すぎる向きのときは今の向きのまま */
 	void FaceDirection(const Vector3& dir);
 	/** 水平方向の速度を決める（ x と z だけを入れ替え、y はそのまま） */
