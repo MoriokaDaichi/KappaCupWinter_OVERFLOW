@@ -5,6 +5,7 @@
 #include "gimmick/Anchor.h"
 #include "param/GameParam.h"
 #include "weapon/BulletManager.h"
+#include "input/InputManager.h"
 
 Game::~Game()
 {
@@ -89,12 +90,12 @@ bool Game::Start()
 	m_bulletManager = NewGO<BulletManager>(0, "bulletManager");
 
 	m_player = NewGO<Player>(0, "player");
-	m_playerController.SetInput(&m_input);
+	m_playerController.SetInput(&InputManager::GetInstance());
 	m_player->SetController(&m_playerController);
 
 	m_gameCamera = NewGO<GameCamera>(1, "gameCamera");
 	m_gameCamera->SetTarget(m_player);
-	m_gameCamera->SetInput(&m_input);
+	m_gameCamera->SetInput(&InputManager::GetInstance());
 
 	m_debugManager.Init(m_player);
 
@@ -103,7 +104,7 @@ bool Game::Start()
 
 void Game::Update()
 {
-	m_input.Update();
+	InputManager::GetInstance().Update();
 
 	m_debugManager.Update();
 }

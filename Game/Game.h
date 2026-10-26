@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Level3DRender/LevelRender.h"
-#include "input/InputManager.h"
 #include "debug/DebugManager.h"
 #include "controller/PlayerController.h"
 
@@ -32,7 +31,6 @@ private:
 	static constexpr float CROSSHAIR_SIZE = 48.0f;		///< 仮の照準の画像の大きさ（縦横）
 
 	Anchor* m_anchor[ANCHOR_NUM] = {};
-	InputManager m_input;
 	ModelRender m_floorRender;		// 仮の床（ステージができたら置き換える）
 	BoxCollider m_floorCollider;	
 	RigidBody   m_floorBody;	

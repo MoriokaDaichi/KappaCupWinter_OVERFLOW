@@ -88,6 +88,12 @@ void InputManager::SetEnable(const bool enable)
     m_enable = enable;
 }
 
+InputManager& InputManager::GetInstance()
+{
+    static InputManager instance;
+    return instance;
+}
+
 int InputManager::ToIndex(const EnInputAction a)
 {
     const int i = static_cast<int>(a);

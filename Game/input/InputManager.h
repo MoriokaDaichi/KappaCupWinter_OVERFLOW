@@ -12,6 +12,9 @@ enum class EnInputAction : int {
 class InputManager
 {
 public:
+    /** 複製できないようにする（入力は 1 つだけ） */
+    InputManager(const InputManager&) = delete;
+    InputManager& operator = (const InputManager&) = delete;
     void Update();
 
 public:
@@ -23,17 +26,18 @@ public:
     bool IsRelease(const EnInputAction a) const;
     /**押し続けている秒数*/
     float GetHoldTime(const EnInputAction a) const;
-
-public:
     /**左スティック*/
     Vector2 GetMove() const;
     /**右スティック*/
     Vector2 GetCamera() const;
-
-public:
     /**入力を止める・戻す*/
     void SetEnable(const bool enable);
+    /** 唯一の実体を返す（受け取るときは InputManager& で受ける） */
+    static InputManager& GetInstance();
 
+private:
+    InputManager() = default;
+ 
 private:
     static constexpr int ACTION_NUM = static_cast<int>(EnInputAction::Num);
 
