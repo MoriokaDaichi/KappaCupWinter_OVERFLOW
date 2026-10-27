@@ -8,6 +8,7 @@
 #include "speed/SpeedSystem.h"
 #include "actor/CharacterCommand.h"
 #include <array>
+#include <limits>
 
 class IController;
 class Anchor;
@@ -134,8 +135,8 @@ private:
 	Vector3 GetRopeHandPosition() const;
 	/** 体の見た目を傾ける。スイングではアンカーの方へ、壁走りでは壁から離れる向きへ。ほかの状態ではまっすぐに戻す */
 	void UpdateBodyTilt();
-	/** ワイヤーの見た目を、手からアンカー（飛んでいる途中は先まで）に合わせる */
-	void UpdateWireEnds();
+	/** ワイヤーの手元を渡す（骨が動いた後に呼ぶ） */
+	void UpdateWireHand();
 	/** 銃の見た目を右手に持たせる（握る位置は、手首と中指の付け根の間＝手のひら） */
 	void UpdateGunModel();
 	/** クールダウンを更新する */
@@ -164,6 +165,8 @@ private:
 	static constexpr float ANIM_INTERPOLATE_TIME = 0.2f;	///< アニメーションを切り替えるときに、前のものとなめらかにつなぐ時間（秒）。調整は遷移のタスクで JSON に出す
 	static constexpr int COOLDOWN_NUM = static_cast<int>(EnCooldown::Num);		///< 待ち時間の種類の数
 	static constexpr float START_HEIGHT = 300.0f;			///< 始めるときに置く高さ（床の少し上から落とす）
+	static constexpr float WIRE_HOOKED_LENGTH = (std::numeric_limits<float>::max)();	///< つかんだ後にワイヤーへ渡す先の長さ（必ずアンカーまで届く）
+
 
 	const PlayerParam& m_param = nsGameParam::Get().player;	///< 調整用の値（F5 で読み直すと中身が変わる）
 	const SpeedParam& m_speedParam = nsGameParam::Get().speed;		///< 速度の調整値（speed.json）

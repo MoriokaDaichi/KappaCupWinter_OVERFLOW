@@ -10,14 +10,12 @@ public:
 	void Render(RenderContext& rc) override;
 
 public:
-	/** ワイヤーの両端を決める。Player が毎フレーム呼ぶ */
-	void SetEnds(const Vector3& start, const Vector3& end)
-	{
-		m_start = start;
-		m_end = end;
-	}
 	/** 表示するかどうかを決める。スイングを始めたら true、終わったら false */
 	void SetVisible(const bool visible) { m_isVisible = visible; }
+	/** 狙う先と、先が飛んだ長さを覚える */
+	void SetTarget(const Vector3& anchorPosition, const float tipLength);
+	/** Playerの手元を覚える */
+	void SetHandPosition(const Vector3& hand);
 
 private:
 	/** 両端から、モデルの位置・向き・大きさを決める */
@@ -31,7 +29,8 @@ private:
 
 	ModelRender m_modelRender;					///< 見た目
 	Vector3 m_start = Vector3::Zero;			///< 始点（プレイヤーの手元）
-	Vector3 m_end = Vector3::Zero;				///< 終点（アンカー）
+	Vector3 m_targetPosition = Vector3::Zero;	///< 狙う先（アンカー）
+	float m_tipLength = 0.0f;					///< 手元から飛んだ先までの長さ
 	bool m_isVisible = false;					///< 表示するか
 	bool m_canDraw = false;						///< 今のフレームで描けるか（短すぎるときは false）
 };

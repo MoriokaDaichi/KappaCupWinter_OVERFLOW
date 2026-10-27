@@ -32,10 +32,21 @@ void GrappleWire::Render(RenderContext& rc)
 	m_modelRender.Draw(rc);
 }
 
+void GrappleWire::SetTarget(const Vector3& anchorPosition, const float tipLength)
+{
+	m_targetPosition = anchorPosition;
+	m_tipLength = tipLength;
+}
+
+void GrappleWire::SetHandPosition(const Vector3& hand)
+{
+	m_start = hand;
+}
+
 void GrappleWire::UpdateTransform()
 {
-	const Vector3 toEnd = m_end - m_start;
-	const float length = toEnd.Length();
+	Vector3 toAnchor = m_targetPosition - m_start;
+	const float length = min(m_tipLength, toAnchor.Length());
 
 	m_canDraw = length >= MIN_LENGTH;
 	if (!m_canDraw)
@@ -43,12 +54,11 @@ void GrappleWire::UpdateTransform()
 		return;
 	}
 
-	Vector3 dir = toEnd;
-	dir.Normalize();
+	toAnchor.Normalize();
 
 	//モデルは Z 方向に伸びているので、Z 軸をワイヤーの向きへ回す
 	Quaternion rotation;
-	rotation.SetRotation(Vector3::AxisZ, dir);
+	rotation.SetRotation(Vector3::AxisZ, toAnchor);
 
 	const Vector3 scale(m_param.thicknessScale, m_param.thicknessScale, length / MODEL_LENGTH);
 

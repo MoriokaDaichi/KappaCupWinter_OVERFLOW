@@ -218,26 +218,14 @@ void Player::UpdateBodyTilt()
 	m_modelTiltTarget = Quaternion::Identity;
 }
 
-void Player::UpdateWireEnds()
+void Player::UpdateWireHand()
 {
 	if (m_swingAnchor == nullptr)
 	{
 		return;
 	}
 
-	const Vector3 hand = GetRopeHandPosition();
-	const Vector3 anchorPosition = m_swingAnchor->GetPosition();
-	if (m_isHooked)
-	{
-		m_grappleWire->SetEnds(hand, anchorPosition);
-		return;
-	}
-
-	// 飛んでいる途中は、手元から先までだけ描く
-	Vector3 toAnchor = anchorPosition - hand;
-	const float length = min(m_wireTipLength, toAnchor.Length());
-	toAnchor.Normalize();
-	m_grappleWire->SetEnds(hand, hand + toAnchor * length);
+	m_grappleWire->SetHandPosition(GetRopeHandPosition());
 }
 
 void Player::UpdateGunModel()
@@ -258,7 +246,7 @@ void Player::UpdateGunModel()
 
 void Player::OnBodyUpdated()
 {
-	UpdateWireEnds();
+	UpdateWireHand();
 	UpdateGunModel();
 }
 
@@ -352,6 +340,10 @@ void Player::StartSwing()
 
 void Player::SwingMove()
 {
+	// ワイヤーの先を渡す。つかんだ後はどこまでも届く長さにして、手からアンカーまで全部描く
+	const float tipLength = m_isHooked ? WIRE_HOOKED_LENGTH : m_wireTipLength;
+	m_grappleWire->SetTarget(m_swingAnchor->GetPosition(), tipLength);
+	
 	if (!m_isHooked)
 	{
 		ShootWire();
