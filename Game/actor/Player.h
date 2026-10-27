@@ -8,7 +8,6 @@
 #include "speed/SpeedSystem.h"
 #include "actor/CharacterCommand.h"
 #include <array>
-#include <limits>
 
 class IController;
 class Anchor;
@@ -67,16 +66,6 @@ public:
 	bool IsGrappleRelease() const;
 	/** スイングを始められるか（ロック中のアンカーがあるか） */
 	bool CanStartSwing() const {return m_lockedAnchor != nullptr; }
-	/** スイングを始めるときの準備（つかむアンカーを覚え、ワイヤーを飛ばし始める） */
-	void StartSwing();
-	/** ワイヤーが届くまでは飛ばす。届いたら巻き上げながら、アンカーを中心に振り子のように動く */
-	void SwingMove();
-	/** スイングを終わるときの片付け（つかんでいるアンカーを外す） */
-	void EndSwing();
-	/** ワイヤーの先がアンカーに届いたか（届くまでは飛んでいる途中） */
-	bool IsGrappleHooked() const { return m_isHooked; }
-	/** スイングを離したときに、進んでいる向きと上に速さを足す（つかんでいて、十分速いときだけ） */
-	void ReleaseBoost();
 	/** 射撃ボタンを押しているか */
 	bool IsShootPress() const;
 	/** エイムボタンを押しているか */
@@ -93,6 +82,10 @@ public:
 	void StartCooldown(const EnCooldown id, const float seconds);
 	/** クールダウン時間を超えたかどうか */
 	bool IsCooldownOver(const EnCooldown id) const;
+	/** 胸の位置を返す。ロープの手元と、銃口を決める基準に使う */
+	Vector3 GetChestPosition() const;
+	/** ワイヤーの見た目を返す（スイングの State が使う）。仮: ステップ 4 でグラップルの能力にまとめる */
+	GrappleWire& GetGrappleWire() { return *m_grappleWire; }
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -107,16 +100,6 @@ private:
 	void UpdateLock();
 	/** アンカー1つの点数を出す。候補にならないときはマイナス（例：-1.0f）を返す */
 	float CalcLockScore(const Anchor* anchor) const;
-	/** 胸の位置を返す。ロープの手元と、銃口を決める基準に使う */
-	Vector3 GetChestPosition() const;
-	/** ワイヤーの先を手元からアンカーへ飛ばす。届いたらつかむ。飛んでいる間は普通に動く */
-	void ShootWire();
-	/** ワイヤーの先が届いたときに、アンカーをつかむ（ロープの長さを決める） */
-	void HookAnchor(const float ropeLength);
-	/** スティックの向きのうち、ロープと直角な向きにだけ加速する（こぐ） */
-	void SwingPump(const Vector3& ropeDir);
-	/** 速さが上限を超えていたら、向きはそのまま長さを上限にそろえる */
-	void ClampSwingSpeed();
 	/** 構えている間、体をカメラの前向きに向ける */
 	void FaceAimDirection();
 	/** 今の状態に合わせて、上乗せの速さを増やす・減らす（壁走りで増え、地上で減る） */
@@ -147,7 +130,6 @@ private:
 	CharacterCommand m_command;				///< このフレームのコマンド
 	StateMachine<Player, EnPlayerState> m_stateMachine;		///< 状態の切り替え役
 	Anchor* m_lockedAnchor = nullptr;		///< ロック中のアンカー
-	Anchor* m_swingAnchor = nullptr;		///< スイングに使うアンカー
 	GrappleWire* m_grappleWire = nullptr;	///< ワイヤーの見た目。スイング中だけ表示する
 	Gun m_gun;								///< 銃。RT で弾を撃つ
 	GunModel m_gunModel;					///< 右手に持つ銃の見た目
@@ -161,19 +143,13 @@ private:
 
 	// 調整する値は Assets/param/player.json（意味は param/GameParam.h の PlayerParam）。ここには計算のための値だけ置く
 	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;	///< スティックを倒したとみなす境目（長さの2乗）
-	static constexpr float SWING_MIN_DISTANCE = 0.001f;		///< アンカーとの距離がこれより近いと、ロープの向きを出せない
 	static constexpr float ANIM_INTERPOLATE_TIME = 0.2f;	///< アニメーションを切り替えるときに、前のものとなめらかにつなぐ時間（秒）。調整は遷移のタスクで JSON に出す
 	static constexpr int COOLDOWN_NUM = static_cast<int>(EnCooldown::Num);		///< 待ち時間の種類の数
 	static constexpr float START_HEIGHT = 300.0f;			///< 始めるときに置く高さ（床の少し上から落とす）
-	static constexpr float WIRE_HOOKED_LENGTH = (std::numeric_limits<float>::max)();	///< つかんだ後にワイヤーへ渡す先の長さ（必ずアンカーまで届く）
-
 
 	const PlayerParam& m_param = nsGameParam::Get().player;	///< 調整用の値（F5 で読み直すと中身が変わる）
 	const SpeedParam& m_speedParam = nsGameParam::Get().speed;		///< 速度の調整値（speed.json）
 
 	int m_jumpCount = 0;			///< いま何回跳んだか
-	float m_ropeLength = 0.0f;		///< ロープの長さ。つかんだときの距離を入れ、巻き上げで縮める
-	float m_wireTipLength = 0.0f;	///< 手元から飛んでいるワイヤーの先までの長さ
-	bool m_isHooked = false;		///< ワイヤーの先がアンカーに届いたか
 	std::array<float, COOLDOWN_NUM> m_cooldownTimers = {};		///< 待ち時間の残り（秒）
 };

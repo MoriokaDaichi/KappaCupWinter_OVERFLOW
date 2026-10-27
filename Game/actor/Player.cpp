@@ -201,17 +201,6 @@ Vector3 Player::GetRopeHandPosition() const
 
 void Player::UpdateBodyTilt()
 {
-	const EnPlayerState state = GetCurrentState();
-
-	if (state == EnPlayerState::Swing && m_swingAnchor != nullptr && m_isHooked)
-	{
-		// 体の上をアンカーに向ける（ロープにぶら下がって見えるように）。胸を中心に回す
-		Quaternion target;
-		target.SetRotation(Vector3::Up, m_swingAnchor->GetPosition() - GetChestPosition());
-
-		SetModelTiltTarget(target, m_param.body.chestHeight);
-	}
-
 	// 入るとき・抜けるときに急に傾かないように、少しずつ近づける
 	const float rate = min(m_param.body.tiltLerpRate * g_gameTime->GetFrameDeltaTime(), 1.0f);
 	m_modelTilt.Slerp(rate, m_modelTilt, m_modelTiltTarget);
@@ -220,11 +209,6 @@ void Player::UpdateBodyTilt()
 
 void Player::UpdateWireHand()
 {
-	if (m_swingAnchor == nullptr)
-	{
-		return;
-	}
-
 	m_grappleWire->SetHandPosition(GetRopeHandPosition());
 }
 
@@ -324,160 +308,6 @@ bool Player::IsGrappleTrigger() const
 bool Player::IsGrappleRelease() const
 {
 	return m_command.grappleRelease;
-}
-
-void Player::StartSwing()
-{
-	m_grappleWire->SetVisible(true);
-
-	m_swingAnchor = m_lockedAnchor;
-
-	//まだつかまない。ワイヤーの先を手元から飛ばし、届いたら HookAnchor でつかむ
-	m_wireTipLength = 0.0f;
-	m_isHooked = false;
-	ResetJumpCount();
-}
-
-void Player::SwingMove()
-{
-	// ワイヤーの先を渡す。つかんだ後はどこまでも届く長さにして、手からアンカーまで全部描く
-	const float tipLength = m_isHooked ? WIRE_HOOKED_LENGTH : m_wireTipLength;
-	m_grappleWire->SetTarget(m_swingAnchor->GetPosition(), tipLength);
-	
-	if (!m_isHooked)
-	{
-		ShootWire();
-		return;
-	}
-
-	ApplyGravity();
-
-	const Vector3 toPlayer = GetChestPosition() - m_swingAnchor->GetPosition();
-	const float distance = toPlayer.Length();
-
-	if (distance < SWING_MIN_DISTANCE)
-	{
-		return;
-	}
-
-	Vector3 toPlayerDir = toPlayer;
-	toPlayerDir.Normalize();
-
-	SwingPump(toPlayerDir);
-
-	// ロープの外へ逃げる速さを消す（これで円を描く）
-	const float outSpeed = m_moveSpeed.Dot(toPlayerDir);
-	if (distance >= m_ropeLength && outSpeed > 0.0f)
-	{
-		m_moveSpeed -= toPlayerDir * outSpeed;
-	}
-
-	// 巻き上げ: 最短の長さに近いほどゆっくり引き寄せる（着いた勢いで飛び出さないように）
-	float reelSpeed = 0.0f;
-	if (m_ropeLength > m_param.swing.minRopeLength)
-	{
-		reelSpeed = min(m_param.swing.reelSpeed, (distance - m_param.swing.minRopeLength) * m_param.swing.reelEase);
-
-		// 近づいた分だけロープも縮める（伸びることはない）
-		m_ropeLength = max(min(m_ropeLength, distance), m_param.swing.minRopeLength);
-	}
-
-	// ロープが伸びた分を戻すのに必要な、内向きの速さ
-	const float pullSpeed = max(distance - m_ropeLength, 0.0f) * m_param.swing.pullRate;
-
-	// 内向きの速さが足りないときだけ足す（毎フレーム足し続けると、ばねのように跳ね飛ばされる）
-	// 横の速さ（振り子の勢い）はそのまま残すので、引き寄せられながら振れる
-	const float needSpeed = max(reelSpeed, pullSpeed);
-	const float inSpeed = -m_moveSpeed.Dot(toPlayerDir);
-	if (inSpeed < needSpeed)
-	{
-		m_moveSpeed -= toPlayerDir * (needSpeed - inSpeed);
-	}
-
-	ClampSwingSpeed();
-
-	Vector3 horizontal = m_moveSpeed;
-	horizontal.y = 0.0f;
-
-	if (horizontal.LengthSq() > m_param.swing.faceMinSpeed * m_param.swing.faceMinSpeed)
-	{
-		FaceDirection(horizontal);
-	}
-}
-
-void Player::EndSwing()
-{
-	m_swingAnchor = nullptr;
-
-	// 離したときの速さを上乗せに残す（空中で減速しないように）
-	if (m_isHooked)
-	{
-		Vector3 horizontal = m_moveSpeed;
-		horizontal.y = 0.0f;
-		m_speed.RaiseBonusTo(horizontal.Length() - m_speed.GetBaseSpeed());
-	}
-
-	m_isHooked = false;
-	m_grappleWire->SetVisible(false);
-}
-
-void Player::ShootWire()
-{
-	const Vector3 origin = GetChestPosition();
-	const Vector3 toAnchor = m_swingAnchor->GetPosition() - origin;
-	const float distance = toAnchor.Length();
-
-	m_wireTipLength += m_param.swing.wireShootSpeed * g_gameTime->GetFrameDeltaTime();
-
-	//届いた
-	if (m_wireTipLength >= distance)
-	{
-		HookAnchor(distance);
-		return;
-	}
-
-	// ワイヤーの見た目は、骨が動いた後の OnBodyUpdated で手から描く
-	//まだつかんでいないので、いつもどおり動く（床の上では重力をかけない）
-	if (IsOnGround())
-	{
-		Move();
-	}
-	else
-	{
-		AirMove();
-		ApplyGravity();
-	}
-}
-
-void Player::HookAnchor(const float ropeLength)
-{
-	m_isHooked = true;
-	m_ropeLength = ropeLength;
-
-	//地上でつかんだら少し浮かせる（すぐ「着地した」と判定されないように）
-	if (IsOnGround())
-	{
-		SetVerticalSpeed(m_param.swing.startLift);
-	}
-}
-
-
-void Player::ReleaseBoost()
-{
-	if (!IsGrappleHooked())
-	{
-		return;
-	}
-
-	if (m_moveSpeed.LengthSq() < m_param.swing.releaseMinSpeed * m_param.swing.releaseMinSpeed)
-	{
-		return;
-	}
-
-	Vector3 speed = m_moveSpeed;
-	speed.Normalize();
-	AddMoveSpeed(speed * m_param.swing.releaseBoost);
-	AddMoveSpeed(Vector3::Up * m_param.swing.releaseLift);
 }
 
 bool Player::IsShootPress() const
@@ -610,34 +440,6 @@ Vector3 Player::GetChestPosition() const
 	return position;
 }
 
-void Player::SwingPump(const Vector3& ropeDir)
-{
-	if (!IsMoveInput())
-	{
-		return;
-	}
-
-	Vector3 input = GetMoveDirection();
-	input -= ropeDir * input.Dot(ropeDir);
-
-	if (input.LengthSq() < MOVE_INPUT_THRESHOLD)
-	{
-		return;
-	}
-
-	input.Normalize();
-	m_moveSpeed += input * m_param.swing.pumpAccel * g_gameTime->GetFrameDeltaTime();
-}
-
-void Player::ClampSwingSpeed()
-{
-	if (m_moveSpeed.LengthSq() > m_param.swing.maxSpeed * m_param.swing.maxSpeed)
-	{
-		m_moveSpeed.Normalize();
-		m_moveSpeed *= m_param.swing.maxSpeed;
-	}
-}
-
 void Player::FaceAimDirection()
 {
 	// 押した最初のフレームは、まだ Gun の構えのタイマーが入っていないので、ボタンも見る
@@ -670,7 +472,7 @@ void Player::UpdateSpeedBonus()
 
 void Player::Warp(const Vector3& position)
 {
-	// 状態より先に速さを消す（スイング中だと、状態を変えたときに EndSwing が今の速さを上乗せに残してしまうため）
+	// 状態より先に速さを消す（スイング中だと、状態を変えたときにスイングの State の Exit が今の速さを上乗せに残してしまうため）
 	SetMoveSpeed(Vector3::Zero);
 	ChangeState(EnPlayerState::Air);
 	m_charaCon.SetPosition(position);
