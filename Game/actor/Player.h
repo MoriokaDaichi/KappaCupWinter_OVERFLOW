@@ -7,6 +7,7 @@
 #include "param/GameParam.h"
 #include "speed/SpeedSystem.h"
 #include "actor/CharacterCommand.h"
+#include "grapple/AnchorLocker.h"
 #include <array>
 
 class IController;
@@ -59,13 +60,13 @@ public:
 	/** 止まるまで減速する（Idle から呼ぶ） */
 	void Decelerate();
 	/** スイングに使うロック中のアンカーを返す */
-	Anchor* GetLockedAnchor() const { return m_lockedAnchor; }
+	Anchor* GetLockedAnchor() const { return m_anchorLocker.GetLockedAnchor(); }
 	/** グラップルが押されたか */
 	bool IsGrappleTrigger() const;
 	/** グラップルを離したか */
 	bool IsGrappleRelease() const;
 	/** スイングを始められるか（ロック中のアンカーがあるか） */
-	bool CanStartSwing() const {return m_lockedAnchor != nullptr; }
+	bool CanStartSwing() const {return m_anchorLocker.GetLockedAnchor() != nullptr; }
 	/** 射撃ボタンを押しているか */
 	bool IsShootPress() const;
 	/** エイムボタンを押しているか */
@@ -96,10 +97,6 @@ protected:
 	void Render(RenderContext& rc) override;
 
 private:
-	/** 毎フレーム、一番いいアンカーを選んで m_lockedAnchor に入れる */
-	void UpdateLock();
-	/** アンカー1つの点数を出す。候補にならないときはマイナス（例：-1.0f）を返す */
-	float CalcLockScore(const Anchor* anchor) const;
 	/** 構えている間、体をカメラの前向きに向ける */
 	void FaceAimDirection();
 	/** 今の状態に合わせて、上乗せの速さを増やす・減らす（壁走りで増え、地上で減る） */
@@ -129,7 +126,7 @@ private:
 	const IController* m_controller = nullptr;	///< コマンドを作る係（Game が持っている）
 	CharacterCommand m_command;				///< このフレームのコマンド
 	StateMachine<Player, EnPlayerState> m_stateMachine;		///< 状態の切り替え役
-	Anchor* m_lockedAnchor = nullptr;		///< ロック中のアンカー
+	AnchorLocker m_anchorLocker;			///< グラップルで狙うアンカーを選ぶ
 	GrappleWire* m_grappleWire = nullptr;	///< ワイヤーの見た目。スイング中だけ表示する
 	Gun m_gun;								///< 銃。RT で弾を撃つ
 	GunModel m_gunModel;					///< 右手に持つ銃の見た目

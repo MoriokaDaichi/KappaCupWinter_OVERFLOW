@@ -7,8 +7,6 @@
 #include "actor/playerState/PlayerAirState.h"
 #include "actor/playerState/PlayerWallRunState.h"
 #include "actor/playerState/PlayerSwingState.h"
-#include "collision/RayCast.h"
-#include "gimmick/Anchor.h"
 #include "grapple/GrappleWire.h"
 #include "weapon/BulletManager.h"
 
@@ -338,7 +336,7 @@ void Player::UpdateAction()
 	}
 
 	UpdateCooldown();
-	UpdateLock();
+	m_anchorLocker.Update(GetPosition(), GetChestPosition(), m_command.aimOrigin, m_command.aimDirection);
 
 	if (IsGrappleTrigger() && CanStartSwing())
 	{
@@ -352,84 +350,6 @@ void Player::UpdateAction()
 	// 銃口は体の向きから決めるので、先に体を向けてから撃つ
 	FaceAimDirection();
 	m_gun.Update(IsShootPress(), m_speed.GetLevel(), GetChestPosition(), m_rotation);
-}
-
-void Player::UpdateLock()
-{
-	Anchor* best = nullptr;
-	float bestScore = 0.0f;
-
-	QueryGOs<Anchor>("anchor", [&](Anchor* anchor)
-		{
-			float score = CalcLockScore(anchor);
-
-			if( score < 0.0f)
-			{
-				return true;
-			}
-
-			if (anchor == m_lockedAnchor)
-			{
-				score += m_param.lock.keepBonus;
-			}
-
-			if (best == nullptr || score > bestScore)
-			{
-				best = anchor;
-				bestScore = score;
-			}
-
-			return true;
-		});
-
-	if (best == m_lockedAnchor)
-	{
-		return;
-	}
-
-	if (m_lockedAnchor != nullptr)
-	{
-		m_lockedAnchor->SetLocked(false);
-	}
-
-	if (best != nullptr)
-	{
-		best->SetLocked(true);
-	}
-
-	m_lockedAnchor = best;
-}
-
-float Player::CalcLockScore(const Anchor* anchor) const
-{
-	const Vector3 toAnchor = anchor->GetPosition() - GetPosition();
-	const float distance = toAnchor.Length();
-	if (distance > m_param.lock.maxDistance)
-	{
-		return -1.0f;
-	}
-
-	Vector3 camToAnchor = anchor->GetPosition() - m_command.aimOrigin;
-	camToAnchor.Normalize();
-	const float dot = m_command.aimDirection.Dot(camToAnchor);
-	if (dot < cosf(Math::DegToRad(m_param.lock.maxAngle)))
-	{
-		return -1.0f;
-	}
-
-	const float angle = Math::RadToDeg(acosf(min(dot, 1.0f)));
-
-	Vector3 from = GetPosition();
-	from.y += m_param.body.chestHeight;		// 胸の高さから飛ばす（足元だと床に当たる）
-	if (nsCollision::RayCast(from, anchor->GetPosition()).isHit)
-	{
-		return -1.0f;
-	}
-
-	const float angleScore = 1.0f - angle / m_param.lock.maxAngle;
-	const float distanceScore = 1.0f - distance / m_param.lock.maxDistance;
-
-	return angleScore * m_param.lock.angleWeight + distanceScore * m_param.lock.distanceWeight;
 }
 
 Vector3 Player::GetChestPosition() const

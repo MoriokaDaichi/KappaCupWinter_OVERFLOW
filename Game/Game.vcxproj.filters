@@ -117,6 +117,9 @@
     <ClCompile Include="controller\PlayerController.cpp">
       <Filter>controller</Filter>
     </ClCompile>
+    <ClCompile Include="grapple\AnchorLocker.cpp">
+      <Filter>grapple</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -204,6 +207,9 @@
     </ClInclude>
     <ClInclude Include="actor\CharacterCommand.h">
       <Filter>actor</Filter>
+    </ClInclude>
+    <ClInclude Include="grapple\AnchorLocker.h">
+      <Filter>grapple</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
