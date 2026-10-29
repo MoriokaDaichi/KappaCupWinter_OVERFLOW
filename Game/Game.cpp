@@ -94,6 +94,7 @@ bool Game::Start()
 	m_player = NewGO<Player>(0, "player");
 	m_playerController.SetInput(&InputManager::GetInstance());
 	m_player->SetController(&m_playerController);
+	m_player->SetParam(nsGameParam::Get().player);
 
 	// 仮: ステップ 5 の確認用。アンカーから離れた横の方に置き、プレイヤーの方へ歩かせる
 	m_enemy = NewGO<Enemy>(0, "enemy");
@@ -101,6 +102,7 @@ bool Game::Start()
 	m_enemyController.SetOwner(m_enemy);
 	m_enemyController.SetTarget(m_player);
 	m_enemy->SetController(&m_enemyController);
+	m_enemy->SetParam(nsGameParam::Get().enemyWalker);
 
 	m_gameCamera = NewGO<GameCamera>(1, "gameCamera");
 	m_gameCamera->SetTarget(m_player);

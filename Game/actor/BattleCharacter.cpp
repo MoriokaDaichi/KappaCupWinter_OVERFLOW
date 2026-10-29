@@ -63,7 +63,7 @@ void BattleCharacter::Move()
 	const Vector3 moveDir = GetMoveDirection();
 
 	//速度に入れる
-	ApproachHorizontal(moveDir * GetSpeedSystem().GetSpeed(), m_param.move.groundAccel);
+	ApproachHorizontal(moveDir * GetSpeedSystem().GetSpeed(), m_param->move.groundAccel);
 
 	//スティックを倒しているときだけ向きを変える（離したときは今の向きを保つ）
 	FaceDirection(moveDir);
@@ -79,7 +79,7 @@ void BattleCharacter::AirMove()
 	const Vector3 moveDir = GetMoveDirection();
 	const Vector3 target = moveDir * GetSpeedSystem().GetSpeed();
 
-	float t = m_param.move.airControl * g_gameTime->GetFrameDeltaTime();
+	float t = m_param->move.airControl * g_gameTime->GetFrameDeltaTime();
 	if (t > 1.0f)
 	{
 		t = 1.0f;
@@ -94,13 +94,13 @@ void BattleCharacter::AirMove()
 
 void BattleCharacter::Decelerate()
 {
-	ApproachHorizontal(Vector3::Zero, m_param.move.groundDecel);
+	ApproachHorizontal(Vector3::Zero, m_param->move.groundDecel);
 }
 
 void BattleCharacter::Jump()
 {
 	// = で入れるので、落ちている途中に跳んでも同じ高さだけ上がる
-	SetVerticalSpeed(m_param.jump.speed);
+	SetVerticalSpeed(m_param->jump.speed);
 	m_jumpCount += 1;
 	// ジャンプしたことを子クラスに知らせる
 	OnJump();
@@ -130,13 +130,13 @@ bool BattleCharacter::CanStartWallRun() const
 	horizontal.y = 0.0f;
 	const float speed = horizontal.Length();
 
-	return IsMoveInput() && speed >= m_param.wallRun.minSpeed && IsCooldownOver(EnCooldown::WallRun);
+	return IsMoveInput() && speed >= m_param->wallRun.minSpeed && IsCooldownOver(EnCooldown::WallRun);
 }
 
 Vector3 BattleCharacter::GetChestPosition() const
 {
 	Vector3 position = GetPosition();
-	position.y += m_param.body.chestHeight;
+	position.y += m_param->body.chestHeight;
 
 	return position;
 }

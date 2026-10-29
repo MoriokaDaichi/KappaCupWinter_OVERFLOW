@@ -4,6 +4,13 @@
 #include "actor/BattleCharacter.h"
 #include "collision/RayCast.h"
 
+PlayerWallRunState::PlayerWallRunState(BattleCharacter* owner)
+	: IState<BattleCharacter>(owner)
+	, m_param(owner->GetParam().wallRun)
+	, m_bodyParam(owner->GetParam().body)
+{
+}
+
 void PlayerWallRunState::Enter()
 {
 	FindWall(*m_owner, m_wallNormal);
@@ -46,7 +53,7 @@ void PlayerWallRunState::Exit()
 
 bool PlayerWallRunState::FindWall(const BattleCharacter& owner, Vector3& outNormal)
 {
-	const PlayerParam& param = nsGameParam::Get().player;
+	const CharacterParam& param = owner.GetParam();
 
 	Vector3 right = Vector3::Right;
 	owner.GetRotation().Apply(right);

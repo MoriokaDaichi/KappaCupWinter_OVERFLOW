@@ -23,5 +23,5 @@ private:
 
 private:
 	Anchor* m_lockedAnchor = nullptr;		///< ロック中のアンカー（借りているだけ）
-	const PlayerParam::Lock& m_param = nsGameParam::Get().player.lock;		///< 調整用の値のうち、ロックの分（Assets/param/player.json）
+	const CharacterParam::Lock& m_param = nsGameParam::Get().player.lock;		///< 調整用の値のうち、ロックの分（Assets/param/player.json）
 };

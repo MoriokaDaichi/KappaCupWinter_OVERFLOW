@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "actor/BattleCharacter.h"
 #include "weapon/GunModel.h"
-#include "param/GameParam.h"
 #include <array>
 
 class Anchor;
@@ -57,9 +56,7 @@ private:
 	int m_rightHandBoneId = -1;				///< 右手の骨の番号
 	int m_rightMiddleBoneId = -1;			///< 右手の中指の付け根の骨の番号（銃を握る位置に使う）
 
-	// 調整する値は Assets/param/player.json（意味は param/GameParam.h の PlayerParam）。ここには計算のための値だけ置く
+	// 調整する値は Assets/param/chara/player.json（意味は param/GameParam.h の CharacterParam）。ここには計算のための値だけ置く
 	static constexpr float ANIM_INTERPOLATE_TIME = 0.2f;	///< アニメーションを切り替えるときに、前のものとなめらかにつなぐ時間（秒）。調整は遷移のタスクで JSON に出す
 	static constexpr float START_HEIGHT = 300.0f;			///< 始めるときに置く高さ（床の少し上から落とす）
-
-	const PlayerParam& m_param = nsGameParam::Get().player;	///< 調整用の値（F5 で読み直すと中身が変わる）
 };

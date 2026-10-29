@@ -9,15 +9,15 @@
 #include "thirdParty/nlohmann/json.hpp"
 
 // JSON → 構造体の対応。at() で読むので、キーがなければ例外になる（既定値で黙って動かない）
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Body, radius, height, chestHeight, tiltLerpRate)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Move, groundAccel, groundDecel, airControl)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Jump, speed, maxCount, fastFallAnimSpeed, landAnimMinSpeed)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::WallRun, checkLength, normalYLimit, speed, minSpeed, gravityScale,
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Body, radius, height, chestHeight, tiltLerpRate)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Move, groundAccel, groundDecel, airControl)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Jump, speed, maxCount, fastFallAnimSpeed, landAnimMinSpeed)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::WallRun, checkLength, normalYLimit, speed, minSpeed, gravityScale,
 	stickSpeed, maxTime, jumpSpeedUp, jumpSpeedOut, reattachTime, tiltAngle)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Lock, maxDistance, maxAngle, angleWeight, distanceWeight, keepBonus)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam::Swing, wireShootSpeed, startLift, pullRate, reelSpeed, minRopeLength,
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Lock, maxDistance, maxAngle, angleWeight, distanceWeight, keepBonus)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Swing, wireShootSpeed, startLift, pullRate, reelSpeed, minRopeLength,
 	reelEase, pumpAccel, faceMinSpeed, maxSpeed, releaseBoost, releaseLift, releaseMinSpeed)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PlayerParam, body, move, jump, wallRun, lock, swing)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam, model, body, move, jump, wallRun, lock, swing)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraParam, distance, targetHeight, rotateSpeedX, rotateSpeedY, pitchMin, pitchMax,
 	viewAngleNormal, viewAngleMax, viewAngleLerpRate, maxSpeedForFov, collisionRadius, nearClip, farClip, shoulderOffset,
 	aimDistance, aimShoulderOffset, aimViewAngleDown, aimRotateScale, aimTransitionTime)
@@ -57,7 +57,8 @@ namespace
 	/** すべてのファイルを out に読む */
 	void ReadAll(GameParam& out)
 	{
-		ReadFile("Assets/param/player.json", out.player);
+		ReadFile("Assets/param/chara/player.json", out.player);
+		ReadFile("Assets/param/chara/enemy_walker.json", out.enemyWalker);
 		ReadFile("Assets/param/camera.json", out.camera);
 		ReadFile("Assets/param/gravity.json", out.gravity);
 		ReadFile("Assets/param/anchor.json", out.anchor);

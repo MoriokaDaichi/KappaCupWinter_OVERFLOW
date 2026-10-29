@@ -10,7 +10,7 @@ class Anchor;
 class PlayerSwingState : public IState<BattleCharacter>
 {
 public:
-	explicit PlayerSwingState(BattleCharacter* owner) : IState<BattleCharacter>(owner) {}
+	explicit PlayerSwingState(BattleCharacter* owner);
 
 	/** スイングの準備（アンカーを覚えてワイヤーを飛ばし始める・ジャンプの回数を戻す） */
 	void Enter() override;
@@ -41,8 +41,8 @@ private:
 	static constexpr float PUMP_MIN_INPUT = 0.001f;			///< ロープの向きを除いたスティックの残りがこれより短い（長さの2乗）と、こがない
 
 	const Anchor* m_swingAnchor = nullptr;		///< スイングに使うアンカー（借りているだけ）
-	const PlayerParam::Swing& m_param = nsGameParam::Get().player.swing;		///< 調整用の値のうち、スイングの分（Assets/param/player.json）
-	const PlayerParam::Body& m_bodyParam = nsGameParam::Get().player.body;
+	const CharacterParam::Swing& m_param;		///< スイングの値（持ち主の設定から受け取る）
+	const CharacterParam::Body& m_bodyParam;	///< 体の大きさの値（同上）
 	float m_ropeLength = 0.0f;					///< ロープの長さ。つかんだときの距離を入れ、巻き上げで縮める
 	float m_wireTipLength = 0.0f;				///< 手元から飛んでいるワイヤーの先までの長さ
 	bool m_isHooked = false;					///< ワイヤーの先がアンカーに届いたか

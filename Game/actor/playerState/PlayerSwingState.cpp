@@ -5,6 +5,13 @@
 #include "gimmick/Anchor.h"
 #include "grapple/GrappleWire.h"
 
+PlayerSwingState::PlayerSwingState(BattleCharacter* owner)
+	: IState<BattleCharacter>(owner)
+	, m_param(owner->GetParam().swing)
+	, m_bodyParam(owner->GetParam().body)
+{
+}
+
 void PlayerSwingState::Enter()
 {
 	m_owner->GetGrapple().GetWire().SetVisible(true);

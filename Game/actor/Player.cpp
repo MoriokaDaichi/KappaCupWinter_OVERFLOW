@@ -4,8 +4,8 @@
 bool Player::Start()
 {
 	LoadAnimation();
-	InitCharacter("Assets/modelData/player/medea.tkm", m_animClips.data(), static_cast<int>(m_animClips.size()),
-		m_param.body.radius, m_param.body.height, Vector3(0.0f, START_HEIGHT, 0.0f));
+	InitCharacter(GetParam().model.c_str(), m_animClips.data(), static_cast<int>(m_animClips.size()),
+		GetParam().body.radius, GetParam().body.height, Vector3(0.0f, START_HEIGHT, 0.0f));
 	m_leftHandBoneId = m_modelRender.FindBoneID(L"mixamorig:LeftHand");
 	m_rightHandBoneId = m_modelRender.FindBoneID(L"mixamorig:RightHand");
 	m_rightMiddleBoneId = m_modelRender.FindBoneID(L"mixamorig:RightHandMiddle1");
@@ -66,7 +66,7 @@ void Player::PlayStateAnimation(const EnPlayerState state)
 
 	// 止まって着地したときだけ、着地の動きを流す（走りながらの着地は、足が止まって見えるので run のまま）
 	const bool isFromAir = m_currentAnim == EnPlayerAnim::JumpUp || m_currentAnim == EnPlayerAnim::Fall || m_currentAnim == EnPlayerAnim::FallFast;
-	if (state == EnPlayerState::Idle && isFromAir && m_airFallSpeed > m_param.jump.landAnimMinSpeed)
+	if (state == EnPlayerState::Idle && isFromAir && m_airFallSpeed > GetParam().jump.landAnimMinSpeed)
 	{
 		PlayAnimation(EnPlayerAnim::Land);
 		return;
@@ -99,7 +99,7 @@ EnPlayerAnim Player::SelectAirAnimation() const
 	}
 
 	// 高いところから落ちて、速さがついてきた
-	if (m_moveSpeed.y < -m_param.jump.fastFallAnimSpeed)
+	if (m_moveSpeed.y < -GetParam().jump.fastFallAnimSpeed)
 	{
 		return EnPlayerAnim::FallFast;
 	}
@@ -137,7 +137,7 @@ Vector3 Player::GetRopeHandPosition() const
 void Player::UpdateBodyTilt()
 {
 	// 入るとき・抜けるときに急に傾かないように、少しずつ近づける
-	const float rate = min(m_param.body.tiltLerpRate * g_gameTime->GetFrameDeltaTime(), 1.0f);
+	const float rate = min(GetParam().body.tiltLerpRate * g_gameTime->GetFrameDeltaTime(), 1.0f);
 	m_modelTilt.Slerp(rate, m_modelTilt, m_modelTiltTarget);
 	m_modelTiltTarget = Quaternion::Identity;
 }

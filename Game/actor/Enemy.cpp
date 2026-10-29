@@ -4,8 +4,8 @@
 bool Enemy::Start()
 {
 	// アニメーションはまだないので、立ったまま動く
-	InitCharacter("Assets/modelData/enemy/aegis.tkm", nullptr, 0,
-		m_param.body.radius, m_param.body.height, m_startPosition);
+	InitCharacter(GetParam().model.c_str(), nullptr, 0,
+		GetParam().body.radius, GetParam().body.height, m_startPosition);
 
 	InitState();
 

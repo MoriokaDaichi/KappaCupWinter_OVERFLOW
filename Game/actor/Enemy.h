@@ -13,5 +13,4 @@ public:
 
 private:
 	Vector3 m_startPosition = Vector3::Zero;		///< 出てくる位置（足元）
-	const PlayerParam& m_param = nsGameParam::Get().player;	///< 体の大きさ。仮: ステップ 6 で敵ごとの設定から読む
 };

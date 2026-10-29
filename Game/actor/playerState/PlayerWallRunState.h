@@ -8,7 +8,7 @@ class BattleCharacter;
 class PlayerWallRunState : public IState<BattleCharacter>
 {
 public:
-	explicit PlayerWallRunState(BattleCharacter* owner) : IState<BattleCharacter>(owner) {}
+	explicit PlayerWallRunState(BattleCharacter* owner);
 
 	/** 壁走りの準備（落ちる速さを消す・重力を弱める・ジャンプの回数を戻す） */
 	void Enter() override;
@@ -33,6 +33,6 @@ private:
 
 	Vector3 m_wallNormal = Vector3::Zero;					///< 今の壁の向き（法線）。FindWall で書き換える
 	float m_runTime = 0.0f;				///< 壁を走り始めてからの時間
-	const PlayerParam::WallRun& m_param = nsGameParam::Get().player.wallRun;		///< 調整用の値のうち、壁走りの分（Assets/param/player.json）
-	const PlayerParam::Body& m_bodyParam = nsGameParam::Get().player.body;			///< 調整用の値のうち、体の大きさの分（Assets/param/player.json）
+	const CharacterParam::WallRun& m_param;		///< 壁走りの値（持ち主の設定から受け取る）
+	const CharacterParam::Body& m_bodyParam;	///< 体の大きさの値（同上）
 };

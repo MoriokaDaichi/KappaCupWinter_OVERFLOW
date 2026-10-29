@@ -8,8 +8,8 @@
  * JSON のキーはメンバ名と同じつづりにする（JSON にはコメントが書けないので、意味と単位はここに書く）
  */
 
-/** プレイヤーの値（player.json） */
-struct PlayerParam
+/** キャラクターの値（Assets/param/chara/ の JSON。プレイヤーも敵も同じ形） */
+struct CharacterParam
 {
 	/** 体 */
 	struct Body
@@ -75,6 +75,7 @@ struct PlayerParam
 		float releaseMinSpeed = 0.0f;	///< スイングを離したとき、これより遅いときはブーストしない
 	};
 
+	std::string model;		///< モデルのファイル名（.tkm）
 	Body body;
 	Move move;
 	Jump jump;
@@ -178,7 +179,8 @@ struct DebugParam
 /** すべての調整値 */
 struct GameParam
 {
-	PlayerParam player;
+	CharacterParam player;			///< プレイヤー（chara/player.json）
+	CharacterParam enemyWalker;		///< 歩く敵（chara/enemy_walker.json）
 	CameraParam camera;
 	GravityParam gravity;
 	AnchorParam anchor;

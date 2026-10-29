@@ -27,6 +27,12 @@ public:
 public:
 	/** コマンドを作る係を設定する */
 	void SetController(const IController* controller) { m_controller = controller; }
+	/** 設定を渡す（NewGO の直後、Start より前に呼ぶ） */
+	void SetParam(const CharacterParam& param) { m_param = &param; }
+	/** 設定を返す（State も読む） */
+	const CharacterParam& GetParam() const { return *m_param; }
+
+public:
 	/** このフレームのコマンドを返す（State や能力が読む） */
 	const CharacterCommand& GetCommand() const { return m_command; }
 	/** ジャンプが押されたか */
@@ -71,7 +77,7 @@ public:
 	/** ジャンプする（上向きの速さを入れて、回数を1増やす） */
 	void Jump();
 	/** まだジャンプできるか（跳んだ回数が上限より少ないか） */
-	bool CanJump() const { return m_jumpCount < m_param.jump.maxCount; }
+	bool CanJump() const { return m_jumpCount < m_param->jump.maxCount; }
 	/** ジャンプの回数を 0 に戻す */
 	void ResetJumpCount();
 	/** ジャンプの回数を 1 増やす */
@@ -125,7 +131,7 @@ private:
 	Grapple m_grapple;															///< グラップルの能力（狙うアンカーの選択とワイヤーの見た目）
 	Gun m_gun;																	///< 銃。RT で弾を撃つ
 	SpeedSystem m_speed;														///< スピードシステム（基礎速度と上乗せ速度をもつ）
-	const PlayerParam& m_param = nsGameParam::Get().player;						///< 調整用の値。仮: ステップ 6 でキャラごとの設定から読む
+	const CharacterParam* m_param = nullptr;									///< このキャラの設定（nsGameParam が持っているものを借りる。SetParam で受け取る）
 	const SpeedParam& m_speedParam = nsGameParam::Get().speed;					///< 速度の調整値（speed.json）
 	int m_jumpCount = 0;														///< いま何回跳んだか
 	StateMachine<BattleCharacter, EnPlayerState> m_stateMachine;				///< 状態の切り替え役
