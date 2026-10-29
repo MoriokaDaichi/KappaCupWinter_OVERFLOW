@@ -186,53 +186,10 @@ void Player::OnStateChanged(const EnPlayerState id)
 	PlayStateAnimation(id);
 }
 
-void Player::UpdateAction()
+void Player::OnStateUpdated()
 {
-	UpdateCommand();
-	GetGrapple().UpdateLock(GetPosition(), GetChestPosition(), GetCommand().aimOrigin, GetCommand().aimDirection);
-
-	if (IsGrappleTrigger() && CanStartSwing())
-	{
-		ChangeState(EnPlayerState::Swing);
-	}
-
-	UpdateState();
 	UpdateBodyTilt();
 	UpdateAnimation();
-	UpdateSpeedBonus();
-	// 銃口は体の向きから決めるので、先に体を向けてから撃つ
-	FaceAimDirection();
-	GetGun().Update(IsShootPress(), GetSpeedSystem().GetLevel(), GetChestPosition(), m_rotation);
-}
-
-void Player::FaceAimDirection()
-{
-	// 押した最初のフレームは、まだ Gun の構えのタイマーが入っていないので、ボタンも見る
-	const bool isAiming = IsShootPress() || GetGun().IsAiming() || IsAimPress();
-	if (!isAiming || GetCurrentState() == EnPlayerState::WallRun)
-	{
-		return;
-	}
-
-	FaceDirection(GetCommand().aimDirection);
-}
-
-void Player::UpdateSpeedBonus()
-{
-	switch (GetCurrentState())
-	{
-	case EnPlayerState::WallRun:
-		GetSpeedSystem().AddBonusPerSecond(m_speedParam.wallRunGain);
-		break;
-	case EnPlayerState::Run:
-		GetSpeedSystem().AddBonusPerSecond(-m_speedParam.groundDecay);
-		break;
-	case EnPlayerState::Idle:
-		GetSpeedSystem().AddBonusPerSecond(-m_speedParam.idleDecay);
-		break;
-	default:
-		break;
-	}
 }
 
 void Player::Warp(const Vector3& position)

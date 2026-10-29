@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "physics/Gravity.h"
 
-/** プレイヤーと敵の共通部分（体・重力・モデル）。子クラスは UpdateAction だけを書く */
+/** プレイヤーと敵の共通部分（体・重力・モデル）。子クラスが UpdateAction を書く（戦うキャラは BattleCharacter が書く） */
 class Character : public IGameObject
 {
 public:

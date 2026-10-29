@@ -1,7 +1,5 @@
 ﻿#pragma once
 #include "actor/BattleCharacter.h"
-#include "state/StateMachine.h"
-#include "actor/playerState/PlayerState.h"
 #include "weapon/GunModel.h"
 #include "param/GameParam.h"
 #include <array>
@@ -19,8 +17,6 @@ public:
 	void Warp(const Vector3& position);
 
 protected:
-	/** プレイヤーの行動（ステートマシンを動かす） */
-	void UpdateAction() override;
 	/** 体を動かした後（骨の位置が決まった後）に、ワイヤーと銃の見た目を合わせる */
 	void OnBodyUpdated() override;
 	/** 体と、手に持つ銃を描く */
@@ -29,12 +25,10 @@ protected:
 	void OnJump() override;
 	/** 状態が切り替わったときに呼ばれる（アニメーションなどを切り替える） */
 	void OnStateChanged(const EnPlayerState id) override;
+	/** State を動かした直後に、体の傾きとアニメーションを合わせる */
+	void OnStateUpdated() override;
 
 private:
-	/** 構えている間、体をカメラの前向きに向ける */
-	void FaceAimDirection();
-	/** 今の状態に合わせて、上乗せの速さを増やす・減らす（壁走りで増え、地上で減る） */
-	void UpdateSpeedBonus();
 	/** アニメーションを読み込む（InitCharacter の前に呼ぶ） */
 	void LoadAnimation();
 	/** 状態に合ったアニメーションに切り替える */
@@ -68,5 +62,4 @@ private:
 	static constexpr float START_HEIGHT = 300.0f;			///< 始めるときに置く高さ（床の少し上から落とす）
 
 	const PlayerParam& m_param = nsGameParam::Get().player;	///< 調整用の値（F5 で読み直すと中身が変わる）
-	const SpeedParam& m_speedParam = nsGameParam::Get().speed;		///< 速度の調整値（speed.json）
 };

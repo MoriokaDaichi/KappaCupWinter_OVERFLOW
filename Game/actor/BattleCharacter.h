@@ -90,8 +90,6 @@ public:
 	EnPlayerState GetCurrentState() const { return m_stateMachine.GetCurrentState(); }
 
 protected:
-	/** コマンドを作り、待ち時間を進める（子クラスの UpdateAction の最初に呼ぶ） */
-	void UpdateCommand();
 	/** 能力を準備する（子クラスの Start で呼ぶ） */
 	void InitAbilities();
 	/** ジャンプしたときに呼ばれる（子クラスがアニメーションなどを流す） */
@@ -100,12 +98,22 @@ protected:
 	virtual void OnStateChanged(const EnPlayerState id) {}
 	/** State を作って登録し、Idle から始める（子クラスの Start で呼ぶ）。仮: ステップ 6 で JSON の一覧から作る */
 	void InitState();
-	/** 今の State を動かす（仮: 4-3c-3 で更新の順番ごと BattleCharacter に移す） */
-	void UpdateState();
+	/** 1 フレームの行動。コマンド → ロック → State → 速さ → 構え → 射撃 の順に動かす（子クラスは上書きしない） */
+	void UpdateAction() override final;
+	/** State を動かした直後に呼ばれる（子クラスが体の傾きやアニメーションを合わせる） */
+	virtual void OnStateUpdated() {}
 
 private:
+	/** コマンドを作り、待ち時間を進める */
+	void UpdateCommand();
+	/** 今の State を動かす */
+	void UpdateState();
 	/** 待ち時間を進める（0 より下にはしない） */
 	void UpdateCooldown();
+	/** 構えている間、体をカメラの前向きに向ける */
+	void FaceAimDirection();
+	/** 今の状態に合わせて、上乗せの速さを増やす・減らす（壁走りで増え、地上で減る） */
+	void UpdateSpeedBonus();
 
 private:
 	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;						///< スティックを倒したとみなす境目（長さの2乗）
@@ -118,6 +126,7 @@ private:
 	Gun m_gun;																	///< 銃。RT で弾を撃つ
 	SpeedSystem m_speed;														///< スピードシステム（基礎速度と上乗せ速度をもつ）
 	const PlayerParam& m_param = nsGameParam::Get().player;						///< 調整用の値。仮: ステップ 6 でキャラごとの設定から読む
+	const SpeedParam& m_speedParam = nsGameParam::Get().speed;					///< 速度の調整値（speed.json）
 	int m_jumpCount = 0;														///< いま何回跳んだか
 	StateMachine<BattleCharacter, EnPlayerState> m_stateMachine;				///< 状態の切り替え役
 };
