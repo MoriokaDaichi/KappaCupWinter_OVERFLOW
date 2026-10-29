@@ -2,12 +2,8 @@
 #include "actor/BattleCharacter.h"
 #include "state/StateMachine.h"
 #include "actor/playerState/PlayerState.h"
-#include "weapon/Gun.h"
 #include "weapon/GunModel.h"
 #include "param/GameParam.h"
-#include "speed/SpeedSystem.h"
-#include "actor/CharacterCommand.h"
-#include "grapple/Grapple.h"
 #include <array>
 
 class Anchor;
@@ -40,22 +36,12 @@ public:
 	bool CanStartWallRun() const;
 	/** 止まるまで減速する（Idle から呼ぶ） */
 	void Decelerate();
-	/** スイングに使うロック中のアンカーを返す */
-	Anchor* GetLockedAnchor() const { return m_grapple.GetLockedAnchor(); }
-	/** スイングを始められるか（ロック中のアンカーがあるか） */
-	bool CanStartSwing() const {return m_grapple.GetLockedAnchor() != nullptr; }
-	/** 速度を返す（HUD やデバッグ表示で読む） */
-	const SpeedSystem& GetSpeedSystem() const { return m_speed; }
-	/** 速度を返す（書き換えられる。デバッグ画面用） */
-	SpeedSystem& GetSpeedSystem() { return m_speed; }
 	/** 今の状態を返す（デバッグ画面の表示用） */
 	EnPlayerState GetCurrentState() const { return m_stateMachine.GetCurrentState(); }
 	/** position へ瞬間移動する。速さを 0 にして空中の状態から始める（デバッグ画面・チェックポイント用） */
 	void Warp(const Vector3& position);
 	/** 胸の位置を返す。ロープの手元と、銃口を決める基準に使う */
 	Vector3 GetChestPosition() const;
-	/** グラップルの能力を返す（スイングの State がワイヤーに使う） */
-	Grapple& GetGrapple() { return m_grapple; }
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -91,10 +77,7 @@ private:
 
 private:
 	StateMachine<Player, EnPlayerState> m_stateMachine;		///< 状態の切り替え役
-	Grapple m_grapple;						///< グラップルの能力（狙うアンカーの選択とワイヤーの見た目）
-	Gun m_gun;								///< 銃。RT で弾を撃つ
 	GunModel m_gunModel;					///< 右手に持つ銃の見た目
-	SpeedSystem m_speed;					///< スピードシステム（基礎速度と上乗せ速度をもつ）
 	std::array<AnimationClip, static_cast<int>(EnPlayerAnim::Num)> m_animClips;	///< アニメーション（ModelRender が借りるので、ここで持つ）
 	EnPlayerAnim m_currentAnim = EnPlayerAnim::Num;	///< 今流しているアニメーション（Num はまだ流していない）
 	float m_airFallSpeed = 0.0f;			///< 空中で最後に見た、落ちる速さ（着地すると速さが 0 になるので、着地のアニメーションを流すかの判定用に覚えておく）

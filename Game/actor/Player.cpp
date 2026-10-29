@@ -6,7 +6,6 @@
 #include "actor/playerState/PlayerAirState.h"
 #include "actor/playerState/PlayerWallRunState.h"
 #include "actor/playerState/PlayerSwingState.h"
-#include "weapon/BulletManager.h"
 
 Player::Player() : m_stateMachine(this)
 {
@@ -21,8 +20,6 @@ bool Player::Start()
 	m_rightHandBoneId = m_modelRender.FindBoneID(L"mixamorig:RightHand");
 	m_rightMiddleBoneId = m_modelRender.FindBoneID(L"mixamorig:RightHandMiddle1");
 
-	m_speed.Reset();
-
 	m_stateMachine.AddState<PlayerIdleState>(EnPlayerState::Idle);
 	m_stateMachine.AddState<PlayerRunState>(EnPlayerState::Run);
 	m_stateMachine.AddState<PlayerAirState>(EnPlayerState::Air);
@@ -31,9 +28,8 @@ bool Player::Start()
 
 	ChangeState(EnPlayerState::Idle);
 
-	m_grapple.Init();
+	InitAbilities();
 
-	m_gun.Init(FindGO<BulletManager>("bulletManager"));
 	m_gunModel.Init();
 
 	return true;
@@ -44,7 +40,7 @@ void Player::Move()
 	const Vector3 moveDir = GetMoveDirection();
 
 	//速度に入れる
-	ApproachHorizontal(moveDir * m_speed.GetSpeed(), m_param.move.groundAccel);
+	ApproachHorizontal(moveDir * GetSpeedSystem().GetSpeed(), m_param.move.groundAccel);
 
 	//スティックを倒しているときだけ向きを変える（離したときは今の向きを保つ）
 	FaceDirection(moveDir);
@@ -190,7 +186,7 @@ void Player::UpdateBodyTilt()
 
 void Player::UpdateWireHand()
 {
-	m_grapple.SetHandPosition(GetRopeHandPosition());
+	GetGrapple().SetHandPosition(GetRopeHandPosition());
 }
 
 void Player::UpdateGunModel()
@@ -247,7 +243,7 @@ void Player::AirMove()
 	}
 
 	const Vector3 moveDir = GetMoveDirection();
-	const Vector3 target = moveDir * m_speed.GetSpeed();
+	const Vector3 target = moveDir * GetSpeedSystem().GetSpeed();
 
 	float t = m_param.move.airControl * g_gameTime->GetFrameDeltaTime();
 	if (t > 1.0f)
@@ -279,7 +275,7 @@ void Player::Decelerate()
 void Player::UpdateAction()
 {
 	UpdateCommand();
-	m_grapple.UpdateLock(GetPosition(), GetChestPosition(), GetCommand().aimOrigin, GetCommand().aimDirection);
+	GetGrapple().UpdateLock(GetPosition(), GetChestPosition(), GetCommand().aimOrigin, GetCommand().aimDirection);
 
 	if (IsGrappleTrigger() && CanStartSwing())
 	{
@@ -292,7 +288,7 @@ void Player::UpdateAction()
 	UpdateSpeedBonus();
 	// 銃口は体の向きから決めるので、先に体を向けてから撃つ
 	FaceAimDirection();
-	m_gun.Update(IsShootPress(), m_speed.GetLevel(), GetChestPosition(), m_rotation);
+	GetGun().Update(IsShootPress(), GetSpeedSystem().GetLevel(), GetChestPosition(), m_rotation);
 }
 
 Vector3 Player::GetChestPosition() const
@@ -306,7 +302,7 @@ Vector3 Player::GetChestPosition() const
 void Player::FaceAimDirection()
 {
 	// 押した最初のフレームは、まだ Gun の構えのタイマーが入っていないので、ボタンも見る
-	const bool isAiming = IsShootPress() || m_gun.IsAiming() || IsAimPress();
+	const bool isAiming = IsShootPress() || GetGun().IsAiming() || IsAimPress();
 	if (!isAiming || m_stateMachine.IsCurrentState(EnPlayerState::WallRun))
 	{
 		return;
@@ -320,13 +316,13 @@ void Player::UpdateSpeedBonus()
 	switch (m_stateMachine.GetCurrentState())
 	{
 	case EnPlayerState::WallRun:
-		m_speed.AddBonusPerSecond(m_speedParam.wallRunGain);
+		GetSpeedSystem().AddBonusPerSecond(m_speedParam.wallRunGain);
 		break;
 	case EnPlayerState::Run:
-		m_speed.AddBonusPerSecond(-m_speedParam.groundDecay);
+		GetSpeedSystem().AddBonusPerSecond(-m_speedParam.groundDecay);
 		break;
 	case EnPlayerState::Idle:
-		m_speed.AddBonusPerSecond(-m_speedParam.idleDecay);
+		GetSpeedSystem().AddBonusPerSecond(-m_speedParam.idleDecay);
 		break;
 	default:
 		break;

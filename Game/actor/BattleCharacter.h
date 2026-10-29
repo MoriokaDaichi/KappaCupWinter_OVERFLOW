@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include "actor/Character.h"
 #include "actor/CharacterCommand.h"
+#include "grapple/Grapple.h"
+#include "weapon/Gun.h"
+#include "speed/SpeedSystem.h"
 #include <array>
 
 class IController;
@@ -12,7 +15,7 @@ enum class EnCooldown
 	Num				///< 種類の数（いちばん最後に置く）
 };
 
-/** 戦うキャラの土台。コマンドと待ち時間を持つ（プレイヤーも敵も同じ） */
+/** 戦うキャラの土台。コマンド・待ち時間・能力を持つ（プレイヤーも敵も同じ） */
 class BattleCharacter : public Character
 {
 public:
@@ -38,10 +41,24 @@ public:
 	void StartCooldown(const EnCooldown id, const float seconds);
 	/** 待ち時間が終わったか */
 	bool IsCooldownOver(const EnCooldown id) const;
+	/** 速度を返す（HUD やデバッグ表示で読む） */
+	const SpeedSystem& GetSpeedSystem() const { return m_speed; }
+	/** 速度を返す（書き換えられる。デバッグ画面用） */
+	SpeedSystem& GetSpeedSystem() { return m_speed; }
+	/** グラップルの能力を返す（スイングの State がワイヤーに使う） */
+	Grapple& GetGrapple() { return m_grapple; }
+	/** スイングに使うロック中のアンカーを返す */
+	Anchor* GetLockedAnchor() const { return m_grapple.GetLockedAnchor(); }
+	/** スイングを始められるか（ロック中のアンカーがあるか） */
+	bool CanStartSwing() const { return m_grapple.GetLockedAnchor() != nullptr; }
+	/** 銃を返す（構えているかを見る・撃つ） */
+	Gun& GetGun() { return m_gun; }
 
 protected:
 	/** コマンドを作り、待ち時間を進める（子クラスの UpdateAction の最初に呼ぶ） */
 	void UpdateCommand();
+	/** 能力を準備する（子クラスの Start で呼ぶ） */
+	void InitAbilities();
 
 private:
 	/** 待ち時間を進める（0 より下にはしない） */
@@ -50,7 +67,11 @@ private:
 private:
 	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;						///< スティックを倒したとみなす境目（長さの2乗）
 	static constexpr int COOLDOWN_NUM = static_cast<int>(EnCooldown::Num);		///< 待ち時間の種類の数
+
 	const IController* m_controller = nullptr;									///< コマンドを作る係（Game が持っている）
 	CharacterCommand m_command;													///< このフレームのコマンド
 	std::array<float, COOLDOWN_NUM> m_cooldownTimers = {};						///< 待ち時間の残り（秒）
+	Grapple m_grapple;															///< グラップルの能力（狙うアンカーの選択とワイヤーの見た目）
+	Gun m_gun;																	///< 銃。RT で弾を撃つ
+	SpeedSystem m_speed;														///< スピードシステム（基礎速度と上乗せ速度をもつ）
 };

@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "actor/BattleCharacter.h"
 #include "controller/IController.h"
+#include "weapon/BulletManager.h"
 
 bool BattleCharacter::IsJumpTrigger() const
 {
@@ -67,4 +68,11 @@ void BattleCharacter::UpdateCooldown()
 			timer = 0.0f;
 		}
 	}
+}
+
+void BattleCharacter::InitAbilities()
+{
+	m_speed.Reset();
+	m_grapple.Init();
+	m_gun.Init(FindGO<BulletManager>("bulletManager"));
 }
