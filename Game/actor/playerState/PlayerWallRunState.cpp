@@ -94,7 +94,7 @@ void PlayerWallRunState::Move()
 		along *= -1.0f;
 	}
 
-	// 壁走りは最低でも wallRun.speed。速度システムの値がそれより速ければ、その速さで走る
+	// 壁走りは最低でも speed。速度システムの値がそれより速ければ、その速さで走る
 	const float runSpeed = max(m_param.speed, m_owner->GetSpeedSystem().GetSpeed());
 	const Vector3 horizontalSpeed = along * runSpeed + m_wallNormal * -m_param.stickSpeed;
 

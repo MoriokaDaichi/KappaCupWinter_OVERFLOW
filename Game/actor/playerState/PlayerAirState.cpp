@@ -25,9 +25,11 @@ void PlayerAirState::Update()
 		return;
 	}
 
-	Vector3 wallNormal;
+	Vector3 wallNormal = Vector3::Zero;
 	// 仮: State から別の State を呼んでいる。ステップ 6 で切り替え表の条件に移す
-	if (m_owner->CanStartWallRun() && PlayerWallRunState::FindWall(*m_owner, wallNormal))
+	if (m_owner->HasState(EnPlayerState::WallRun) &&
+		m_owner->CanStartWallRun() &&
+		PlayerWallRunState::FindWall(*m_owner, wallNormal))
 	{
 		m_owner->ChangeState(EnPlayerState::WallRun);
 		return;

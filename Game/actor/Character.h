@@ -33,7 +33,7 @@ public:
 	const Quaternion& GetRotation() const { return m_rotation; }
 	/** dir の横の向き（y は見ない）に体を向ける。短すぎる向きのときは今の向きのまま */
 	void FaceDirection(const Vector3& dir);
-	/** 水平方向の速度を決める（ x と z だけを入れ替え、y はそのまま） */
+	/** 水平方向の速度を決める（x と z だけを入れ替え、y はそのまま） */
 	void SetHorizontalSpeed(const Vector3& speed);
 	/** 重力の係数を決める */
 	void SetGravityScale(const float scale) { m_gravity.SetScale(scale); }

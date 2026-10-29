@@ -1,6 +1,7 @@
 {
   "model": "Assets/modelData/enemy/aegis.tkm",
   "abilities": [],
+  "states": [ "Idle", "Run", "Air" ],
 
   "body": {
     "radius": 30.0,

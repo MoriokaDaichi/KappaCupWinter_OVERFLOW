@@ -61,6 +61,12 @@ public:
 		m_currentState->Enter();
 	}
 
+	/** id の状態が登録されているか（AddState したか） */
+	bool HasState(const TStateId id) const
+	{
+		return m_stateList[ToIndex(id)] != nullptr;
+	}
+
 private:
 	/** 状態の数（配列の大きさに使う） */
 	static constexpr int STATE_NUM = static_cast<int>(TStateId::Num);

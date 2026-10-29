@@ -99,6 +99,8 @@ public:
 	void ChangeState(const EnPlayerState id);
 	/** 今の状態を返す（デバッグ画面の表示用） */
 	EnPlayerState GetCurrentState() const { return m_stateMachine.GetCurrentState(); }
+	/** id の状態を持っているか（設定の states に書いてあるか） */
+	bool HasState(const EnPlayerState id) const { return m_stateMachine.HasState(id); }
 
 protected:
 	/** 能力を準備する（子クラスの Start で呼ぶ） */
@@ -107,7 +109,7 @@ protected:
 	virtual void OnJump() {}
 	/** 状態が切り替わったときに呼ばれる（子クラスがアニメーションなどを切り替える） */
 	virtual void OnStateChanged(const EnPlayerState id) {}
-	/** State を作って登録し、Idle から始める（子クラスの Start で呼ぶ）。仮: ステップ 6 で JSON の一覧から作る */
+	/** 設定の states に書いた State だけを作って登録し、Idle から始める（子クラスの Start で呼ぶ） */
 	void InitState();
 	/** 1 フレームの行動。コマンド → ロック → State → 速さ → 構え → 射撃 の順に動かす（子クラスは上書きしない） */
 	void UpdateAction() override final;
@@ -127,6 +129,8 @@ private:
 	void UpdateSpeedBonus();
 	/** 設定の abilities に name があるか */
 	bool HasAbility(const char* name) const;
+	/** id に合う State を作って登録する（名前から State を作る工場） */
+	void AddStateById(const EnPlayerState id);
 
 private:
 	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;						///< スティックを倒したとみなす境目（長さの2乗）

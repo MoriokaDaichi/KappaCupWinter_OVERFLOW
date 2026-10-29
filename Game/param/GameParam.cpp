@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "param/GameParam.h"
 
+#include "actor/playerState/PlayerState.h"
 #include <fstream>
 #include <string>
 #include <algorithm>
@@ -18,7 +19,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::WallRun, checkLength, normalY
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Lock, maxDistance, maxAngle, angleWeight, distanceWeight, keepBonus)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Swing, wireShootSpeed, startLift, pullRate, reelSpeed, minRopeLength,
 	reelEase, pumpAccel, faceMinSpeed, maxSpeed, releaseBoost, releaseLift, releaseMinSpeed)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam, model, abilities, body, move, jump, wallRun, lock, swing)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam, model, abilities, states, body, move, jump, wallRun, lock, swing)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraParam, distance, targetHeight, rotateSpeedX, rotateSpeedY, pitchMin, pitchMax,
 	viewAngleNormal, viewAngleMax, viewAngleLerpRate, maxSpeedForFov, collisionRadius, nearClip, farClip, shoulderOffset,
 	aimDistance, aimShoulderOffset, aimViewAngleDown, aimRotateScale, aimTransitionTime)
@@ -46,6 +47,42 @@ namespace
 			{
 				throw std::runtime_error(std::string(path) + "\nunknown ability: " + name);
 			}
+		}
+	}
+
+	/** 一覧に name があるかを調べる */
+	bool Contains(const std::vector<std::string>& list, const char* name)
+	{
+		return std::find(list.begin(), list.end(), name) != list.end();
+	}
+
+	/**
+	 * ステートの一覧が正しいか調べる
+	 * （知らない名前・Idle がない・Swing なのに Grapple がない）
+	 * だめならファイル名付きで例外を投げる
+	 */
+	void CheckStates(const char* path, const CharacterParam& param)
+	{
+		// 知らない名前がないか
+		for (const std::string& name : param.states)
+		{
+			EnPlayerState id = EnPlayerState::Num;
+			if (!ToPlayerState(name, id))
+			{
+				throw std::runtime_error(std::string(path) + "\nunknown state: " + name);
+			}
+		}
+
+		// "Idle" があるか
+		if (!Contains(param.states, "Idle"))
+		{
+			throw std::runtime_error(std::string(path) + "\nstates needs \"Idle\"");
+		}
+
+		// "Swing" があるなら "Grapple" もあるか
+		if (Contains(param.states, "Swing") && !Contains(param.abilities, "Grapple"))
+		{
+			throw std::runtime_error(std::string(path) + "\n\"Swing\" needs ability \"Grapple\"");
 		}
 	}
 
@@ -84,6 +121,9 @@ namespace
 
 		CheckAbilities("Assets/param/chara/player.json", out.player);
 		CheckAbilities("Assets/param/chara/enemy_walker.json", out.enemyWalker);
+
+		CheckStates("Assets/param/chara/player.json", out.player);
+		CheckStates("Assets/param/chara/enemy_walker.json", out.enemyWalker);
 
 		const size_t speedLevelCount = out.speed.levelUpSpeeds.size() + 1;
 		const size_t gunLevelCount = out.gun.levels.size();

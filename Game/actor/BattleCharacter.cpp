@@ -150,11 +150,15 @@ void BattleCharacter::ChangeState(const EnPlayerState id)
 
 void BattleCharacter::InitState()
 {
-	m_stateMachine.AddState<PlayerIdleState>(EnPlayerState::Idle);
-	m_stateMachine.AddState<PlayerRunState>(EnPlayerState::Run);
-	m_stateMachine.AddState<PlayerAirState>(EnPlayerState::Air);
-	m_stateMachine.AddState<PlayerWallRunState>(EnPlayerState::WallRun);
-	m_stateMachine.AddState<PlayerSwingState>(EnPlayerState::Swing);
+	for (const std::string& name : m_param->states)
+	{
+		EnPlayerState id = EnPlayerState::Num;
+		const bool found = ToPlayerState(name, id);
+
+		K2_ASSERT(found, "知らない State の名前です");
+
+		AddStateById(id);
+	}
 
 	ChangeState(EnPlayerState::Idle);
 }
@@ -244,6 +248,30 @@ bool BattleCharacter::HasAbility(const char* name) const
 {
 	const std::vector<std::string>& abilities = m_param->abilities;
 	return std::find(abilities.begin(), abilities.end(), name) != abilities.end();
+}
+
+void BattleCharacter::AddStateById(const EnPlayerState id)
+{
+	switch (id)
+	{
+	case EnPlayerState::Idle:
+		m_stateMachine.AddState<PlayerIdleState>(id);
+		break;
+	case EnPlayerState::Run:
+		m_stateMachine.AddState<PlayerRunState>(id);
+		break;
+	case EnPlayerState::Air:
+		m_stateMachine.AddState<PlayerAirState>(id);
+		break;
+	case EnPlayerState::WallRun:
+		m_stateMachine.AddState<PlayerWallRunState>(id);
+		break;
+	case EnPlayerState::Swing:
+		m_stateMachine.AddState<PlayerSwingState>(id);
+		break;
+	case EnPlayerState::Num:		// State ではない（個数）ので作らない
+		break;
+	}
 }
 
 void BattleCharacter::InitAbilities()

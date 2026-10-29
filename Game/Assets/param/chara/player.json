@@ -1,6 +1,7 @@
 {
   "model": "Assets/modelData/player/medea.tkm",
   "abilities": [ "Grapple", "Gun" ],
+  "states": [ "Idle", "Run", "Air", "WallRun", "Swing" ],
 
   "body": {
     "radius": 30.0,

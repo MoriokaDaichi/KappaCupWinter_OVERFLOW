@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <string>
 
 /** プレイヤーの状態 */
 enum class EnPlayerState : int {
@@ -21,3 +22,26 @@ enum class EnPlayerAnim : int {
     Swing,  ///< スイング
     Num     ///< 個数（配列の大きさに使う）
 };
+
+/** EnPlayerState の名前（JSON の states に書く名前）。enum と同じ順番に並べる */
+constexpr const char* PLAYER_STATE_NAMES[] =
+{
+    "Idle", "Run", "Air", "WallRun", "Swing"
+};
+
+static_assert(sizeof(PLAYER_STATE_NAMES) / sizeof(PLAYER_STATE_NAMES[0]) == static_cast<int>(EnPlayerState::Num),
+    "PLAYER_STATE_NAMES の数を EnPlayerState と合わせてください");
+
+/** name に合う EnPlayerState を outId に入れる。知らない名前なら false */
+inline bool ToPlayerState(const std::string& name, EnPlayerState& outId)
+{
+    for (int i = 0; i < static_cast<int>(EnPlayerState::Num); i++)
+    {
+        if (name == PLAYER_STATE_NAMES[i])
+        {
+            outId = static_cast<EnPlayerState>(i);
+            return true;
+        }
+    }
+    return false;
+}
