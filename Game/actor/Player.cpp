@@ -35,26 +35,6 @@ bool Player::Start()
 	return true;
 }
 
-void Player::Move()
-{
-	const Vector3 moveDir = GetMoveDirection();
-
-	//速度に入れる
-	ApproachHorizontal(moveDir * GetSpeedSystem().GetSpeed(), m_param.move.groundAccel);
-
-	//スティックを倒しているときだけ向きを変える（離したときは今の向きを保つ）
-	FaceDirection(moveDir);
-}
-
-void Player::Jump()
-{
-	// = で入れるので、落ちている途中に跳んでも同じ高さだけ上がる
-	SetVerticalSpeed(m_param.jump.speed);
-	m_jumpCount += 1;
-	// 2段目のジャンプでも、踏み切りから流し直す
-	PlayAnimation(EnPlayerAnim::JumpUp, true);
-}
-
 void Player::ChangeState(const EnPlayerState id)
 {
 	m_stateMachine.ChangeState(id);
@@ -217,59 +197,10 @@ void Player::Render(RenderContext& rc)
 	m_gunModel.Draw(rc);
 }
 
-void Player::ResetJumpCount()
+void Player::OnJump()
 {
-	m_jumpCount = 0;
-}
-
-void Player::AddJumpCount()
-{
-	m_jumpCount += 1;
-}
-
-void Player::ConsumeGroundJump()
-{
-	if (m_jumpCount == 0)
-	{
-		m_jumpCount = 1;
-	}
-}
-
-void Player::AirMove()
-{
-	if (!IsMoveInput())
-	{
-		return;
-	}
-
-	const Vector3 moveDir = GetMoveDirection();
-	const Vector3 target = moveDir * GetSpeedSystem().GetSpeed();
-
-	float t = m_param.move.airControl * g_gameTime->GetFrameDeltaTime();
-	if (t > 1.0f)
-	{
-		t = 1.0f;
-	}
-
-	//今の速さを目標の速さに t の割合だけ近づける
-	m_moveSpeed.x += (target.x - m_moveSpeed.x) * t;
-	m_moveSpeed.z += (target.z - m_moveSpeed.z) * t;
-
-	FaceDirection(moveDir);
-}
-
-bool Player::CanStartWallRun() const
-{
-	Vector3 horizontal = GetMoveSpeed();
-	horizontal.y = 0.0f;
-	const float speed = horizontal.Length();
-
-	return IsMoveInput() && speed >= m_param.wallRun.minSpeed && IsCooldownOver(EnCooldown::WallRun);
-}
-
-void Player::Decelerate()
-{
-	ApproachHorizontal(Vector3::Zero, m_param.move.groundDecel);
+	//2段目のジャンプでも、踏み切りから流し直す
+	PlayAnimation(EnPlayerAnim::JumpUp, true);
 }
 
 void Player::UpdateAction()
@@ -289,14 +220,6 @@ void Player::UpdateAction()
 	// 銃口は体の向きから決めるので、先に体を向けてから撃つ
 	FaceAimDirection();
 	GetGun().Update(IsShootPress(), GetSpeedSystem().GetLevel(), GetChestPosition(), m_rotation);
-}
-
-Vector3 Player::GetChestPosition() const
-{
-	Vector3 position = GetPosition();
-	position.y += m_param.body.chestHeight;
-
-	return position;
 }
 
 void Player::FaceAimDirection()

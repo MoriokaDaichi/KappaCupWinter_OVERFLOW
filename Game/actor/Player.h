@@ -16,32 +16,12 @@ public:
 	bool Start();
 
 public:
-	/** スティックの向きに移動し、進む方向に体を向ける */
-	void Move();
-	/** ジャンプする（上向きの速さを入れて、回数を1増やす） */
-	void Jump();
-	/** まだジャンプできるか（跳んだ回数が上限より少ないか） */
-	bool CanJump() const { return m_jumpCount < m_param.jump.maxCount;}
 	/** 状態を切り替える */
 	void ChangeState(const EnPlayerState id);
-	/** ジャンプの回数を 0 に戻す */
-	void ResetJumpCount();
-	/** ジャンプの回数を 1 増やす */
-	void AddJumpCount();
-	/** 地上のジャンプを使ったことにする（まだ跳んでいなければ回数を 1 にする） */
-	void ConsumeGroundJump();
-	/** 空中での移動。スティックの向きへ少しずつ曲がる（離すと勢いのまま） */
-	void AirMove();
-	/** 壁走りを始められるか */
-	bool CanStartWallRun() const;
-	/** 止まるまで減速する（Idle から呼ぶ） */
-	void Decelerate();
 	/** 今の状態を返す（デバッグ画面の表示用） */
 	EnPlayerState GetCurrentState() const { return m_stateMachine.GetCurrentState(); }
 	/** position へ瞬間移動する。速さを 0 にして空中の状態から始める（デバッグ画面・チェックポイント用） */
 	void Warp(const Vector3& position);
-	/** 胸の位置を返す。ロープの手元と、銃口を決める基準に使う */
-	Vector3 GetChestPosition() const;
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -50,6 +30,8 @@ protected:
 	void OnBodyUpdated() override;
 	/** 体と、手に持つ銃を描く */
 	void Render(RenderContext& rc) override;
+	/** ジャンプしたときに呼ばれる（アニメーションなどを流す） */
+	void OnJump() override;
 
 private:
 	/** 構えている間、体をカメラの前向きに向ける */
@@ -91,6 +73,4 @@ private:
 
 	const PlayerParam& m_param = nsGameParam::Get().player;	///< 調整用の値（F5 で読み直すと中身が変わる）
 	const SpeedParam& m_speedParam = nsGameParam::Get().speed;		///< 速度の調整値（speed.json）
-
-	int m_jumpCount = 0;			///< いま何回跳んだか
 };

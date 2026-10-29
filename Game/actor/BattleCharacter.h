@@ -4,6 +4,7 @@
 #include "grapple/Grapple.h"
 #include "weapon/Gun.h"
 #include "speed/SpeedSystem.h"
+#include "param/GameParam.h"
 #include <array>
 
 class IController;
@@ -54,11 +55,36 @@ public:
 	/** 銃を返す（構えているかを見る・撃つ） */
 	Gun& GetGun() { return m_gun; }
 
+//stateが呼ぶ関数
+public:
+	/** スティックの向きに移動し、進む方向に体を向ける */
+	void Move();
+	/** 空中での移動。スティックの向きへ少しずつ曲がる（離すと勢いのまま） */
+	void AirMove();
+	/** 止まるまで減速する（Idle から呼ぶ） */
+	void Decelerate();
+	/** ジャンプする（上向きの速さを入れて、回数を1増やす） */
+	void Jump();
+	/** まだジャンプできるか（跳んだ回数が上限より少ないか） */
+	bool CanJump() const { return m_jumpCount < m_param.jump.maxCount; }
+	/** ジャンプの回数を 0 に戻す */
+	void ResetJumpCount();
+	/** ジャンプの回数を 1 増やす */
+	void AddJumpCount();
+	/** 地上のジャンプを使ったことにする（まだ跳んでいなければ回数を 1 にする） */
+	void ConsumeGroundJump();
+	/** 壁走りを始められるか */
+	bool CanStartWallRun() const;
+	/** 胸の位置を返す。ロープの手元と、銃口を決める基準に使う */
+	Vector3 GetChestPosition() const;
+
 protected:
 	/** コマンドを作り、待ち時間を進める（子クラスの UpdateAction の最初に呼ぶ） */
 	void UpdateCommand();
 	/** 能力を準備する（子クラスの Start で呼ぶ） */
 	void InitAbilities();
+	/** ジャンプしたときに呼ばれる（子クラスがアニメーションなどを流す） */
+	virtual void OnJump() {}
 
 private:
 	/** 待ち時間を進める（0 より下にはしない） */
@@ -74,4 +100,6 @@ private:
 	Grapple m_grapple;															///< グラップルの能力（狙うアンカーの選択とワイヤーの見た目）
 	Gun m_gun;																	///< 銃。RT で弾を撃つ
 	SpeedSystem m_speed;														///< スピードシステム（基礎速度と上乗せ速度をもつ）
+	const PlayerParam& m_param = nsGameParam::Get().player;						///< 調整用の値。仮: ステップ 6 でキャラごとの設定から読む
+	int m_jumpCount = 0;														///< いま何回跳んだか
 };
