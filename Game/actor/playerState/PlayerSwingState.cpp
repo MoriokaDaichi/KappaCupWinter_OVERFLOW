@@ -7,7 +7,7 @@
 
 void PlayerSwingState::Enter()
 {
-	m_owner->GetGrappleWire().SetVisible(true);
+	m_owner->GetGrapple().GetWire().SetVisible(true);
 
 	m_swingAnchor = m_owner->GetLockedAnchor();
 
@@ -64,14 +64,14 @@ void PlayerSwingState::Exit()
 	}
 
 	m_isHooked = false;
-	m_owner->GetGrappleWire().SetVisible(false);
+	m_owner->GetGrapple().GetWire().SetVisible(false);
 }
 
 void PlayerSwingState::Move()
 {
 	// ワイヤーの先を渡す。つかんだ後はどこまでも届く長さにして、手からアンカーまで全部描く
 	const float tipLength = m_isHooked ? WIRE_HOOKED_LENGTH : m_wireTipLength;
-	m_owner->GetGrappleWire().SetTarget(m_swingAnchor->GetPosition(), tipLength);
+	m_owner->GetGrapple().GetWire().SetTarget(m_swingAnchor->GetPosition(), tipLength);
 
 	if (!m_isHooked)
 	{

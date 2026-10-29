@@ -7,12 +7,11 @@
 #include "param/GameParam.h"
 #include "speed/SpeedSystem.h"
 #include "actor/CharacterCommand.h"
-#include "grapple/AnchorLocker.h"
+#include "grapple/Grapple.h"
 #include <array>
 
 class IController;
 class Anchor;
-class GrappleWire;
 
 /** 待ち時間の種類 */
 enum class EnCooldown
@@ -26,7 +25,6 @@ class Player : public Character
 {
 public:
 	Player();
-	~Player();
 	bool Start();
 
 public:
@@ -60,13 +58,13 @@ public:
 	/** 止まるまで減速する（Idle から呼ぶ） */
 	void Decelerate();
 	/** スイングに使うロック中のアンカーを返す */
-	Anchor* GetLockedAnchor() const { return m_anchorLocker.GetLockedAnchor(); }
+	Anchor* GetLockedAnchor() const { return m_grapple.GetLockedAnchor(); }
 	/** グラップルが押されたか */
 	bool IsGrappleTrigger() const;
 	/** グラップルを離したか */
 	bool IsGrappleRelease() const;
 	/** スイングを始められるか（ロック中のアンカーがあるか） */
-	bool CanStartSwing() const {return m_anchorLocker.GetLockedAnchor() != nullptr; }
+	bool CanStartSwing() const {return m_grapple.GetLockedAnchor() != nullptr; }
 	/** 射撃ボタンを押しているか */
 	bool IsShootPress() const;
 	/** エイムボタンを押しているか */
@@ -85,8 +83,8 @@ public:
 	bool IsCooldownOver(const EnCooldown id) const;
 	/** 胸の位置を返す。ロープの手元と、銃口を決める基準に使う */
 	Vector3 GetChestPosition() const;
-	/** ワイヤーの見た目を返す（スイングの State が使う）。仮: ステップ 4 でグラップルの能力にまとめる */
-	GrappleWire& GetGrappleWire() { return *m_grappleWire; }
+	/** グラップルの能力を返す（スイングの State がワイヤーに使う） */
+	Grapple& GetGrapple() { return m_grapple; }
 
 protected:
 	/** プレイヤーの行動（ステートマシンを動かす） */
@@ -126,8 +124,7 @@ private:
 	const IController* m_controller = nullptr;	///< コマンドを作る係（Game が持っている）
 	CharacterCommand m_command;				///< このフレームのコマンド
 	StateMachine<Player, EnPlayerState> m_stateMachine;		///< 状態の切り替え役
-	AnchorLocker m_anchorLocker;			///< グラップルで狙うアンカーを選ぶ
-	GrappleWire* m_grappleWire = nullptr;	///< ワイヤーの見た目。スイング中だけ表示する
+	Grapple m_grapple;						///< グラップルの能力（狙うアンカーの選択とワイヤーの見た目）
 	Gun m_gun;								///< 銃。RT で弾を撃つ
 	GunModel m_gunModel;					///< 右手に持つ銃の見た目
 	SpeedSystem m_speed;					///< スピードシステム（基礎速度と上乗せ速度をもつ）

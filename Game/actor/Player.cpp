@@ -7,16 +7,10 @@
 #include "actor/playerState/PlayerAirState.h"
 #include "actor/playerState/PlayerWallRunState.h"
 #include "actor/playerState/PlayerSwingState.h"
-#include "grapple/GrappleWire.h"
 #include "weapon/BulletManager.h"
 
 Player::Player() : m_stateMachine(this)
 {
-}
-
-Player::~Player()
-{
-	DeleteGO(m_grappleWire);
 }
 
 bool Player::Start()
@@ -38,7 +32,7 @@ bool Player::Start()
 
 	ChangeState(EnPlayerState::Idle);
 
-	m_grappleWire = NewGO<GrappleWire>(0, "grappleWire");
+	m_grapple.Init();
 
 	m_gun.Init(FindGO<BulletManager>("bulletManager"));
 	m_gunModel.Init();
@@ -207,7 +201,7 @@ void Player::UpdateBodyTilt()
 
 void Player::UpdateWireHand()
 {
-	m_grappleWire->SetHandPosition(GetRopeHandPosition());
+	m_grapple.SetHandPosition(GetRopeHandPosition());
 }
 
 void Player::UpdateGunModel()
@@ -336,7 +330,7 @@ void Player::UpdateAction()
 	}
 
 	UpdateCooldown();
-	m_anchorLocker.Update(GetPosition(), GetChestPosition(), m_command.aimOrigin, m_command.aimDirection);
+	m_grapple.UpdateLock(GetPosition(), GetChestPosition(), m_command.aimOrigin, m_command.aimDirection);
 
 	if (IsGrappleTrigger() && CanStartSwing())
 	{

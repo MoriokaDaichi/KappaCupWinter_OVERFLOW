@@ -120,6 +120,9 @@
     <ClCompile Include="grapple\AnchorLocker.cpp">
       <Filter>grapple</Filter>
     </ClCompile>
+    <ClCompile Include="grapple\Grapple.cpp">
+      <Filter>grapple</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -209,6 +212,9 @@
       <Filter>actor</Filter>
     </ClInclude>
     <ClInclude Include="grapple\AnchorLocker.h">
+      <Filter>grapple</Filter>
+    </ClInclude>
+    <ClInclude Include="grapple\Grapple.h">
       <Filter>grapple</Filter>
     </ClInclude>
   </ItemGroup>

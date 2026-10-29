@@ -236,6 +236,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="gimmick\Anchor.cpp" />
     <ClCompile Include="grapple\AnchorLocker.cpp" />
+    <ClCompile Include="grapple\Grapple.cpp" />
     <ClCompile Include="grapple\GrappleWire.cpp" />
     <ClCompile Include="input\InputManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -271,6 +272,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="gimmick\Anchor.h" />
     <ClInclude Include="grapple\AnchorLocker.h" />
+    <ClInclude Include="grapple\Grapple.h" />
     <ClInclude Include="grapple\GrappleWire.h" />
     <ClInclude Include="input\InputManager.h" />
     <ClInclude Include="param\GameParam.h" />
