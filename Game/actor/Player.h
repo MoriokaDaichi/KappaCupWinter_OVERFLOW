@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "actor/Character.h"
+#include "actor/BattleCharacter.h"
 #include "state/StateMachine.h"
 #include "actor/playerState/PlayerState.h"
 #include "weapon/Gun.h"
@@ -10,37 +10,22 @@
 #include "grapple/Grapple.h"
 #include <array>
 
-class IController;
 class Anchor;
 
-/** 待ち時間の種類 */
-enum class EnCooldown
-{
-	WallRun,		///< 壁走り：離れてから、もう一度張り付けるまで
-	Num				///< 種類の数（いちばん最後に置く）
-};
-
 /** プレイヤー。移動・ジャンプ・射撃などを行う */
-class Player : public Character
+class Player : public BattleCharacter
 {
 public:
 	Player();
 	bool Start();
 
 public:
-	/** コマンドを作る係を設定する */
-	void SetController(const IController* controller) { m_controller = controller; }
-
 	/** スティックの向きに移動し、進む方向に体を向ける */
 	void Move();
 	/** ジャンプする（上向きの速さを入れて、回数を1増やす） */
 	void Jump();
 	/** まだジャンプできるか（跳んだ回数が上限より少ないか） */
 	bool CanJump() const { return m_jumpCount < m_param.jump.maxCount;}
-	/** ジャンプが押されたか */
-	bool IsJumpTrigger() const;
-	/** スティックが倒れているか */
-	bool IsMoveInput() const;
 	/** 状態を切り替える */
 	void ChangeState(const EnPlayerState id);
 	/** ジャンプの回数を 0 に戻す */
@@ -51,24 +36,14 @@ public:
 	void ConsumeGroundJump();
 	/** 空中での移動。スティックの向きへ少しずつ曲がる（離すと勢いのまま） */
 	void AirMove();
-	/** スティックとカメラから進行方向を決める */
-	Vector3 GetMoveDirection() const;
 	/** 壁走りを始められるか */
 	bool CanStartWallRun() const;
 	/** 止まるまで減速する（Idle から呼ぶ） */
 	void Decelerate();
 	/** スイングに使うロック中のアンカーを返す */
 	Anchor* GetLockedAnchor() const { return m_grapple.GetLockedAnchor(); }
-	/** グラップルが押されたか */
-	bool IsGrappleTrigger() const;
-	/** グラップルを離したか */
-	bool IsGrappleRelease() const;
 	/** スイングを始められるか（ロック中のアンカーがあるか） */
 	bool CanStartSwing() const {return m_grapple.GetLockedAnchor() != nullptr; }
-	/** 射撃ボタンを押しているか */
-	bool IsShootPress() const;
-	/** エイムボタンを押しているか */
-	bool IsAimPress() const;
 	/** 速度を返す（HUD やデバッグ表示で読む） */
 	const SpeedSystem& GetSpeedSystem() const { return m_speed; }
 	/** 速度を返す（書き換えられる。デバッグ画面用） */
@@ -77,10 +52,6 @@ public:
 	EnPlayerState GetCurrentState() const { return m_stateMachine.GetCurrentState(); }
 	/** position へ瞬間移動する。速さを 0 にして空中の状態から始める（デバッグ画面・チェックポイント用） */
 	void Warp(const Vector3& position);
-	/** クールダウンのカウントをはじめる。（seconds 秒たつまで使えなくする） */
-	void StartCooldown(const EnCooldown id, const float seconds);
-	/** クールダウン時間を超えたかどうか */
-	bool IsCooldownOver(const EnCooldown id) const;
 	/** 胸の位置を返す。ロープの手元と、銃口を決める基準に使う */
 	Vector3 GetChestPosition() const;
 	/** グラップルの能力を返す（スイングの State がワイヤーに使う） */
@@ -117,12 +88,8 @@ private:
 	void UpdateWireHand();
 	/** 銃の見た目を右手に持たせる（握る位置は、手首と中指の付け根の間＝手のひら） */
 	void UpdateGunModel();
-	/** クールダウンを更新する */
-	void UpdateCooldown();
 
 private:
-	const IController* m_controller = nullptr;	///< コマンドを作る係（Game が持っている）
-	CharacterCommand m_command;				///< このフレームのコマンド
 	StateMachine<Player, EnPlayerState> m_stateMachine;		///< 状態の切り替え役
 	Grapple m_grapple;						///< グラップルの能力（狙うアンカーの選択とワイヤーの見た目）
 	Gun m_gun;								///< 銃。RT で弾を撃つ
@@ -136,14 +103,11 @@ private:
 	int m_rightMiddleBoneId = -1;			///< 右手の中指の付け根の骨の番号（銃を握る位置に使う）
 
 	// 調整する値は Assets/param/player.json（意味は param/GameParam.h の PlayerParam）。ここには計算のための値だけ置く
-	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;	///< スティックを倒したとみなす境目（長さの2乗）
 	static constexpr float ANIM_INTERPOLATE_TIME = 0.2f;	///< アニメーションを切り替えるときに、前のものとなめらかにつなぐ時間（秒）。調整は遷移のタスクで JSON に出す
-	static constexpr int COOLDOWN_NUM = static_cast<int>(EnCooldown::Num);		///< 待ち時間の種類の数
 	static constexpr float START_HEIGHT = 300.0f;			///< 始めるときに置く高さ（床の少し上から落とす）
 
 	const PlayerParam& m_param = nsGameParam::Get().player;	///< 調整用の値（F5 で読み直すと中身が変わる）
 	const SpeedParam& m_speedParam = nsGameParam::Get().speed;		///< 速度の調整値（speed.json）
 
 	int m_jumpCount = 0;			///< いま何回跳んだか
-	std::array<float, COOLDOWN_NUM> m_cooldownTimers = {};		///< 待ち時間の残り（秒）
 };

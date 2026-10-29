@@ -123,6 +123,9 @@
     <ClCompile Include="grapple\Grapple.cpp">
       <Filter>grapple</Filter>
     </ClCompile>
+    <ClCompile Include="actor\BattleCharacter.cpp">
+      <Filter>actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -216,6 +219,9 @@
     </ClInclude>
     <ClInclude Include="grapple\Grapple.h">
       <Filter>grapple</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\BattleCharacter.h">
+      <Filter>actor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

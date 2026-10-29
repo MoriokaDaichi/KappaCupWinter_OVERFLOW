@@ -223,6 +223,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="actor\BattleCharacter.cpp" />
     <ClCompile Include="actor\Character.cpp" />
     <ClCompile Include="actor\Player.cpp" />
     <ClCompile Include="actor\playerState\PlayerAirState.cpp" />
@@ -255,6 +256,7 @@
     <ClCompile Include="weapon\GunModel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="actor\BattleCharacter.h" />
     <ClInclude Include="actor\Character.h" />
     <ClInclude Include="actor\CharacterCommand.h" />
     <ClInclude Include="actor\Player.h" />

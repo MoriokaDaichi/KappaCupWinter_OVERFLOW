@@ -1,7 +1,6 @@
 ﻿#include "stdafx.h"
 #include "actor/Player.h"
 
-#include "controller/IController.h"
 #include "actor/playerState/PlayerIdleState.h"
 #include "actor/playerState/PlayerRunState.h"
 #include "actor/playerState/PlayerAirState.h"
@@ -58,16 +57,6 @@ void Player::Jump()
 	m_jumpCount += 1;
 	// 2段目のジャンプでも、踏み切りから流し直す
 	PlayAnimation(EnPlayerAnim::JumpUp, true);
-}
-
-bool Player::IsJumpTrigger() const
-{
-	return m_command.jumpTrigger;
-}
-
-bool Player::IsMoveInput() const
-{
-	return m_command.moveDir.LengthSq() > MOVE_INPUT_THRESHOLD;
 }
 
 void Player::ChangeState(const EnPlayerState id)
@@ -273,11 +262,6 @@ void Player::AirMove()
 	FaceDirection(moveDir);
 }
 
-Vector3 Player::GetMoveDirection() const
-{
-	return m_command.moveDir;
-}
-
 bool Player::CanStartWallRun() const
 {
 	Vector3 horizontal = GetMoveSpeed();
@@ -292,45 +276,10 @@ void Player::Decelerate()
 	ApproachHorizontal(Vector3::Zero, m_param.move.groundDecel);
 }
 
-bool Player::IsGrappleTrigger() const
-{
-	return m_command.grappleTrigger;
-}
-
-bool Player::IsGrappleRelease() const
-{
-	return m_command.grappleRelease;
-}
-
-bool Player::IsShootPress() const
-{
-	return m_command.shootPress;
-}
-
-bool Player::IsAimPress() const
-{
-	return m_command.aimPress;
-}
-
-void Player::StartCooldown(const EnCooldown id, const float seconds)
-{
-	m_cooldownTimers[static_cast<int>(id)] = seconds;
-}
-
-bool Player::IsCooldownOver(const EnCooldown id) const
-{
-	return m_cooldownTimers[static_cast<int>(id)] <= 0.0f;
-}
-
 void Player::UpdateAction()
 {
-	if (m_controller != nullptr)
-	{
-		m_controller->MakeCommand(m_command);
-	}
-
-	UpdateCooldown();
-	m_grapple.UpdateLock(GetPosition(), GetChestPosition(), m_command.aimOrigin, m_command.aimDirection);
+	UpdateCommand();
+	m_grapple.UpdateLock(GetPosition(), GetChestPosition(), GetCommand().aimOrigin, GetCommand().aimDirection);
 
 	if (IsGrappleTrigger() && CanStartSwing())
 	{
@@ -363,7 +312,7 @@ void Player::FaceAimDirection()
 		return;
 	}
 
-	FaceDirection(m_command.aimDirection);
+	FaceDirection(GetCommand().aimDirection);
 }
 
 void Player::UpdateSpeedBonus()
@@ -390,16 +339,4 @@ void Player::Warp(const Vector3& position)
 	SetMoveSpeed(Vector3::Zero);
 	ChangeState(EnPlayerState::Air);
 	m_charaCon.SetPosition(position);
-}
-
-void Player::UpdateCooldown()
-{
-	for (float& timer : m_cooldownTimers)
-	{
-		timer -= g_gameTime->GetFrameDeltaTime();
-		if (timer < 0.0f)
-		{
-			timer = 0.0f;
-		}
-	}
 }
