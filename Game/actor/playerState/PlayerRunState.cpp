@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "actor/playerState/PlayerRunState.h"
 
-#include "actor/Player.h"
+#include "actor/BattleCharacter.h"
 
 void PlayerRunState::Enter()
 {

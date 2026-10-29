@@ -12,14 +12,9 @@ class Anchor;
 class Player : public BattleCharacter
 {
 public:
-	Player();
 	bool Start();
 
 public:
-	/** 状態を切り替える */
-	void ChangeState(const EnPlayerState id);
-	/** 今の状態を返す（デバッグ画面の表示用） */
-	EnPlayerState GetCurrentState() const { return m_stateMachine.GetCurrentState(); }
 	/** position へ瞬間移動する。速さを 0 にして空中の状態から始める（デバッグ画面・チェックポイント用） */
 	void Warp(const Vector3& position);
 
@@ -32,6 +27,8 @@ protected:
 	void Render(RenderContext& rc) override;
 	/** ジャンプしたときに呼ばれる（アニメーションなどを流す） */
 	void OnJump() override;
+	/** 状態が切り替わったときに呼ばれる（アニメーションなどを切り替える） */
+	void OnStateChanged(const EnPlayerState id) override;
 
 private:
 	/** 構えている間、体をカメラの前向きに向ける */
@@ -58,7 +55,6 @@ private:
 	void UpdateGunModel();
 
 private:
-	StateMachine<Player, EnPlayerState> m_stateMachine;		///< 状態の切り替え役
 	GunModel m_gunModel;					///< 右手に持つ銃の見た目
 	std::array<AnimationClip, static_cast<int>(EnPlayerAnim::Num)> m_animClips;	///< アニメーション（ModelRender が借りるので、ここで持つ）
 	EnPlayerAnim m_currentAnim = EnPlayerAnim::Num;	///< 今流しているアニメーション（Num はまだ流していない）

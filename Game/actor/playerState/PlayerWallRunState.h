@@ -2,13 +2,13 @@
 #include "state/IState.h"
 #include "param/GameParam.h"
 
-class Player;
+class BattleCharacter;
 
 /** 壁を走っている状態。壁ジャンプ・着地・壁がなくなるで Air / Run に切り替える */
-class PlayerWallRunState : public IState<Player>
+class PlayerWallRunState : public IState<BattleCharacter>
 {
 public:
-	explicit PlayerWallRunState(Player* player) : IState<Player>(player) {}
+	explicit PlayerWallRunState(BattleCharacter* owner) : IState<BattleCharacter>(owner) {}
 
 	/** 壁走りの準備（落ちる速さを消す・重力を弱める・ジャンプの回数を戻す） */
 	void Enter() override;
@@ -18,7 +18,7 @@ public:
 	void Exit() override;
 
 	/** 左右にレイを飛ばして壁を探す。見つかったら outNormal に壁の向きを入れて true を返す */
-	static bool FindWall(const Player& owner, Vector3& outNormal);
+	static bool FindWall(const BattleCharacter& owner, Vector3& outNormal);
 
 private:
 	/** 壁に沿って走る。時間内は落ちず、過ぎたらずり落ちる */

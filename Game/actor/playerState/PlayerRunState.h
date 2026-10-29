@@ -1,13 +1,13 @@
 ﻿#pragma once
 #include "state/IState.h"
 
-class Player;
+class BattleCharacter;
 
 /**	走っている状態。入力や接地を見て Air / Idle を切り替える */
-class PlayerRunState : public IState<Player>
+class PlayerRunState : public IState<BattleCharacter>
 {
 public:
-	explicit PlayerRunState(Player* player) : IState<Player>(player) {}
+	explicit PlayerRunState(BattleCharacter* owner) : IState<BattleCharacter>(owner) {}
 
 	/** ジャンプの回数を戻す */
 	void Enter() override;

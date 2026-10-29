@@ -1,16 +1,6 @@
 ﻿#include "stdafx.h"
 #include "actor/Player.h"
 
-#include "actor/playerState/PlayerIdleState.h"
-#include "actor/playerState/PlayerRunState.h"
-#include "actor/playerState/PlayerAirState.h"
-#include "actor/playerState/PlayerWallRunState.h"
-#include "actor/playerState/PlayerSwingState.h"
-
-Player::Player() : m_stateMachine(this)
-{
-}
-
 bool Player::Start()
 {
 	LoadAnimation();
@@ -20,25 +10,13 @@ bool Player::Start()
 	m_rightHandBoneId = m_modelRender.FindBoneID(L"mixamorig:RightHand");
 	m_rightMiddleBoneId = m_modelRender.FindBoneID(L"mixamorig:RightHandMiddle1");
 
-	m_stateMachine.AddState<PlayerIdleState>(EnPlayerState::Idle);
-	m_stateMachine.AddState<PlayerRunState>(EnPlayerState::Run);
-	m_stateMachine.AddState<PlayerAirState>(EnPlayerState::Air);
-	m_stateMachine.AddState<PlayerWallRunState>(EnPlayerState::WallRun);
-	m_stateMachine.AddState<PlayerSwingState>(EnPlayerState::Swing);
-
-	ChangeState(EnPlayerState::Idle);
+	InitState();
 
 	InitAbilities();
 
 	m_gunModel.Init();
 
 	return true;
-}
-
-void Player::ChangeState(const EnPlayerState id)
-{
-	m_stateMachine.ChangeState(id);
-	PlayStateAnimation(id);
 }
 
 void Player::LoadAnimation()
@@ -203,6 +181,11 @@ void Player::OnJump()
 	PlayAnimation(EnPlayerAnim::JumpUp, true);
 }
 
+void Player::OnStateChanged(const EnPlayerState id)
+{
+	PlayStateAnimation(id);
+}
+
 void Player::UpdateAction()
 {
 	UpdateCommand();
@@ -213,7 +196,7 @@ void Player::UpdateAction()
 		ChangeState(EnPlayerState::Swing);
 	}
 
-	m_stateMachine.Update();
+	UpdateState();
 	UpdateBodyTilt();
 	UpdateAnimation();
 	UpdateSpeedBonus();
@@ -226,7 +209,7 @@ void Player::FaceAimDirection()
 {
 	// 押した最初のフレームは、まだ Gun の構えのタイマーが入っていないので、ボタンも見る
 	const bool isAiming = IsShootPress() || GetGun().IsAiming() || IsAimPress();
-	if (!isAiming || m_stateMachine.IsCurrentState(EnPlayerState::WallRun))
+	if (!isAiming || GetCurrentState() == EnPlayerState::WallRun)
 	{
 		return;
 	}
@@ -236,7 +219,7 @@ void Player::FaceAimDirection()
 
 void Player::UpdateSpeedBonus()
 {
-	switch (m_stateMachine.GetCurrentState())
+	switch (GetCurrentState())
 	{
 	case EnPlayerState::WallRun:
 		GetSpeedSystem().AddBonusPerSecond(m_speedParam.wallRunGain);

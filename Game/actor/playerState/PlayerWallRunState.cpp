@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "actor/playerState/PlayerWallRunState.h"
 
-#include "actor/Player.h"
+#include "actor/BattleCharacter.h"
 #include "collision/RayCast.h"
 
 void PlayerWallRunState::Enter()
@@ -44,7 +44,7 @@ void PlayerWallRunState::Exit()
 	m_owner->StartCooldown(EnCooldown::WallRun, m_param.reattachTime);
 }
 
-bool PlayerWallRunState::FindWall(const Player& owner, Vector3& outNormal)
+bool PlayerWallRunState::FindWall(const BattleCharacter& owner, Vector3& outNormal)
 {
 	const PlayerParam& param = nsGameParam::Get().player;
 

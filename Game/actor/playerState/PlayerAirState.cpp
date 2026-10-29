@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "actor/playerState/PlayerAirState.h"
 
-#include "actor/Player.h"
+#include "actor/BattleCharacter.h"
 #include "actor/playerState/PlayerWallRunState.h"
 
 void PlayerAirState::Enter()

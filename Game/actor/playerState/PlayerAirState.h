@@ -1,13 +1,13 @@
 ﻿#pragma once
 #include "state/IState.h"
 
-class Player;
+class BattleCharacter;
 
 /** 空中にいる状態。入力や接地を見て Run / Idle / WallRun に切り替える */
-class PlayerAirState : public IState<Player>
+class PlayerAirState : public IState<BattleCharacter>
 {
 public:
-	explicit PlayerAirState(Player* player) : IState<Player>(player) {}
+	explicit PlayerAirState(BattleCharacter* owner) : IState<BattleCharacter>(owner) {}
 
 	/** 足場から落ちてきたときは、地上のジャンプを使ったことにする */
 	void Enter() override;

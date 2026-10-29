@@ -3,14 +3,14 @@
 #include "param/GameParam.h"
 #include <limits>
 
-class Player;
+class BattleCharacter;
 class Anchor;
 
 /** アンカーにぶら下がって振り子のように動いている状態 */
-class PlayerSwingState : public IState<Player>
+class PlayerSwingState : public IState<BattleCharacter>
 {
 public:
-	explicit PlayerSwingState(Player* player) : IState<Player>(player) {}
+	explicit PlayerSwingState(BattleCharacter* owner) : IState<BattleCharacter>(owner) {}
 
 	/** スイングの準備（アンカーを覚えてワイヤーを飛ばし始める・ジャンプの回数を戻す） */
 	void Enter() override;

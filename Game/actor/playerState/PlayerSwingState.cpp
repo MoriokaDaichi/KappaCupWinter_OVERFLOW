@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "actor/playerState/PlayerSwingState.h"
 
-#include "actor/Player.h"
+#include "actor/BattleCharacter.h"
 #include "gimmick/Anchor.h"
 #include "grapple/GrappleWire.h"
 

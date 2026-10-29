@@ -1,7 +1,17 @@
 ﻿#include "stdafx.h"
 #include "actor/BattleCharacter.h"
+
 #include "controller/IController.h"
 #include "weapon/BulletManager.h"
+#include "actor/playerState/PlayerIdleState.h"
+#include "actor/playerState/PlayerRunState.h"
+#include "actor/playerState/PlayerAirState.h"
+#include "actor/playerState/PlayerWallRunState.h"
+#include "actor/playerState/PlayerSwingState.h"
+
+BattleCharacter::BattleCharacter() : m_stateMachine(this)
+{
+}
 
 bool BattleCharacter::IsJumpTrigger() const
 {
@@ -129,6 +139,28 @@ Vector3 BattleCharacter::GetChestPosition() const
 	position.y += m_param.body.chestHeight;
 
 	return position;
+}
+
+void BattleCharacter::ChangeState(const EnPlayerState id)
+{
+	m_stateMachine.ChangeState(id);
+	OnStateChanged(id);
+}
+
+void BattleCharacter::InitState()
+{
+	m_stateMachine.AddState<PlayerIdleState>(EnPlayerState::Idle);
+	m_stateMachine.AddState<PlayerRunState>(EnPlayerState::Run);
+	m_stateMachine.AddState<PlayerAirState>(EnPlayerState::Air);
+	m_stateMachine.AddState<PlayerWallRunState>(EnPlayerState::WallRun);
+	m_stateMachine.AddState<PlayerSwingState>(EnPlayerState::Swing);
+
+	ChangeState(EnPlayerState::Idle);
+}
+
+void BattleCharacter::UpdateState()
+{
+	m_stateMachine.Update();
 }
 
 void BattleCharacter::UpdateCommand()

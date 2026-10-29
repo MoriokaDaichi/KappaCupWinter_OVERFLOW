@@ -5,6 +5,8 @@
 #include "weapon/Gun.h"
 #include "speed/SpeedSystem.h"
 #include "param/GameParam.h"
+#include "state/StateMachine.h"
+#include "actor/playerState/PlayerState.h"
 #include <array>
 
 class IController;
@@ -19,6 +21,9 @@ enum class EnCooldown
 /** 戦うキャラの土台。コマンド・待ち時間・能力を持つ（プレイヤーも敵も同じ） */
 class BattleCharacter : public Character
 {
+public:
+	BattleCharacter();
+
 public:
 	/** コマンドを作る係を設定する */
 	void SetController(const IController* controller) { m_controller = controller; }
@@ -78,6 +83,12 @@ public:
 	/** 胸の位置を返す。ロープの手元と、銃口を決める基準に使う */
 	Vector3 GetChestPosition() const;
 
+public:
+	/** 状態を切り替える */
+	void ChangeState(const EnPlayerState id);
+	/** 今の状態を返す（デバッグ画面の表示用） */
+	EnPlayerState GetCurrentState() const { return m_stateMachine.GetCurrentState(); }
+
 protected:
 	/** コマンドを作り、待ち時間を進める（子クラスの UpdateAction の最初に呼ぶ） */
 	void UpdateCommand();
@@ -85,6 +96,12 @@ protected:
 	void InitAbilities();
 	/** ジャンプしたときに呼ばれる（子クラスがアニメーションなどを流す） */
 	virtual void OnJump() {}
+	/** 状態が切り替わったときに呼ばれる（子クラスがアニメーションなどを切り替える） */
+	virtual void OnStateChanged(const EnPlayerState id) {}
+	/** State を作って登録し、Idle から始める（子クラスの Start で呼ぶ）。仮: ステップ 6 で JSON の一覧から作る */
+	void InitState();
+	/** 今の State を動かす（仮: 4-3c-3 で更新の順番ごと BattleCharacter に移す） */
+	void UpdateState();
 
 private:
 	/** 待ち時間を進める（0 より下にはしない） */
@@ -102,4 +119,5 @@ private:
 	SpeedSystem m_speed;														///< スピードシステム（基礎速度と上乗せ速度をもつ）
 	const PlayerParam& m_param = nsGameParam::Get().player;						///< 調整用の値。仮: ステップ 6 でキャラごとの設定から読む
 	int m_jumpCount = 0;														///< いま何回跳んだか
+	StateMachine<BattleCharacter, EnPlayerState> m_stateMachine;				///< 状態の切り替え役
 };
