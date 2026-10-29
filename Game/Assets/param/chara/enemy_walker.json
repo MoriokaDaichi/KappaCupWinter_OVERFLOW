@@ -19,39 +19,5 @@
     "maxCount": 1,
     "fastFallAnimSpeed": 900.0,
     "landAnimMinSpeed": 500.0
-  },
-  "wallRun": {
-    "checkLength": 50.0,
-    "normalYLimit": 0.3,
-    "speed": 600.0,
-    "minSpeed": 200.0,
-    "gravityScale": 0.15,
-    "stickSpeed": 50.0,
-    "maxTime": 2.0,
-    "jumpSpeedUp": 600.0,
-    "jumpSpeedOut": 400.0,
-    "reattachTime": 0.3,
-    "tiltAngle": 30.0
-  },
-  "lock": {
-    "maxDistance": 3000.0,
-    "maxAngle": 30.0,
-    "angleWeight": 0.7,
-    "distanceWeight": 0.3,
-    "keepBonus": 0.1
-  },
-  "swing": {
-    "wireShootSpeed": 8000.0,
-    "startLift": 100.0,
-    "pullRate": 5.0,
-    "reelSpeed": 1000.0,
-    "minRopeLength": 300.0,
-    "reelEase": 3.0,
-    "pumpAccel": 800.0,
-    "faceMinSpeed": 50.0,
-    "maxSpeed": 2000.0,
-    "releaseBoost": 300.0,
-    "releaseLift": 200.0,
-    "releaseMinSpeed": 300.0
   }
 }

@@ -19,7 +19,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::WallRun, checkLength, normalY
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Lock, maxDistance, maxAngle, angleWeight, distanceWeight, keepBonus)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Swing, wireShootSpeed, startLift, pullRate, reelSpeed, minRopeLength,
 	reelEase, pumpAccel, faceMinSpeed, maxSpeed, releaseBoost, releaseLift, releaseMinSpeed)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam, model, abilities, states, body, move, jump, wallRun, lock, swing)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraParam, distance, targetHeight, rotateSpeedX, rotateSpeedY, pitchMin, pitchMax,
 	viewAngleNormal, viewAngleMax, viewAngleLerpRate, maxSpeedForFov, collisionRadius, nearClip, farClip, shoulderOffset,
 	aimDistance, aimShoulderOffset, aimViewAngleDown, aimRotateScale, aimTransitionTime)
@@ -31,6 +30,41 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam, range, bulletLifeTime, aimHoldTime,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpeedParam, baseMin, baseMax, bonusMax, groundDecay, idleDecay, wallRunGain, levelUpSpeeds, maxSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam::WarpPoint, name, position)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam, warpPoints)
+
+namespace
+{
+	/** 一覧に name があるかを調べる */
+	bool Contains(const std::vector<std::string>& list, const char* name)
+	{
+		return std::find(list.begin(), list.end(), name) != list.end();
+	}
+}
+
+/** wallRun・lock・swing は、使うキャラ（states・abilities に書いたもの）だけ必ず読む */
+void from_json(const nlohmann::json& j, CharacterParam& param)
+{
+	j.at("model").get_to(param.model);
+	j.at("abilities").get_to(param.abilities);
+	j.at("states").get_to(param.states);
+	j.at("body").get_to(param.body);
+	j.at("move").get_to(param.move);
+	j.at("jump").get_to(param.jump);
+
+	if (Contains(param.states, "WallRun"))
+	{
+		j.at("wallRun").get_to(param.wallRun);
+	}
+
+	if (Contains(param.abilities, "Grapple"))
+	{
+		j.at("lock").get_to(param.lock);
+	}
+
+	if (Contains(param.states, "Swing"))
+	{
+		j.at("swing").get_to(param.swing);
+	}
+}
 
 namespace
 {
@@ -48,12 +82,6 @@ namespace
 				throw std::runtime_error(std::string(path) + "\nunknown ability: " + name);
 			}
 		}
-	}
-
-	/** 一覧に name があるかを調べる */
-	bool Contains(const std::vector<std::string>& list, const char* name)
-	{
-		return std::find(list.begin(), list.end(), name) != list.end();
 	}
 
 	/**
