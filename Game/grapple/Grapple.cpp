@@ -3,6 +3,11 @@
 
 #include "grapple/GrappleWire.h"
 
+Grapple::Grapple(const CharacterParam::Lock& lockParam)
+	: m_locker(lockParam)
+{
+}
+
 Grapple::~Grapple()
 {
 	DeleteGO(m_wire);

@@ -23,7 +23,10 @@ void AIController::MakeCommand(CharacterCommand& command) const
 		command.moveDir = toTarget;
 	}
 
-	// 狙いはまだ使わない。向きを 0 にしておくと、アンカーをロックしない（ロック中の印はアンカーが持つので、プレイヤーの印を消さないように）
+	// 狙いは相手の方（足元から足元）。撃つのは敵のタスクで足す
+	Vector3 toTargetAim = m_target->GetPosition() - m_owner->GetPosition();
+	toTargetAim.Normalize();
+
 	command.aimOrigin = m_owner->GetPosition();
-	command.aimDirection = Vector3::Zero;
+	command.aimDirection = toTargetAim;
 }

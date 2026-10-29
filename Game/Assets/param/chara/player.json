@@ -1,5 +1,6 @@
 {
   "model": "Assets/modelData/player/medea.tkm",
+  "abilities": [ "Grapple", "Gun" ],
 
   "body": {
     "radius": 30.0,

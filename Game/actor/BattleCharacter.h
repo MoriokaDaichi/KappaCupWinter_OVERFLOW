@@ -8,6 +8,7 @@
 #include "state/StateMachine.h"
 #include "actor/playerState/PlayerState.h"
 #include <array>
+#include <memory>
 
 class IController;
 
@@ -57,14 +58,18 @@ public:
 	const SpeedSystem& GetSpeedSystem() const { return m_speed; }
 	/** 速度を返す（書き換えられる。デバッグ画面用） */
 	SpeedSystem& GetSpeedSystem() { return m_speed; }
-	/** グラップルの能力を返す（スイングの State がワイヤーに使う） */
-	Grapple& GetGrapple() { return m_grapple; }
-	/** スイングに使うロック中のアンカーを返す */
-	Anchor* GetLockedAnchor() const { return m_grapple.GetLockedAnchor(); }
-	/** スイングを始められるか（ロック中のアンカーがあるか） */
-	bool CanStartSwing() const { return m_grapple.GetLockedAnchor() != nullptr; }
-	/** 銃を返す（構えているかを見る・撃つ） */
-	Gun& GetGun() { return m_gun; }
+	/** グラップルを持っているか */
+	bool HasGrapple() const { return m_grapple != nullptr; }
+	/** グラップルの能力を返す（持っているときだけ呼ぶ） */
+	Grapple& GetGrapple() { return *m_grapple; }
+	/** ロック中のアンカーを返す。グラップルがない・候補がないときは nullptr */
+	Anchor* GetLockedAnchor() const { return m_grapple ? m_grapple->GetLockedAnchor() : nullptr; }
+	/** スイングを始められるか */
+	bool CanStartSwing() const { return GetLockedAnchor() != nullptr; }
+	/** 銃を持っているか */
+	bool HasGun() const { return m_gun != nullptr; }
+	/** 銃を返す（持っているときだけ呼ぶ） */
+	Gun& GetGun() { return *m_gun; }
 
 //stateが呼ぶ関数
 public:
@@ -120,6 +125,8 @@ private:
 	void FaceAimDirection();
 	/** 今の状態に合わせて、上乗せの速さを増やす・減らす（壁走りで増え、地上で減る） */
 	void UpdateSpeedBonus();
+	/** 設定の abilities に name があるか */
+	bool HasAbility(const char* name) const;
 
 private:
 	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;						///< スティックを倒したとみなす境目（長さの2乗）
@@ -128,11 +135,11 @@ private:
 	const IController* m_controller = nullptr;									///< コマンドを作る係（Game が持っている）
 	CharacterCommand m_command;													///< このフレームのコマンド
 	std::array<float, COOLDOWN_NUM> m_cooldownTimers = {};						///< 待ち時間の残り（秒）
-	Grapple m_grapple;															///< グラップルの能力（狙うアンカーの選択とワイヤーの見た目）
-	Gun m_gun;																	///< 銃。RT で弾を撃つ
 	SpeedSystem m_speed;														///< スピードシステム（基礎速度と上乗せ速度をもつ）
 	const CharacterParam* m_param = nullptr;									///< このキャラの設定（nsGameParam が持っているものを借りる。SetParam で受け取る）
 	const SpeedParam& m_speedParam = nsGameParam::Get().speed;					///< 速度の調整値（speed.json）
 	int m_jumpCount = 0;														///< いま何回跳んだか
 	StateMachine<BattleCharacter, EnPlayerState> m_stateMachine;				///< 状態の切り替え役
+	std::unique_ptr<Grapple> m_grapple;											///< グラップルの能力（abilities に "Grapple" があるときだけ作る）
+	std::unique_ptr<Gun> m_gun;													///< 銃（abilities に "Gun" があるときだけ作る）
 };

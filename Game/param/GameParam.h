@@ -76,6 +76,7 @@ struct CharacterParam
 	};
 
 	std::string model;		///< モデルのファイル名（.tkm）
+	std::vector<std::string> abilities;		///< 持つ能力の名前（"Grapple"・"Gun"）。書いていない能力は作らない
 	Body body;
 	Move move;
 	Jump jump;

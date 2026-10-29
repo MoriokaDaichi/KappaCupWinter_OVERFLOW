@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <string>
+#include <algorithm>
 
 // キーが足りないときのエラーに「どのグループの」キーかも出す（例: (/swing) key 'maxSpeed' not found）
 #define JSON_DIAGNOSTICS 1
@@ -17,7 +18,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::WallRun, checkLength, normalY
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Lock, maxDistance, maxAngle, angleWeight, distanceWeight, keepBonus)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Swing, wireShootSpeed, startLift, pullRate, reelSpeed, minRopeLength,
 	reelEase, pumpAccel, faceMinSpeed, maxSpeed, releaseBoost, releaseLift, releaseMinSpeed)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam, model, body, move, jump, wallRun, lock, swing)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam, model, abilities, body, move, jump, wallRun, lock, swing)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraParam, distance, targetHeight, rotateSpeedX, rotateSpeedY, pitchMin, pitchMax,
 	viewAngleNormal, viewAngleMax, viewAngleLerpRate, maxSpeedForFov, collisionRadius, nearClip, farClip, shoulderOffset,
 	aimDistance, aimShoulderOffset, aimViewAngleDown, aimRotateScale, aimTransitionTime)
@@ -33,6 +34,20 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam, warpPoints)
 namespace
 {
 	GameParam s_param;		///< 読んだ値。Get で返す
+
+	/** 能力の名前が知っているものかを調べる。知らない名前なら、ファイル名つきで例外を投げる */
+	void CheckAbilities(const char* path, const CharacterParam& param)
+	{
+		static const std::array<const char*, 2> KNOWN_ABILITIES = { "Grapple", "Gun" };
+
+		for (const std::string& name : param.abilities)
+		{
+			if (std::find(KNOWN_ABILITIES.begin(), KNOWN_ABILITIES.end(), name) == KNOWN_ABILITIES.end())
+			{
+				throw std::runtime_error(std::string(path) + "\nunknown ability: " + name);
+			}
+		}
+	}
 
 	/** path の JSON を読んで out に入れる。失敗したら、ファイル名を付けた例外を投げる */
 	template <class T>
@@ -66,6 +81,9 @@ namespace
 		ReadFile("Assets/param/gun.json", out.gun);
 		ReadFile("Assets/param/speed.json", out.speed);
 		ReadFile("Assets/param/debug.json", out.debug);
+
+		CheckAbilities("Assets/param/chara/player.json", out.player);
+		CheckAbilities("Assets/param/chara/enemy_walker.json", out.enemyWalker);
 
 		const size_t speedLevelCount = out.speed.levelUpSpeeds.size() + 1;
 		const size_t gunLevelCount = out.gun.levels.size();

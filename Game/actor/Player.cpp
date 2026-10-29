@@ -144,6 +144,10 @@ void Player::UpdateBodyTilt()
 
 void Player::UpdateWireHand()
 {
+	if (!HasGrapple())
+	{
+		return;
+	}
 	GetGrapple().SetHandPosition(GetRopeHandPosition());
 }
 

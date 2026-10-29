@@ -7,6 +7,9 @@ class Anchor;
 class AnchorLocker
 {
 public:
+	/** 調整用の値（ロックの分）を受け取る。持ち主の設定のものを借りる */
+	explicit AnchorLocker(const CharacterParam::Lock& param) : m_param(param) {}
+
 	/**
 	 * 毎フレーム、一番点の高いアンカーを選んでロックする
 	 * position: キャラの足元（距離を測る）
@@ -23,5 +26,5 @@ private:
 
 private:
 	Anchor* m_lockedAnchor = nullptr;		///< ロック中のアンカー（借りているだけ）
-	const CharacterParam::Lock& m_param = nsGameParam::Get().player.lock;		///< 調整用の値のうち、ロックの分（Assets/param/player.json）
+	const CharacterParam::Lock& m_param;	///< 調整用の値のうち、ロックの分（持ち主の設定から受け取る）
 };

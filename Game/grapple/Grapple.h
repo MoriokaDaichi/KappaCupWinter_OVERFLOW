@@ -8,6 +8,8 @@ class Anchor;
 class Grapple : public Noncopyable
 {
 public:
+	/** ロックの値を受け取る（AnchorLocker に渡す） */
+	explicit Grapple(const CharacterParam::Lock& lockParam);
 	/** ワイヤーを消す */
 	~Grapple();
 	/** ワイヤーを作る */

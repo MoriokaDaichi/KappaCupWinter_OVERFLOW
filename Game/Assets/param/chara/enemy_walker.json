@@ -1,5 +1,6 @@
 {
   "model": "Assets/modelData/enemy/aegis.tkm",
+  "abilities": [],
 
   "body": {
     "radius": 30.0,

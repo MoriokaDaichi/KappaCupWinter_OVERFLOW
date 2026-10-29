@@ -8,6 +8,7 @@
 #include "actor/playerState/PlayerAirState.h"
 #include "actor/playerState/PlayerWallRunState.h"
 #include "actor/playerState/PlayerSwingState.h"
+#include <algorithm>
 
 BattleCharacter::BattleCharacter() : m_stateMachine(this)
 {
@@ -166,7 +167,10 @@ void BattleCharacter::UpdateState()
 void BattleCharacter::UpdateAction()
 {
 	UpdateCommand();
-	GetGrapple().UpdateLock(GetPosition(), GetChestPosition(), GetCommand().aimOrigin, GetCommand().aimDirection);
+	if (HasGrapple())
+	{
+		GetGrapple().UpdateLock(GetPosition(), GetChestPosition(), GetCommand().aimOrigin, GetCommand().aimDirection);
+	}
 
 	if (IsGrappleTrigger() && CanStartSwing())
 	{
@@ -178,7 +182,10 @@ void BattleCharacter::UpdateAction()
 	UpdateSpeedBonus();
 	// 銃口は体の向きから決めるので、先に体を向けてから撃つ
 	FaceAimDirection();
-	GetGun().Update(IsShootPress(), GetSpeedSystem().GetLevel(), GetChestPosition(), m_rotation);
+	if (HasGun())
+	{
+		GetGun().Update(IsShootPress(), GetSpeedSystem().GetLevel(), GetChestPosition(), m_rotation);
+	}
 }
 
 void BattleCharacter::UpdateCommand()
@@ -206,7 +213,7 @@ void BattleCharacter::UpdateCooldown()
 void BattleCharacter::FaceAimDirection()
 {
 	// 押した最初のフレームは、まだ Gun の構えのタイマーが入っていないので、ボタンも見る
-	const bool isAiming = IsShootPress() || GetGun().IsAiming() || IsAimPress();
+	const bool isAiming = IsShootPress() || (HasGun() && GetGun().IsAiming()) || IsAimPress();
 	if (!isAiming || GetCurrentState() == EnPlayerState::WallRun)
 	{
 		return;
@@ -233,9 +240,23 @@ void BattleCharacter::UpdateSpeedBonus()
 	}
 }
 
+bool BattleCharacter::HasAbility(const char* name) const
+{
+	const std::vector<std::string>& abilities = m_param->abilities;
+	return std::find(abilities.begin(), abilities.end(), name) != abilities.end();
+}
+
 void BattleCharacter::InitAbilities()
 {
 	m_speed.Reset();
-	m_grapple.Init();
-	m_gun.Init(FindGO<BulletManager>("bulletManager"));
+	if (HasAbility("Grapple"))
+	{
+		m_grapple = std::make_unique<Grapple>(m_param->lock);
+		m_grapple->Init();
+	}
+	if (HasAbility("Gun"))
+	{
+		m_gun = std::make_unique<Gun>();
+		m_gun->Init(FindGO<BulletManager>("bulletManager"));
+	}
 }
