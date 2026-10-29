@@ -3,13 +3,13 @@
 
 class BulletManager;
 
-/** RT を押している間、一定の間隔で照準の先へ弾を撃つ。Player が持つ */
+/** RT を押している間、一定の間隔で照準の先へ弾を撃つ。BattleCharacter が持つ（abilities に "Gun" があるときだけ） */
 class Gun
 {
 public:
 	/** 弾を出す BulletManager を受け取る（借りているだけ。消すのは Game） */
 	void Init(BulletManager* bulletManager) { m_bulletManager = bulletManager; }
-	/** 毎フレーム Player が呼ぶ。押していて間隔が空いていれば撃つ。level は今の速度 Lv（1〜5）。chest は胸の位置、rotation は体の向き（銃口の位置を決める） */
+	/** 毎フレーム BattleCharacter が呼ぶ。押していて間隔が空いていれば撃つ。level は今の速度 Lv（1〜5）。chest は胸の位置、rotation は体の向き（銃口の位置を決める） */
 	void Update(const bool isShootPress, const int level, const Vector3& chest, const Quaternion& rotation);
 	/** 構えているか（撃っている間と、やめてから aimHoldTime 秒の間） */
 	bool IsAiming() const { return m_aimTimer > 0.0f; }

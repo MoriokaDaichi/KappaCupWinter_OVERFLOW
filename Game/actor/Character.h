@@ -41,13 +41,13 @@ public:
 	void SetModelTiltTarget(const Quaternion& target, const float pivotHeight);
 
 protected:
-	/** 子クラスが書く（Player ならステートマシン） */
+	/** 子クラスが書く（BattleCharacter なら、切り替え表と State を動かす） */
 	virtual void UpdateAction() = 0;
 	/** 体（位置・モデル・骨）を動かした後に呼ぶ。骨の位置を使う処理（手から出すワイヤーなど）はここに書く */
 	virtual void OnBodyUpdated() {}
 	/**
 	 * モデルとキャラコンの初期化。子クラスの Start から呼ぶ
-	 * clips はアニメーション（なければ nullptr と 0）。ModelRender は借りるだけなので、子クラスのメンバに持たせておく
+	 * clips はアニメーション（なければ nullptr と 0）。AnimationClip は ModelRender が借りるだけなので、呼ぶ側が持っておく（BattleCharacter なら CharacterAnimation）
 	 * カプセルの高さは height + radius × 2（position は足元）
 	 */
 	void InitCharacter(const char* filePath, AnimationClip* clips, const int clipCount, const float radius, const float height, const Vector3& position);

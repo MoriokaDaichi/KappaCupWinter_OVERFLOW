@@ -2,6 +2,18 @@
   "model": "Assets/modelData/enemy/aegis.tkm",
   "abilities": [],
   "states": [ "Idle", "Run", "Air" ],
+  "transitions": [
+    { "from": "Idle", "when": [ "NotOnGround" ],         "to": "Air" },
+    { "from": "Idle", "when": [ "JumpStart" ],           "to": "Air",  "do": [ "Jump" ] },
+    { "from": "Idle", "when": [ "MoveInput" ],           "to": "Run" },
+
+    { "from": "Run",  "when": [ "NotOnGround" ],         "to": "Air" },
+    { "from": "Run",  "when": [ "JumpStart" ],           "to": "Air",  "do": [ "Jump" ] },
+    { "from": "Run",  "when": [ "NoMoveInput" ],         "to": "Idle" },
+
+    { "from": "Air",  "when": [ "Landed", "MoveInput" ], "to": "Run" },
+    { "from": "Air",  "when": [ "Landed" ],              "to": "Idle" }
+  ],
 
   "body": {
     "radius": 30.0,
@@ -16,8 +28,6 @@
   },
   "jump": {
     "speed": 600.0,
-    "maxCount": 1,
-    "fastFallAnimSpeed": 900.0,
-    "landAnimMinSpeed": 500.0
+    "maxCount": 1
   }
 }

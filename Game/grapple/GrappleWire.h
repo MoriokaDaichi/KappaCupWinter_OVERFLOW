@@ -14,7 +14,7 @@ public:
 	void SetVisible(const bool visible) { m_isVisible = visible; }
 	/** 狙う先と、先が飛んだ長さを覚える */
 	void SetTarget(const Vector3& anchorPosition, const float tipLength);
-	/** Playerの手元を覚える */
+	/** キャラの手元を覚える（骨が動いた後に BattleCharacter が渡す） */
 	void SetHandPosition(const Vector3& hand);
 
 private:

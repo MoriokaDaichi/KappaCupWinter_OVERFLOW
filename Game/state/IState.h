@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-/** 状態の土台。TOwnerは「誰の状態か」（Player や Enemy）*/
+/** 状態の土台。TOwnerは「誰の状態か」（BattleCharacter など）*/
 template<typename TOwner>
 class IState
 {

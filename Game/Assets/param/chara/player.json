@@ -2,6 +2,30 @@
   "model": "Assets/modelData/player/medea.tkm",
   "abilities": [ "Grapple", "Gun" ],
   "states": [ "Idle", "Run", "Air", "WallRun", "Swing" ],
+  "transitions": [
+    { "from": "Any",     "when": [ "GrappleStart" ],                    "to": "Swing" },
+
+    { "from": "Idle",    "when": [ "NotOnGround" ],                     "to": "Air" },
+    { "from": "Idle",    "when": [ "JumpStart" ],                       "to": "Air",  "do": [ "Jump" ] },
+    { "from": "Idle",    "when": [ "MoveInput" ],                       "to": "Run" },
+
+    { "from": "Run",     "when": [ "NotOnGround" ],                     "to": "Air" },
+    { "from": "Run",     "when": [ "JumpStart" ],                       "to": "Air",  "do": [ "Jump" ] },
+    { "from": "Run",     "when": [ "NoMoveInput" ],                     "to": "Idle" },
+
+    { "from": "Air",     "when": [ "Landed", "MoveInput" ],             "to": "Run" },
+    { "from": "Air",     "when": [ "Landed" ],                          "to": "Idle" },
+    { "from": "Air",     "when": [ "WallFound" ],                       "to": "WallRun" },
+
+    { "from": "WallRun", "when": [ "JumpTrigger" ],                     "to": "Air",  "do": [ "WallJump" ] },
+    { "from": "WallRun", "when": [ "OnGround" ],                        "to": "Run" },
+    { "from": "WallRun", "when": [ "WallLost" ],                        "to": "Air" },
+
+    { "from": "Swing",   "when": [ "GrappleRelease" ],                  "to": "Air",  "do": [ "ReleaseBoost" ] },
+    { "from": "Swing",   "when": [ "JumpTrigger" ],                     "to": "Air",  "do": [ "ReleaseBoost", "Jump" ] },
+    { "from": "Swing",   "when": [ "Hooked", "Landed", "MoveInput" ],   "to": "Run" },
+    { "from": "Swing",   "when": [ "Hooked", "Landed" ],                "to": "Idle" }
+  ],
 
   "body": {
     "radius": 30.0,
@@ -16,9 +40,7 @@
   },
   "jump": {
     "speed": 600.0,
-    "maxCount": 2,
-    "fastFallAnimSpeed": 900.0,
-    "landAnimMinSpeed": 500.0
+    "maxCount": 2
   },
   "wallRun": {
     "checkLength": 50.0,
@@ -53,5 +75,23 @@
     "releaseBoost": 300.0,
     "releaseLift": 200.0,
     "releaseMinSpeed": 300.0
+  },
+  "animation": {
+    "clips": [
+      { "anim": "Idle",     "file": "Assets/animData/player/idle.tka",      "loop": true },
+      { "anim": "Run",      "file": "Assets/animData/player/run.tka",       "loop": true },
+      { "anim": "JumpUp",   "file": "Assets/animData/player/jump_up.tka",   "loop": false },
+      { "anim": "Fall",     "file": "Assets/animData/player/fall_idle.tka", "loop": true },
+      { "anim": "FallFast", "file": "Assets/animData/player/fall_long.tka", "loop": true },
+      { "anim": "Land",     "file": "Assets/animData/player/land.tka",      "loop": false },
+      { "anim": "Swing",    "file": "Assets/animData/player/swing.tka",     "loop": true }
+    ],
+    "fastFallSpeed": 900.0,
+    "landMinSpeed": 500.0
+  },
+  "hands": {
+    "left": "mixamorig:LeftHand",
+    "right": "mixamorig:RightHand",
+    "rightMiddle": "mixamorig:RightHandMiddle1"
   }
 }

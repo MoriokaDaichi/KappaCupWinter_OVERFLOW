@@ -1,7 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Game.h"
-#include "actor/Player.h"
-#include "actor/Enemy.h"
+#include "actor/BattleCharacter.h"
 #include "camera/GameCamera.h"
 #include "gimmick/Anchor.h"
 #include "param/GameParam.h"
@@ -91,13 +90,15 @@ bool Game::Start()
 
 	m_bulletManager = NewGO<BulletManager>(0, "bulletManager");
 
-	m_player = NewGO<Player>(0, "player");
+	// プレイヤーも敵も同じ BattleCharacter。違うのは、渡す設定（JSON）と Controller だけ
+	m_player = NewGO<BattleCharacter>(0, "player");
+	m_player->SetStartPosition(Vector3(0.0f, START_HEIGHT, 0.0f));
 	m_playerController.SetInput(&InputManager::GetInstance());
 	m_player->SetController(&m_playerController);
 	m_player->SetParam(nsGameParam::Get().player);
 
-	// 仮: ステップ 5 の確認用。アンカーから離れた横の方に置き、プレイヤーの方へ歩かせる
-	m_enemy = NewGO<Enemy>(0, "enemy");
+	// 仮: アンカーから離れた横の方に置き、プレイヤーの方へ歩かせる（敵のスポーンができたら置き換える）
+	m_enemy = NewGO<BattleCharacter>(0, "enemy");
 	m_enemy->SetStartPosition(Vector3(2500.0f, START_HEIGHT, 0.0f));
 	m_enemyController.SetOwner(m_enemy);
 	m_enemyController.SetTarget(m_player);

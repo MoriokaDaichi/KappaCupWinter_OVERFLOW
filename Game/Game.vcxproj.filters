@@ -16,7 +16,7 @@
     <Filter Include="actor">
       <UniqueIdentifier>{f57d08e6-eec1-49f6-b0b5-b45e74efbed0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="actor\playerState">
+    <Filter Include="actor\characterState">
       <UniqueIdentifier>{7e252a6c-93f3-45a1-a957-b0e5abbe3318}</UniqueIdentifier>
     </Filter>
     <Filter Include="camera">
@@ -66,17 +66,14 @@
     <ClCompile Include="param\GameParam.cpp">
       <Filter>param</Filter>
     </ClCompile>
-    <ClCompile Include="actor\Player.cpp">
-      <Filter>actor</Filter>
+    <ClCompile Include="actor\characterState\IdleState.cpp">
+      <Filter>actor\characterState</Filter>
     </ClCompile>
-    <ClCompile Include="actor\playerState\PlayerIdleState.cpp">
-      <Filter>actor\playerState</Filter>
+    <ClCompile Include="actor\characterState\RunState.cpp">
+      <Filter>actor\characterState</Filter>
     </ClCompile>
-    <ClCompile Include="actor\playerState\PlayerRunState.cpp">
-      <Filter>actor\playerState</Filter>
-    </ClCompile>
-    <ClCompile Include="actor\playerState\PlayerAirState.cpp">
-      <Filter>actor\playerState</Filter>
+    <ClCompile Include="actor\characterState\AirState.cpp">
+      <Filter>actor\characterState</Filter>
     </ClCompile>
     <ClCompile Include="actor\Character.cpp">
       <Filter>actor</Filter>
@@ -84,8 +81,8 @@
     <ClCompile Include="camera\GameCamera.cpp">
       <Filter>camera</Filter>
     </ClCompile>
-    <ClCompile Include="actor\playerState\PlayerWallRunState.cpp">
-      <Filter>actor\playerState</Filter>
+    <ClCompile Include="actor\characterState\WallRunState.cpp">
+      <Filter>actor\characterState</Filter>
     </ClCompile>
     <ClCompile Include="input\InputManager.cpp">
       <Filter>input</Filter>
@@ -96,8 +93,8 @@
     <ClCompile Include="grapple\GrappleWire.cpp">
       <Filter>grapple</Filter>
     </ClCompile>
-    <ClCompile Include="actor\playerState\PlayerSwingState.cpp">
-      <Filter>actor\playerState</Filter>
+    <ClCompile Include="actor\characterState\SwingState.cpp">
+      <Filter>actor\characterState</Filter>
     </ClCompile>
     <ClCompile Include="weapon\Gun.cpp">
       <Filter>weapon</Filter>
@@ -117,9 +114,6 @@
     <ClCompile Include="controller\AIController.cpp">
       <Filter>controller</Filter>
     </ClCompile>
-    <ClCompile Include="actor\Enemy.cpp">
-      <Filter>actor</Filter>
-    </ClCompile>
     <ClCompile Include="controller\PlayerController.cpp">
       <Filter>controller</Filter>
     </ClCompile>
@@ -131,6 +125,15 @@
     </ClCompile>
     <ClCompile Include="actor\BattleCharacter.cpp">
       <Filter>actor</Filter>
+    </ClCompile>
+    <ClCompile Include="actor\CharacterAnimation.cpp">
+      <Filter>actor</Filter>
+    </ClCompile>
+    <ClCompile Include="actor\HandBones.cpp">
+      <Filter>actor</Filter>
+    </ClCompile>
+    <ClCompile Include="actor\characterState\TransitionTable.cpp">
+      <Filter>actor\characterState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -160,20 +163,17 @@
     <ClInclude Include="thirdParty\nlohmann\json.hpp">
       <Filter>thirdParty</Filter>
     </ClInclude>
-    <ClInclude Include="actor\Player.h">
-      <Filter>actor</Filter>
+    <ClInclude Include="actor\characterState\PlayerState.h">
+      <Filter>actor\characterState</Filter>
     </ClInclude>
-    <ClInclude Include="actor\playerState\PlayerState.h">
-      <Filter>actor\playerState</Filter>
+    <ClInclude Include="actor\characterState\IdleState.h">
+      <Filter>actor\characterState</Filter>
     </ClInclude>
-    <ClInclude Include="actor\playerState\PlayerIdleState.h">
-      <Filter>actor\playerState</Filter>
+    <ClInclude Include="actor\characterState\RunState.h">
+      <Filter>actor\characterState</Filter>
     </ClInclude>
-    <ClInclude Include="actor\playerState\PlayerRunState.h">
-      <Filter>actor\playerState</Filter>
-    </ClInclude>
-    <ClInclude Include="actor\playerState\PlayerAirState.h">
-      <Filter>actor\playerState</Filter>
+    <ClInclude Include="actor\characterState\AirState.h">
+      <Filter>actor\characterState</Filter>
     </ClInclude>
     <ClInclude Include="actor\Character.h">
       <Filter>actor</Filter>
@@ -181,8 +181,8 @@
     <ClInclude Include="camera\GameCamera.h">
       <Filter>camera</Filter>
     </ClInclude>
-    <ClInclude Include="actor\playerState\PlayerWallRunState.h">
-      <Filter>actor\playerState</Filter>
+    <ClInclude Include="actor\characterState\WallRunState.h">
+      <Filter>actor\characterState</Filter>
     </ClInclude>
     <ClInclude Include="input\InputManager.h">
       <Filter>input</Filter>
@@ -193,8 +193,8 @@
     <ClInclude Include="grapple\GrappleWire.h">
       <Filter>grapple</Filter>
     </ClInclude>
-    <ClInclude Include="actor\playerState\PlayerSwingState.h">
-      <Filter>actor\playerState</Filter>
+    <ClInclude Include="actor\characterState\SwingState.h">
+      <Filter>actor\characterState</Filter>
     </ClInclude>
     <ClInclude Include="weapon\Gun.h">
       <Filter>weapon</Filter>
@@ -214,9 +214,6 @@
     <ClInclude Include="controller\AIController.h">
       <Filter>controller</Filter>
     </ClInclude>
-    <ClInclude Include="actor\Enemy.h">
-      <Filter>actor</Filter>
-    </ClInclude>
     <ClInclude Include="controller\IController.h">
       <Filter>controller</Filter>
     </ClInclude>
@@ -225,6 +222,24 @@
     </ClInclude>
     <ClInclude Include="actor\CharacterCommand.h">
       <Filter>actor</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\CharacterAnimation.h">
+      <Filter>actor</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\HandBones.h">
+      <Filter>actor</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\characterState\CharacterState.h">
+      <Filter>actor\characterState</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\characterState\StateTransition.h">
+      <Filter>actor\characterState</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\characterState\TransitionTable.h">
+      <Filter>actor\characterState</Filter>
+    </ClInclude>
+    <ClInclude Include="param\NameToEnum.h">
+      <Filter>param</Filter>
     </ClInclude>
     <ClInclude Include="grapple\AnchorLocker.h">
       <Filter>grapple</Filter>

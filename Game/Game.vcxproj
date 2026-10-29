@@ -224,14 +224,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="actor\BattleCharacter.cpp" />
+    <ClCompile Include="actor\CharacterAnimation.cpp" />
+    <ClCompile Include="actor\HandBones.cpp" />
+    <ClCompile Include="actor\characterState\TransitionTable.cpp" />
     <ClCompile Include="actor\Character.cpp" />
-    <ClCompile Include="actor\Enemy.cpp" />
-    <ClCompile Include="actor\Player.cpp" />
-    <ClCompile Include="actor\playerState\PlayerAirState.cpp" />
-    <ClCompile Include="actor\playerState\PlayerIdleState.cpp" />
-    <ClCompile Include="actor\playerState\PlayerRunState.cpp" />
-    <ClCompile Include="actor\playerState\PlayerSwingState.cpp" />
-    <ClCompile Include="actor\playerState\PlayerWallRunState.cpp" />
+    <ClCompile Include="actor\characterState\AirState.cpp" />
+    <ClCompile Include="actor\characterState\IdleState.cpp" />
+    <ClCompile Include="actor\characterState\RunState.cpp" />
+    <ClCompile Include="actor\characterState\SwingState.cpp" />
+    <ClCompile Include="actor\characterState\WallRunState.cpp" />
     <ClCompile Include="camera\GameCamera.cpp" />
     <ClCompile Include="collision\RayCast.cpp" />
     <ClCompile Include="controller\AIController.cpp" />
@@ -259,16 +260,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="actor\BattleCharacter.h" />
+    <ClInclude Include="actor\CharacterAnimation.h" />
+    <ClInclude Include="actor\HandBones.h" />
+    <ClInclude Include="actor\characterState\CharacterState.h" />
+    <ClInclude Include="actor\characterState\StateTransition.h" />
+    <ClInclude Include="actor\characterState\TransitionTable.h" />
+    <ClInclude Include="param\NameToEnum.h" />
     <ClInclude Include="actor\Character.h" />
     <ClInclude Include="actor\CharacterCommand.h" />
-    <ClInclude Include="actor\Enemy.h" />
-    <ClInclude Include="actor\Player.h" />
-    <ClInclude Include="actor\playerState\PlayerAirState.h" />
-    <ClInclude Include="actor\playerState\PlayerIdleState.h" />
-    <ClInclude Include="actor\playerState\PlayerRunState.h" />
-    <ClInclude Include="actor\playerState\PlayerState.h" />
-    <ClInclude Include="actor\playerState\PlayerSwingState.h" />
-    <ClInclude Include="actor\playerState\PlayerWallRunState.h" />
+    <ClInclude Include="actor\characterState\AirState.h" />
+    <ClInclude Include="actor\characterState\IdleState.h" />
+    <ClInclude Include="actor\characterState\RunState.h" />
+    <ClInclude Include="actor\characterState\PlayerState.h" />
+    <ClInclude Include="actor\characterState\SwingState.h" />
+    <ClInclude Include="actor\characterState\WallRunState.h" />
     <ClInclude Include="camera\GameCamera.h" />
     <ClInclude Include="collision\CollisionType.h" />
     <ClInclude Include="collision\RayCast.h" />

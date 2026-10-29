@@ -2,7 +2,7 @@
 #include "camera/CameraCollisionSolver.h"
 #include "param/GameParam.h"
 
-class Player;
+class BattleCharacter;
 class InputManager;
 
 /** プレイヤーに追従するばねカメラ。プレイヤーの速度によって視野角がかわる */
@@ -14,7 +14,7 @@ public:
 
 public:
 	/** 追いかける相手を受け取る */
-	void SetTarget(const Player* player) { m_player = player; }
+	void SetTarget(const BattleCharacter* player) { m_player = player; }
 	/** 入力を受け取る */
 	void SetInput(const InputManager* input) { m_input = input; }
 
@@ -32,7 +32,7 @@ private:
 	const CameraParam& m_param = nsGameParam::Get().camera;	///< 調整用の値（Assets/param/camera.json）
 
 	CameraCollisionSolver m_collisionSolver;			///< カメラが壁にめり込まないように手前に寄せる
-	const Player* m_player = nullptr;		///< 追いかける相手
+	const BattleCharacter* m_player = nullptr;		///< 追いかける相手
 	const InputManager* m_input = nullptr;	///< 右スティックを読むため
 
 	static constexpr float SHOULDER_WALL_MARGIN = 5.0f;		///< 肩の点が壁に当たったとき、体の中心の方へ戻す量

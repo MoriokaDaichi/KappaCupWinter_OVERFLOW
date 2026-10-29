@@ -1,18 +1,18 @@
 ﻿#include "stdafx.h"
-#include "actor/playerState/PlayerSwingState.h"
+#include "actor/characterState/SwingState.h"
 
 #include "actor/BattleCharacter.h"
 #include "gimmick/Anchor.h"
 #include "grapple/GrappleWire.h"
 
-PlayerSwingState::PlayerSwingState(BattleCharacter* owner)
-	: IState<BattleCharacter>(owner)
+SwingState::SwingState(BattleCharacter* owner)
+	: CharacterState(owner)
 	, m_param(owner->GetParam().swing)
 	, m_bodyParam(owner->GetParam().body)
 {
 }
 
-void PlayerSwingState::Enter()
+void SwingState::Enter()
 {
 	m_owner->GetGrapple().GetWire().SetVisible(true);
 
@@ -24,41 +24,13 @@ void PlayerSwingState::Enter()
 	m_owner->ResetJumpCount();
 }
 
-void PlayerSwingState::Update()
+void SwingState::Update()
 {
-	if (m_owner->IsGrappleRelease())
-	{
-		ReleaseBoost();
-		m_owner->ChangeState(EnPlayerState::Air);
-		return;
-	}
-
-	if (m_owner->IsJumpTrigger())
-	{
-		ReleaseBoost();
-		m_owner->Jump();
-		m_owner->ChangeState(EnPlayerState::Air);
-		return;
-	}
-
-	//ワイヤーが飛んでいる途中は地上にいてもいいので、つかんでからだけ着地を見る
-	if (m_isHooked && m_owner->IsOnGround() && m_owner->IsFalling())
-	{
-		if (m_owner->IsMoveInput())
-		{
-			m_owner->ChangeState(EnPlayerState::Run);
-		}
-		else
-		{
-			m_owner->ChangeState(EnPlayerState::Idle);
-		}
-		return;
-	}
-
+	// 切り替え（離した・跳んだ・つかんだ後の着地）は切り替え表が先に見る
 	Move();
 }
 
-void PlayerSwingState::Exit()
+void SwingState::Exit()
 {
 	m_swingAnchor = nullptr;
 
@@ -74,7 +46,25 @@ void PlayerSwingState::Exit()
 	m_owner->GetGrapple().GetWire().SetVisible(false);
 }
 
-void PlayerSwingState::Move()
+bool SwingState::IsConditionMet(const EnCondition when) const
+{
+	// ワイヤーが飛んでいる途中は地上にいてもいいので、着地の行は Hooked と組み合わせて「つかんでから」だけ見る
+	if (when == EnCondition::Hooked)
+	{
+		return m_isHooked;
+	}
+	return false;
+}
+
+void SwingState::DoAction(const EnTransitionAction action)
+{
+	if (action == EnTransitionAction::ReleaseBoost)
+	{
+		ReleaseBoost();
+	}
+}
+
+void SwingState::Move()
 {
 	// ワイヤーの先を渡す。つかんだ後はどこまでも届く長さにして、手からアンカーまで全部描く
 	const float tipLength = m_isHooked ? WIRE_HOOKED_LENGTH : m_wireTipLength;
@@ -143,7 +133,7 @@ void PlayerSwingState::Move()
 	UpdateTilt();
 }
 
-void PlayerSwingState::ShootWire()
+void SwingState::ShootWire()
 {
 	const Vector3 origin = m_owner->GetChestPosition();
 	const Vector3 toAnchor = m_swingAnchor->GetPosition() - origin;
@@ -171,7 +161,7 @@ void PlayerSwingState::ShootWire()
 	}
 }
 
-void PlayerSwingState::HookAnchor(const float ropeLength)
+void SwingState::HookAnchor(const float ropeLength)
 {
 	m_isHooked = true;
 	m_ropeLength = ropeLength;
@@ -183,7 +173,7 @@ void PlayerSwingState::HookAnchor(const float ropeLength)
 	}
 }
 
-void PlayerSwingState::SwingPump(const Vector3& ropeDir)
+void SwingState::SwingPump(const Vector3& ropeDir)
 {
 	if (!m_owner->IsMoveInput())
 	{
@@ -202,7 +192,7 @@ void PlayerSwingState::SwingPump(const Vector3& ropeDir)
 	m_owner->AddMoveSpeed(input * m_param.pumpAccel * g_gameTime->GetFrameDeltaTime());
 }
 
-void PlayerSwingState::ClampSwingSpeed()
+void SwingState::ClampSwingSpeed()
 {
 	Vector3 moveSpeed = m_owner->GetMoveSpeed();
 
@@ -215,7 +205,7 @@ void PlayerSwingState::ClampSwingSpeed()
 	m_owner->SetMoveSpeed(moveSpeed);
 }
 
-void PlayerSwingState::ReleaseBoost()
+void SwingState::ReleaseBoost()
 {
 	if (!m_isHooked)
 	{
@@ -233,7 +223,7 @@ void PlayerSwingState::ReleaseBoost()
 	m_owner->AddMoveSpeed(Vector3::Up * m_param.releaseLift);
 }
 
-void PlayerSwingState::UpdateTilt()
+void SwingState::UpdateTilt()
 {
 	// 体の上をアンカーに向ける（ロープにぶら下がって見えるように）。胸を中心に回す
 	Quaternion target;

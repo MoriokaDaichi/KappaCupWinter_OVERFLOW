@@ -12,7 +12,7 @@ public:
 public:
 	/** 置く場所を決める。Game が NewGO のすぐ後に呼ぶ */
 	void SetPosition(const Vector3& pos) { m_position = pos; }
-	/** 位置を返す。Player がロックの判定やスイングに使う */
+	/** 位置を返す。キャラ（AnchorLocker・SwingState）がロックの判定やスイングに使う */
 	const Vector3& GetPosition() const { return m_position; }
 	/** ロック中かどうかを受け取る。見た目の大きさに使う */
 	void SetLocked(const bool locked) { m_isLocked = locked; }

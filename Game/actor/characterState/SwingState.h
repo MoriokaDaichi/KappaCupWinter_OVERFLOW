@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "state/IState.h"
+#include "actor/characterState/CharacterState.h"
 #include "param/GameParam.h"
 #include <limits>
 
@@ -7,17 +7,21 @@ class BattleCharacter;
 class Anchor;
 
 /** アンカーにぶら下がって振り子のように動いている状態 */
-class PlayerSwingState : public IState<BattleCharacter>
+class SwingState : public CharacterState
 {
 public:
-	explicit PlayerSwingState(BattleCharacter* owner);
+	explicit SwingState(BattleCharacter* owner);
 
 	/** スイングの準備（アンカーを覚えてワイヤーを飛ばし始める・ジャンプの回数を戻す） */
 	void Enter() override;
-	/** 離す・ジャンプで Air、着地で Run／Idle に切り替える */
+	/** ワイヤーを飛ばす・振り子で動く（切り替えは切り替え表が先に見る） */
 	void Update() override;
 	/** スイングの片付け（つかんでいるアンカーを外す） */
 	void Exit() override;
+	/** 切り替え表の条件のうち、スイングだけが判定できるもの（Hooked）に答える */
+	bool IsConditionMet(const EnCondition when) const override;
+	/** 切り替え表の動作のうち、スイングだけができるもの（ReleaseBoost）をする */
+	void DoAction(const EnTransitionAction action) override;
 
 private:
 	/** ワイヤーが届くまでは飛ばす。届いたら巻き上げながら、アンカーを中心に振り子のように動く */

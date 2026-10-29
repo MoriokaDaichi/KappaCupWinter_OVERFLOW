@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "param/GameParam.h"
 
-class Player;
+class BattleCharacter;
 
 /**
  * デバッグ画面（エンジンの ImGui に「Game > OVERFLOW」のパネルを出す）。Game が持つ
@@ -10,8 +10,8 @@ class Player;
 class DebugManager
 {
 public:
-	/** パネルを登録する。Player を作った後に、Game の Start から呼ぶ */
-	void Init(Player* player);
+	/** パネルを登録する。プレイヤーを作った後に、Game の Start から呼ぶ */
+	void Init(BattleCharacter* player);
 	/** 毎フレーム Game の Update から呼ぶ（F5 の読み直しと、速度の固定） */
 	void Update();
 
@@ -33,7 +33,7 @@ private:
 	const DebugParam& m_param = nsGameParam::Get().debug;	///< ワープ先など（debug.json）
 	const SpeedParam& m_speedParam = nsGameParam::Get().speed;	///< 速度の範囲と Lv の境目（speed.json）
 
-	Player* m_player = nullptr;			///< 調べる・書き換える相手（借りているだけ。消すのは Game）
+	BattleCharacter* m_player = nullptr;			///< 調べる・書き換える相手（借りているだけ。消すのは Game）
 	DebugGuiPanel m_panel;				///< パネルの登録。このクラスが消えると自動で外れる
 	bool m_isReloadKeyDown = false;		///< 前のフレームで F5 を押していたか（押した瞬間だけ読み直すため）
 	bool m_isSpeedLocked = false;		///< 速度を固定しているか（地上で上乗せが減らないようにする）

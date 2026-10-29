@@ -2,20 +2,17 @@
 #include "debug/DebugManager.h"
 
 #include <iterator>
-#include "actor/Player.h"
+#include "actor/BattleCharacter.h"
 #include "speed/SpeedSystem.h"
 
 // ImGui に渡す日本語は U8() で包む（ソースの文字列は CP932 になるので、UTF-8 に直して渡す）
 
 namespace
 {
-	/** 状態の名前（EnPlayerState と同じ順に並べる） */
-	const char* const STATE_NAMES[] = { "Idle", "Run", "Air", "WallRun", "Swing" };
-	constexpr int STATE_NUM = static_cast<int>(EnPlayerState::Num);
-	static_assert(std::size(STATE_NAMES) == STATE_NUM, "STATE_NAMES を EnPlayerState に合わせてください");
+	constexpr int STATE_NUM = static_cast<int>(EnCharacterState::Num);	///< 状態の数（名前は CharacterStateId.h の STATE_NAMES）
 }
 
-void DebugManager::Init(Player* player)
+void DebugManager::Init(BattleCharacter* player)
 {
 	m_player = player;
 	// [this] で登録するが、m_panel はこのクラスと一緒に消えるので、消えた後に呼ばれることはない
@@ -32,7 +29,7 @@ void DebugManager::Update()
 	}
 	m_isReloadKeyDown = isReloadKeyDown;
 
-	// Game は Player より先に Update されるので、ここで戻しておけば、このフレームの移動は固定した速度で行われる
+	// Game はプレイヤーより先に Update されるので、ここで戻しておけば、このフレームの移動は固定した速度で行われる
 	if (m_isSpeedLocked && m_player != nullptr)
 	{
 		m_player->GetSpeedSystem().SetForDebug(m_lockedBase, m_lockedBonus);

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-/** 手に持つ銃の見た目。毎フレーム、手の骨に合わせて置く（弾を撃つ処理は Gun）。Player が持つ */
+/** 手に持つ銃の見た目。毎フレーム、手の骨に合わせて置く（弾を撃つ処理は Gun）。BattleCharacter が持つ（銃と手の骨の両方があるときだけ） */
 class GunModel
 {
 public:

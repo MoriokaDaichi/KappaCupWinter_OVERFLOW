@@ -31,8 +31,6 @@ struct CharacterParam
 	{
 		float speed = 0.0f;				///< 跳んだ瞬間の上向きの速さ
 		int maxCount = 0;				///< 何回ジャンプできるか
-		float fastFallAnimSpeed = 0.0f;	///< 落ちる速さがこれを超えたら、手足をばたつかせる落下アニメーションにする（重力の maxFallSpeed より小さくする）
-		float landAnimMinSpeed = 0.0f;	///< 着地したときの落ちる速さがこれを超えたら、着地のアニメーションを流す（小さな段差では流さない）
 	};
 	/** ウォールラン */
 	struct WallRun
@@ -74,16 +72,50 @@ struct CharacterParam
 		float releaseLift = 0.0f;		///< スイングを離したとき、上に足す速さ
 		float releaseMinSpeed = 0.0f;	///< スイングを離したとき、これより遅いときはブーストしない
 	};
+	/** 切り替え表の 1 行（JSON の transitions の 1 つ）。名前の一覧は actor/characterState/StateTransition.h */
+	struct Transition
+	{
+		std::string from;						///< どの State のときか（"Any" ならどの State からでも）
+		std::vector<std::string> when;			///< 条件の名前。全部成り立ったら切り替える
+		std::string to;							///< 行き先の State
+		std::vector<std::string> actions;		///< 切り替える前にやること（JSON のキーは "do"。書かなければなし）
+	};
+	/** アニメーション（書いたキャラだけ流す。名前の一覧は actor/CharacterAnimation.h） */
+	struct Animation
+	{
+		/** 1 つのアニメーション */
+		struct Clip
+		{
+			std::string anim;				///< どのアニメーションか（"Idle"・"Run"・"JumpUp"・"Fall"・"FallFast"・"Land"・"Swing"。全部 1 回ずつ書く）
+			std::string file;				///< tka のファイル名
+			bool loop = false;				///< 繰り返すか
+		};
+		std::vector<Clip> clips;				///< アニメーションの一覧
+		float fastFallSpeed = 0.0f;			///< 落ちる速さがこれを超えたら、手足をばたつかせる落下アニメーションにする（重力の maxFallSpeed より小さくする）
+		float landMinSpeed = 0.0f;			///< 着地したときの落ちる速さがこれを超えたら、着地のアニメーションを流す（小さな段差では流さない）
+	};
+	/** 手の骨の名前（書いたキャラだけ、ワイヤーを両手の間から出し、銃を右手に持たせる） */
+	struct Hands
+	{
+		std::string left;						///< 左手
+		std::string right;						///< 右手（銃の向きにも使う）
+		std::string rightMiddle;				///< 右手の中指の付け根（銃を握る位置＝右手との間）
+	};
 
 	std::string model;		///< モデルのファイル名（.tkm）
 	std::vector<std::string> abilities;		///< 持つ能力の名前（"Grapple"・"Gun"）。書いていない能力は作らない
 	std::vector<std::string> states;		///< 使う State の名前（"Idle"・"Run"・"Air"・"WallRun"・"Swing"）
+	std::vector<Transition> transitions;	///< 切り替え表。上から順に調べ、最初に成り立った行で切り替える
 	Body body;
 	Move move;
 	Jump jump;
 	WallRun wallRun;
 	Lock lock;
 	Swing swing;
+	Animation animation;
+	bool hasAnimation = false;		///< JSON に animation を書いたか
+	Hands hands;
+	bool hasHands = false;			///< JSON に hands を書いたか
 };
 
 /** カメラの値（camera.json） */

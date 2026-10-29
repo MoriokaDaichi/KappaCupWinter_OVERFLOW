@@ -1,11 +1,11 @@
 ﻿#pragma once
 #include "param/GameParam.h"
 
-/** 速度の管理役。基礎速度と上乗せを持ち、合計から Lv を決める（Player が持つ） */
+/** 速度の管理役。基礎速度と上乗せを持ち、合計から Lv を決める（BattleCharacter が持つ） */
 class SpeedSystem
 {
 public:
-	/** 基礎速度をbaseMinに、上乗せ速度を0にする（Player の Start で呼ぶ） */
+	/** 基礎速度をbaseMinに、上乗せ速度を0にする（BattleCharacter の能力の準備で呼ぶ） */
 	void Reset();
 	/** 基礎速度を増やす（マイナスで減らす）baseMin～baseMaxに収める */
 	void AddBase(const float amount);

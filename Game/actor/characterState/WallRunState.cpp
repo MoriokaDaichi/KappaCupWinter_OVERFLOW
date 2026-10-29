@@ -1,17 +1,17 @@
 ﻿#include "stdafx.h"
-#include "actor/playerState/PlayerWallRunState.h"
+#include "actor/characterState/WallRunState.h"
 
 #include "actor/BattleCharacter.h"
 #include "collision/RayCast.h"
 
-PlayerWallRunState::PlayerWallRunState(BattleCharacter* owner)
-	: IState<BattleCharacter>(owner)
+WallRunState::WallRunState(BattleCharacter* owner)
+	: CharacterState(owner)
 	, m_param(owner->GetParam().wallRun)
 	, m_bodyParam(owner->GetParam().body)
 {
 }
 
-void PlayerWallRunState::Enter()
+void WallRunState::Enter()
 {
 	FindWall(*m_owner, m_wallNormal);
 	m_runTime = 0.0f;
@@ -21,37 +21,29 @@ void PlayerWallRunState::Enter()
 	m_owner->ResetJumpCount();
 }
 
-void PlayerWallRunState::Update()
+void WallRunState::Update()
 {
-	if (m_owner->IsJumpTrigger())
-	{
-		WallJump();
-		m_owner->ChangeState(EnPlayerState::Air);
-		return;
-	}
-
-	if (m_owner->IsOnGround())
-	{
-		m_owner->ChangeState(EnPlayerState::Run);
-		return;
-	}
-
-	if (!FindWall(*m_owner, m_wallNormal))
-	{
-		m_owner->ChangeState(EnPlayerState::Air);
-		return;
-	}
-
+	// 切り替え（壁ジャンプ・着地・壁がなくなった）は切り替え表が先に見る。ここに来たら壁はまだある（WallLost が成り立たなかった）ので、
+	// 今の壁の向きを取り直してから走る。取れなかったときは前の向きのまま
+	FindWall(*m_owner, m_wallNormal);
 	Move();
 }
 
-void PlayerWallRunState::Exit()
+void WallRunState::Exit()
 {
 	m_owner->SetGravityScale(1.0f);
 	m_owner->StartCooldown(EnCooldown::WallRun, m_param.reattachTime);
 }
 
-bool PlayerWallRunState::FindWall(const BattleCharacter& owner, Vector3& outNormal)
+void WallRunState::DoAction(const EnTransitionAction action)
+{
+	if (action == EnTransitionAction::WallJump)
+	{
+		WallJump();
+	}
+}
+
+bool WallRunState::FindWall(const BattleCharacter& owner, Vector3& outNormal)
 {
 	const CharacterParam& param = owner.GetParam();
 
@@ -84,7 +76,7 @@ bool PlayerWallRunState::FindWall(const BattleCharacter& owner, Vector3& outNorm
 	return false;
 }
 
-void PlayerWallRunState::Move()
+void WallRunState::Move()
 {
 	Vector3 along = Cross(m_wallNormal, Vector3::Up);
 	along.Normalize();
@@ -114,7 +106,7 @@ void PlayerWallRunState::Move()
 	UpdateTilt(m_wallNormal);
 }
 
-void PlayerWallRunState::UpdateTilt(const Vector3& wallNormal)
+void WallRunState::UpdateTilt(const Vector3& wallNormal)
 {
 	// 体の上を壁から離れる向きへ傾け、足を壁につける。壁の向きから決めるので、左右どちらの壁でも同じ
 	Vector3 away = wallNormal;
@@ -130,7 +122,7 @@ void PlayerWallRunState::UpdateTilt(const Vector3& wallNormal)
 	m_owner->SetModelTiltTarget(target, pivotHeight);
 }
 
-void PlayerWallRunState::WallJump()
+void WallRunState::WallJump()
 {
 	m_owner->AddMoveSpeed(m_wallNormal * m_param.jumpSpeedOut);
 	m_owner->SetVerticalSpeed(m_param.jumpSpeedUp);
