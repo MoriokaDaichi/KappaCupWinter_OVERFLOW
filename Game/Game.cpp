@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "Game.h"
 #include "actor/Player.h"
+#include "actor/Enemy.h"
 #include "camera/GameCamera.h"
 #include "gimmick/Anchor.h"
 #include "param/GameParam.h"
@@ -10,6 +11,7 @@
 Game::~Game()
 {
 	DeleteGO(m_player);
+	DeleteGO(m_enemy);
 	DeleteGO(m_gameCamera);
 	DeleteGO(m_bulletManager);
 	for (int i = 0; i < ANCHOR_NUM; i++)
@@ -92,6 +94,13 @@ bool Game::Start()
 	m_player = NewGO<Player>(0, "player");
 	m_playerController.SetInput(&InputManager::GetInstance());
 	m_player->SetController(&m_playerController);
+
+	// 仮: ステップ 5 の確認用。アンカーから離れた横の方に置き、プレイヤーの方へ歩かせる
+	m_enemy = NewGO<Enemy>(0, "enemy");
+	m_enemy->SetStartPosition(Vector3(2500.0f, START_HEIGHT, 0.0f));
+	m_enemyController.SetOwner(m_enemy);
+	m_enemyController.SetTarget(m_player);
+	m_enemy->SetController(&m_enemyController);
 
 	m_gameCamera = NewGO<GameCamera>(1, "gameCamera");
 	m_gameCamera->SetTarget(m_player);

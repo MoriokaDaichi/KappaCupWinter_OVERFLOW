@@ -3,8 +3,10 @@
 #include "Level3DRender/LevelRender.h"
 #include "debug/DebugManager.h"
 #include "controller/PlayerController.h"
+#include "controller/AIController.h"
 
 class Player;
+class Enemy;
 class GameCamera;
 class Anchor;
 class BulletManager;
@@ -20,6 +22,7 @@ public:
 
 private:
 	Player* m_player = nullptr;
+	Enemy* m_enemy = nullptr;		///< 仮: ステップ 5 の確認用の敵（敵のスポーンができたら置き換える）
 	GameCamera* m_gameCamera = nullptr;
 	BulletManager* m_bulletManager = nullptr;
 
@@ -40,5 +43,7 @@ private:
 	SpriteRender m_crosshairRender;		///< 仮の照準（HUD ができたら置き換える）
 	DebugManager m_debugManager;		///< デバッグ画面（ImGui のパネル。F1 で隠せる）
 	PlayerController m_playerController;	///< 入力からプレイヤーのコマンドを作る
+	AIController m_enemyController;			///< 敵のコマンドを作る（プレイヤーの方へ歩く）
+	static constexpr float START_HEIGHT = 300.0f;		///< 敵を置く高さ（床の少し上から落とす）
 };
 
