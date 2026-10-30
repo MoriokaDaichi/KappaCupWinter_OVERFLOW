@@ -49,6 +49,9 @@
     <Filter Include="controller">
       <UniqueIdentifier>{9c44615a-3fc5-4f21-965c-d38e353b3529}</UniqueIdentifier>
     </Filter>
+    <Filter Include="hud">
+      <UniqueIdentifier>{5e7d2c41-8a3b-4f6e-9d12-3c4b7a8e6f20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -135,6 +138,15 @@
     <ClCompile Include="actor\characterState\TransitionTable.cpp">
       <Filter>actor\characterState</Filter>
     </ClCompile>
+    <ClCompile Include="weapon\MultiLocker.cpp">
+      <Filter>weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="hud\LockOnRing.cpp">
+      <Filter>hud</Filter>
+    </ClCompile>
+    <ClCompile Include="hud\LockOnHud.cpp">
+      <Filter>hud</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -162,9 +174,6 @@
     </ClInclude>
     <ClInclude Include="thirdParty\nlohmann\json.hpp">
       <Filter>thirdParty</Filter>
-    </ClInclude>
-    <ClInclude Include="actor\characterState\PlayerState.h">
-      <Filter>actor\characterState</Filter>
     </ClInclude>
     <ClInclude Include="actor\characterState\IdleState.h">
       <Filter>actor\characterState</Filter>
@@ -249,6 +258,15 @@
     </ClInclude>
     <ClInclude Include="actor\BattleCharacter.h">
       <Filter>actor</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon\MultiLocker.h">
+      <Filter>weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="hud\LockOnRing.h">
+      <Filter>hud</Filter>
+    </ClInclude>
+    <ClInclude Include="hud\LockOnHud.h">
+      <Filter>hud</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@
 #include "debug/DebugManager.h"
 #include "controller/PlayerController.h"
 #include "controller/AIController.h"
+#include "hud/LockOnHud.h"
 
 class BattleCharacter;
 class GameCamera;
@@ -40,6 +41,7 @@ private:
 	BoxCollider m_wallCollider[WALL_NUM];
 	RigidBody m_wallBody[WALL_NUM];
 	SpriteRender m_crosshairRender;		///< 仮の照準（HUD ができたら置き換える）
+	LockOnHud m_lockOnHud;				///< マルチロックオンのドーナツ
 	DebugManager m_debugManager;		///< デバッグ画面（ImGui のパネル。F1 で隠せる）
 	PlayerController m_playerController;	///< 入力からプレイヤーのコマンドを作る
 	AIController m_enemyController;			///< 敵のコマンドを作る（プレイヤーの方へ歩く）

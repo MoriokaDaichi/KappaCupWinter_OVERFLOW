@@ -86,6 +86,7 @@ public:
 	bool HasGun() const { return m_gun != nullptr; }
 	/** 銃を返す（持っているときだけ呼ぶ） */
 	Gun& GetGun() { return *m_gun; }
+	const Gun& GetGun() const { return *m_gun; }
 
 //stateが呼ぶ関数
 public:

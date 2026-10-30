@@ -257,6 +257,9 @@
     <ClCompile Include="weapon\BulletManager.cpp" />
     <ClCompile Include="weapon\Gun.cpp" />
     <ClCompile Include="weapon\GunModel.cpp" />
+    <ClCompile Include="weapon\MultiLocker.cpp" />
+    <ClCompile Include="hud\LockOnRing.cpp" />
+    <ClCompile Include="hud\LockOnHud.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="actor\BattleCharacter.h" />
@@ -271,7 +274,6 @@
     <ClInclude Include="actor\characterState\AirState.h" />
     <ClInclude Include="actor\characterState\IdleState.h" />
     <ClInclude Include="actor\characterState\RunState.h" />
-    <ClInclude Include="actor\characterState\PlayerState.h" />
     <ClInclude Include="actor\characterState\SwingState.h" />
     <ClInclude Include="actor\characterState\WallRunState.h" />
     <ClInclude Include="camera\GameCamera.h" />
@@ -298,6 +300,9 @@
     <ClInclude Include="weapon\BulletManager.h" />
     <ClInclude Include="weapon\Gun.h" />
     <ClInclude Include="weapon\GunModel.h" />
+    <ClInclude Include="weapon\MultiLocker.h" />
+    <ClInclude Include="hud\LockOnRing.h" />
+    <ClInclude Include="hud\LockOnHud.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

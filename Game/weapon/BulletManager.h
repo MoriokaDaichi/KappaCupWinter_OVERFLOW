@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "param/GameParam.h"
 
+class BattleCharacter;
+
 /** 撃った弾をまとめて動かし、まとめて描く（１発ごとにInitすると重いため）。Game が NewGO する */
 class BulletManager : public IGameObject
 {
@@ -12,6 +14,9 @@ public:
 public:
 	/** 空いている枠を探して弾を出す。空きがなければ撃たない */
 	void Fire(const Vector3& position, const Vector3& velocity, const GunParam::Level& levelParam);
+	/** target の方へ曲がっていく弾を出す。target は借りているだけ */
+	void FireHoming(const Vector3& position, const Vector3& velocity, const GunParam::Level& levelParam,
+		const BattleCharacter* target);
 
 private:
 	/** 弾を消して空きに戻す（描かれないように大きさ 0 にする） */
@@ -28,7 +33,11 @@ private:
 		float scale = 0.0f;			///< 大きさ
 		bool pierce = false;		///< 弾が貫通するかどうか
 		float explosionRadius = 0.0f;	///< 爆発の半径（0 なら爆発しない）
+		const BattleCharacter* target = nullptr;	///< ホーミングする相手（nullptr ならまっすぐ飛ぶ。借りているだけ）
 	};
+
+	/** 弾の向きを target の方へ曲げる。届いたら true（今は当たり判定がないので、消すのに使う） */
+	bool UpdateHoming(Bullet& bullet, const float dt) const;
 
 	static constexpr int MAX_BULLET = 128;					///< 同時に飛べる弾の数（連射 0.08 秒 × 寿命 2 秒 ≒ 25 発に余裕を持たせる）
 	std::array<Bullet, MAX_BULLET> m_bullets;				///< 全部の弾。isActive が false の枠は空き

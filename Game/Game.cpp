@@ -110,6 +110,7 @@ bool Game::Start()
 	m_gameCamera->SetInput(&InputManager::GetInstance());
 
 	m_debugManager.Init(m_player);
+	m_lockOnHud.Init(m_player);
 
 	return true;
 }
@@ -131,4 +132,5 @@ void Game::Render(RenderContext& rc)
 	}
 
 	m_crosshairRender.Draw(rc);
+	m_lockOnHud.Draw(rc);
 }

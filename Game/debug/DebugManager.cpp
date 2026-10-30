@@ -114,6 +114,10 @@ void DebugManager::DrawPlayer()
 	horizontal.y = 0.0f;
 	ImGui::Text(U8("横の速さ %.0f　縦の速さ %.0f"), horizontal.Length(), vertical);
 	ImGui::Text(U8("接地 %s"), m_player->IsOnGround() ? U8("している") : U8("していない"));
+	if (m_player->HasGun())
+	{
+		ImGui::Text(U8("ロック %d 体"), m_player->GetGun().GetLockCount());
+	}
 
 	// debug.json にワープ先を足すときに、そのまま貼れる形でコピーする
 	if (ImGui::Button(U8("今の位置をコピー")))

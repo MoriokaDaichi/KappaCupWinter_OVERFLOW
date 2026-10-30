@@ -165,6 +165,11 @@ struct GunParam
 	float aimHoldTime = 0.0f;			///< 撃つのをやめてから、体を前に向けておく時間・秒
 	float muzzleRight = 0.0f;			///< 銃口の位置。胸から体の右へずらす量
 	float muzzleForward = 0.0f;			///< 銃口の位置。胸から体の前へずらす量
+	float lockAngle = 0.0f;				///< 画面の中央からこの角度（度）以内の敵をロックする
+	float lockDistance = 0.0f;			///< この距離より遠い敵はロックしない
+	float lockTime = 0.0f;				///< 照準に入れ続けてからロックするまでの時間（秒）
+	float homingSpeed = 0.0f;			///< ホーミング弾の速さ
+	float homingTurnRate = 0.0f;		///< ホーミング弾が 1 秒に相手の方へ曲がる割合
 
 	struct Level
 	{
@@ -173,6 +178,7 @@ struct GunParam
 		float bulletScale = 0.0f;			///< 弾丸の大きさ
 		bool pierce = false;				///< 弾が貫通するかどうか
 		float explosionRadius = 0.0f;		///< 爆発の半径（0 なら爆発しない）
+		int lockCount = 0;					///< 一度にロックできる数（0 ならマルチロックオンを使わない）
 	};
 
 	std::vector<Level> levels;				///< レベルの一覧
