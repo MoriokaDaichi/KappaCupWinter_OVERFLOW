@@ -147,6 +147,17 @@ namespace nsK2Engine {
 		}
 	}
 
+	void ModelRender::Init(
+		const char* filePath,
+		std::vector<AnimationClip>& animationClips,
+		EnModelUpAxis enModelUpAxis,
+		bool isShadowReciever,
+		int maxInstance,
+		bool isFrontCullingOnDrawShadowMap)
+	{
+		Init(filePath, animationClips.empty() ? nullptr : animationClips.data(), static_cast<int>(animationClips.size()), enModelUpAxis, isShadowReciever, maxInstance, isFrontCullingOnDrawShadowMap);
+	}
+
 	void ModelRender::InitGeometryDatas(int maxInstance)
 	{
 		m_geometryDatas.resize(maxInstance);

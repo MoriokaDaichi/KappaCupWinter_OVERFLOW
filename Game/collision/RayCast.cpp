@@ -50,7 +50,7 @@ namespace nsCollision
 
 		RayHitInfo hit;
 
-		// 何にも当たらなければ、初期値（isHit = false, type = -1）のまま返す
+		// 何にも当たらなければ、初期値（isHit = false, type = INVALID_TYPE）のまま返す
 		if (!callback.hasHit())
 		{
 			return hit;

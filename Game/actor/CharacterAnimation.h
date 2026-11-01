@@ -23,7 +23,7 @@ constexpr const char* ANIM_NAMES[] =
     "Idle", "Run", "JumpUp", "Fall", "FallFast", "Land", "Swing"
 };
 
-static_assert(sizeof(ANIM_NAMES) / sizeof(ANIM_NAMES[0]) == static_cast<int>(EnCharacterAnim::Num),
+static_assert(ARRAYSIZE(ANIM_NAMES) == static_cast<int>(EnCharacterAnim::Num),
     "ANIM_NAMES の数を EnCharacterAnim と合わせてください");
 
 /** name に合う EnCharacterAnim を outId に入れる。知らない名前なら false */
@@ -45,9 +45,7 @@ public:
 	/** 体のモデルを受け取る（InitCharacter の後、最初の状態に切り替える前に呼ぶ） */
 	void SetModel(ModelRender& model) { m_model = &model; }
 	/** ModelRender に渡すアニメーションの配列 */
-	AnimationClip* GetClips() { return m_clips.data(); }
-	/** ModelRender に渡すアニメーションの数 */
-	int GetClipCount() const { return static_cast<int>(m_clips.size()); }
+	std::vector<AnimationClip>& GetClips() { return m_clips; }
 
 public:
 	/** ジャンプしたとき。2段目のジャンプでも、踏み切りから流し直す */
@@ -66,7 +64,7 @@ private:
 private:
 	static constexpr float INTERPOLATE_TIME = 0.2f;	///< アニメーションを切り替えるときに、前のものとなめらかにつなぐ時間（秒）。調整は遷移のタスクで JSON に出す
 
-	std::array<AnimationClip, static_cast<int>(EnCharacterAnim::Num)> m_clips;	///< アニメーション（ModelRender が借りるので、ここで持つ）
+	std::vector<AnimationClip> m_clips = std::vector<AnimationClip>(static_cast<int>(EnCharacterAnim::Num));	///< アニメーション（ModelRender が借りるので、ここで持つ）
 	const CharacterParam::Animation* m_param = nullptr;	///< 落下・着地の速さの境目（Load で受け取る）
 	ModelRender* m_model = nullptr;					///< 体のモデル（借りているだけ）
 	EnCharacterAnim m_currentAnim = EnCharacterAnim::Num;	///< 今流しているアニメーション（Num はまだ流していない）

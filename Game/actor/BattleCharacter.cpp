@@ -22,13 +22,19 @@ bool BattleCharacter::Start()
 		m_animation = std::make_unique<CharacterAnimation>();
 		m_animation->Load(m_param->animation);
 	}
-	AnimationClip* clips = m_animation ? m_animation->GetClips() : nullptr;
-	const int clipCount = m_animation ? m_animation->GetClipCount() : 0;
-	InitCharacter(m_param->model.c_str(), clips, clipCount, m_param->body.radius, m_param->body.height, m_startPosition);
+	const char* modelPath = m_param->model.c_str();
+	const CharacterParam::Body& body = m_param->body;
 
 	if (m_animation)
 	{
+		// アニメーションがあるキャラ: vector ごと渡す
+		InitCharacter(modelPath, m_animation->GetClips(), body.radius, body.height, m_startPosition);
 		m_animation->SetModel(m_modelRender);
+	}
+	else
+	{
+		// アニメーションがないキャラ（今の敵）
+		InitCharacter(modelPath, body.radius, body.height, m_startPosition);
 	}
 
 	if (m_param->hasHands)
@@ -178,9 +184,9 @@ bool BattleCharacter::CanStartWallRun() const
 {
 	Vector3 horizontal = GetMoveSpeed();
 	horizontal.y = 0.0f;
-	const float speed = horizontal.Length();
+	const float minSpeed = m_param->wallRun.minSpeed;
 
-	return IsMoveInput() && speed >= m_param->wallRun.minSpeed && IsCooldownOver(EnCooldown::WallRun);
+	return IsMoveInput() && horizontal.LengthSq() >= minSpeed * minSpeed && IsCooldownOver(EnCooldown::WallRun);
 }
 
 Vector3 BattleCharacter::GetChestPosition() const

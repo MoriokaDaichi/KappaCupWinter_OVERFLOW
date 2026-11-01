@@ -44,6 +44,18 @@ namespace nsK2Engine {
 			bool isShadowReciever = true,
 			int maxInstance = 1,
 			bool isFrontCullingOnDrawShadowMap = false);
+
+		/// <summary>
+		/// アニメーションを std::vector で受け取る版。中では上の Init を呼ぶ
+		/// </summary>
+		/// <param name="animationClips">アニメーションクリップの収まった配列。</param>
+		void Init(
+			const char* filePath,
+			std::vector<AnimationClip>& animationClips,
+			EnModelUpAxis enModelUpAxis = enModelUpAxisZ,
+			bool isShadowReciever = true,
+			int maxInstance = 1,
+			bool isFrontCullingOnDrawShadowMap = false);
 		/// <summary>
 		/// 半透明描画を行うオブジェクトを初期化。
 		/// </summary>

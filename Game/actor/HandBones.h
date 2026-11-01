@@ -23,8 +23,10 @@ private:
 	Vector3 GetMiddle(const int boneA, const int boneB) const;
 
 private:
-	const ModelRender* m_model = nullptr;	///< 体のモデル（借りているだけ）
-	int m_leftHandBoneId = -1;				///< 左手の骨の番号（ロープの手元に使う。見つからなければ -1）
-	int m_rightHandBoneId = -1;				///< 右手の骨の番号
-	int m_rightMiddleBoneId = -1;			///< 右手の中指の付け根の骨の番号（銃を握る位置に使う）
+	static constexpr int INVALID_BONE_ID = -1;			///< 骨が見つからないときの番号（エンジンの FindBoneID がこの値を返す）
+
+	const ModelRender* m_model = nullptr;				///< 体のモデル（借りているだけ）
+	int m_leftHandBoneId = INVALID_BONE_ID;				///< 左手の骨の番号（ロープの手元に使う。見つからなければ INVALID_BONE_ID）
+	int m_rightHandBoneId = INVALID_BONE_ID;			///< 右手の骨の番号
+	int m_rightMiddleBoneId = INVALID_BONE_ID;			///< 右手の中指の付け根の骨の番号（銃を握る位置に使う）
 };

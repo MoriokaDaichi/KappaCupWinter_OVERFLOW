@@ -81,7 +81,7 @@ bool MultiLocker::CanLock(const BattleCharacter& target, const Vector3& aimOrigi
 	Vector3 toTarget = targetPos - aimOrigin;
 
 	// 遠すぎる
-	if (toTarget.Length() > m_param.lockDistance)
+	if (toTarget.LengthSq() > m_param.lockDistance * m_param.lockDistance)
 	{
 		return false;
 	}

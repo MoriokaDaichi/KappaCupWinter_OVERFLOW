@@ -3,7 +3,7 @@
 #include "actor/CharacterCommand.h"
 #include "actor/CharacterAnimation.h"
 #include "actor/HandBones.h"
-#include "actor/characterState/CharacterState.h"
+#include "actor/characterState/BattleCharacterState.h"
 #include "actor/characterState/CharacterStateId.h"
 #include "actor/characterState/TransitionTable.h"
 #include "grapple/Grapple.h"
@@ -161,7 +161,7 @@ private:
 	const SpeedParam& m_speedParam = nsGameParam::Get().speed;					///< 速度の調整値（speed.json）
 	Vector3 m_startPosition = Vector3::Zero;									///< 出てくる位置（足元）
 	int m_jumpCount = 0;														///< いま何回跳んだか
-	StateMachine<BattleCharacter, EnCharacterState, CharacterState> m_stateMachine;	///< 状態の切り替え役
+	StateMachine<BattleCharacter, EnCharacterState, BattleCharacterState> m_stateMachine;	///< 状態の切り替え役
 	TransitionTable m_transitionTable;											///< 切り替え表（設定の transitions から作る）
 	std::unique_ptr<Grapple> m_grapple;											///< グラップルの能力（abilities に "Grapple" があるときだけ作る）
 	std::unique_ptr<Gun> m_gun;													///< 銃（abilities に "Gun" があるときだけ作る）

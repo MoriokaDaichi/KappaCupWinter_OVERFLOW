@@ -5,7 +5,7 @@
 #include "collision/RayCast.h"
 
 WallRunState::WallRunState(BattleCharacter* owner)
-	: CharacterState(owner)
+	: BattleCharacterState(owner)
 	, m_param(owner->GetParam().wallRun)
 	, m_bodyParam(owner->GetParam().body)
 {

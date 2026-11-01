@@ -1,11 +1,11 @@
 ﻿#pragma once
-#include "actor/characterState/CharacterState.h"
+#include "actor/characterState/BattleCharacterState.h"
 #include "param/GameParam.h"
 
 class BattleCharacter;
 
 /** 壁を走っている状態 */
-class WallRunState : public CharacterState
+class WallRunState : public BattleCharacterState
 {
 public:
 	explicit WallRunState(BattleCharacter* owner);

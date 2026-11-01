@@ -4,7 +4,7 @@
 #include <vector>
 
 class BattleCharacter;
-class CharacterState;
+class BattleCharacterState;
 
 /**
  * 切り替え表。「今の State のとき、条件が成り立ったら、動作をして、次の State へ」を上から順に調べる
@@ -22,15 +22,15 @@ public:
 	 */
 	bool ApplyFromAny(BattleCharacter& owner) const;
 	/** 今の State の行を上から調べ、成り立った最初の行で切り替える。成り立った行があれば true */
-	bool ApplyFromCurrent(BattleCharacter& owner, const EnCharacterState current, CharacterState& currentState) const;
+	bool ApplyFromCurrent(BattleCharacter& owner, const EnCharacterState current, BattleCharacterState& currentState) const;
 
 private:
 	/** 1 行の条件が全部成り立っていたら、動作をして切り替える。切り替えたら true */
-	bool TryTransition(BattleCharacter& owner, CharacterState* currentState, const StateTransition& transition) const;
+	bool TryTransition(BattleCharacter& owner, BattleCharacterState* currentState, const StateTransition& transition) const;
 	/** 条件 1 つが成り立っているか（State だけが知っている条件は、その State に聞く） */
-	bool IsConditionMet(const BattleCharacter& owner, CharacterState* currentState, const EnCondition when) const;
+	bool IsConditionMet(const BattleCharacter& owner, BattleCharacterState* currentState, const EnCondition when) const;
 	/** 切り替える前の動作を 1 つする（State だけができる動作は、その State にやってもらう） */
-	void DoAction(BattleCharacter& owner, CharacterState* currentState, const EnTransitionAction action) const;
+	void DoAction(BattleCharacter& owner, BattleCharacterState* currentState, const EnTransitionAction action) const;
 
 private:
 	std::vector<StateTransition> m_rows;		///< 表の行（JSON に書いた順）

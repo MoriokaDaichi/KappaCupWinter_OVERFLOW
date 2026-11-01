@@ -1,13 +1,13 @@
 ﻿#pragma once
-#include "actor/characterState/CharacterState.h"
+#include "actor/characterState/BattleCharacterState.h"
 
 class BattleCharacter;
 
 /** 走っている状態 */
-class RunState : public CharacterState
+class RunState : public BattleCharacterState
 {
 public:
-	explicit RunState(BattleCharacter* owner) : CharacterState(owner) {}
+	explicit RunState(BattleCharacter* owner) : BattleCharacterState(owner) {}
 
 	/** ジャンプの回数を戻す */
 	void Enter() override;

@@ -2,7 +2,7 @@
 #include "actor/characterState/TransitionTable.h"
 
 #include "actor/BattleCharacter.h"
-#include "actor/characterState/CharacterState.h"
+#include "actor/characterState/BattleCharacterState.h"
 #include "actor/characterState/WallRunState.h"
 
 void TransitionTable::Init(const std::vector<CharacterParam::Transition>& rows)
@@ -48,7 +48,7 @@ bool TransitionTable::ApplyFromAny(BattleCharacter& owner) const
 	return false;
 }
 
-bool TransitionTable::ApplyFromCurrent(BattleCharacter& owner, const EnCharacterState current, CharacterState& currentState) const
+bool TransitionTable::ApplyFromCurrent(BattleCharacter& owner, const EnCharacterState current, BattleCharacterState& currentState) const
 {
 	for (const StateTransition& transition : m_rows)
 	{
@@ -60,7 +60,7 @@ bool TransitionTable::ApplyFromCurrent(BattleCharacter& owner, const EnCharacter
 	return false;
 }
 
-bool TransitionTable::TryTransition(BattleCharacter& owner, CharacterState* currentState, const StateTransition& transition) const
+bool TransitionTable::TryTransition(BattleCharacter& owner, BattleCharacterState* currentState, const StateTransition& transition) const
 {
 	// 左から順に調べ、成り立たないものがあればそこでやめる（&& と同じ。重い判定（壁を探すレイ）を後ろに書けば、むだに調べない）
 	for (const EnCondition when : transition.when)
@@ -80,7 +80,7 @@ bool TransitionTable::TryTransition(BattleCharacter& owner, CharacterState* curr
 	return true;
 }
 
-bool TransitionTable::IsConditionMet(const BattleCharacter& owner, CharacterState* currentState, const EnCondition when) const
+bool TransitionTable::IsConditionMet(const BattleCharacter& owner, BattleCharacterState* currentState, const EnCondition when) const
 {
 	// その State だけが知っている条件（Hooked など）は、今の State に聞く
 	if (CONDITION_ONLY_FROM[static_cast<int>(when)] != EnCharacterState::Num)
@@ -122,7 +122,7 @@ bool TransitionTable::IsConditionMet(const BattleCharacter& owner, CharacterStat
 	return false;
 }
 
-void TransitionTable::DoAction(BattleCharacter& owner, CharacterState* currentState, const EnTransitionAction action) const
+void TransitionTable::DoAction(BattleCharacter& owner, BattleCharacterState* currentState, const EnTransitionAction action) const
 {
 	// その State だけができる動作（WallJump など）は、今の State にやってもらう
 	if (ACTION_ONLY_FROM[static_cast<int>(action)] != EnCharacterState::Num)

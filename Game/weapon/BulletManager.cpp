@@ -99,9 +99,9 @@ void BulletManager::FireHoming(const Vector3& position, const Vector3& velocity,
 bool BulletManager::UpdateHoming(Bullet& bullet, const float dt) const
 {
 	Vector3 toTarget = bullet.target->GetChestPosition() - bullet.position;
-	const float distance = toTarget.Length();
+	const float reach = m_param.homingSpeed * dt;
 	// このフレームで届く（今は当たり判定がないので、届いたら消す。当てるのは HP のタスクで）
-	if (distance <= m_param.homingSpeed * dt)
+	if (toTarget.LengthSq() <= reach * reach)
 	{
 		return true;
 	}

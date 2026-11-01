@@ -5,13 +5,13 @@
 class BattleCharacter;
 
 /**
- * キャラクターの State の親。IState に「切り替え表から呼ばれる 2 つの窓口」を足したもの
+ * BattleCharacter の State の親（IdleState などはこれを継承する）。IState に「切り替え表から呼ばれる 2 つの窓口」を足したもの
  * 切り替えの判断は表（BattleCharacter）がするので、State の Update には動きだけを書く
  */
-class CharacterState : public IState<BattleCharacter>
+class BattleCharacterState : public IState<BattleCharacter>
 {
 public:
-	explicit CharacterState(BattleCharacter* owner) : IState<BattleCharacter>(owner) {}
+	explicit BattleCharacterState(BattleCharacter* owner) : IState<BattleCharacter>(owner) {}
 
 	/**
 	 * この State だけが判定できる条件に答える（CONDITION_ONLY_FROM でこの State を指している条件だけが来る）

@@ -12,7 +12,7 @@ namespace
         enButtonStart // Pause
     };
 
-    static_assert(std::size(ACTION_TO_BUTTON) == static_cast<size_t>(EnInputAction::Num),
+    static_assert(ARRAYSIZE(ACTION_TO_BUTTON) == static_cast<size_t>(EnInputAction::Num),
         "ACTION_TO_BUTTON の要素数が EnInputAction と合っていません");
 }
 

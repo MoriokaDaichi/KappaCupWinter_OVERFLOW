@@ -47,4 +47,5 @@ private:
 	bool m_wasAimPress = false;								///< 前のフレームに LT を押していたか（離した瞬間を知るため）
 
 	static constexpr float AIM_MIN_DISTANCE = 1.0f;			///< 狙う点が手元からこれより近いと、向きを出せない
+	static constexpr float AIM_MIN_DISTANCE_SQ = AIM_MIN_DISTANCE * AIM_MIN_DISTANCE;		///< AIM_MIN_DISTANCEを2乗した値（LengthSq と比べるため）
 };

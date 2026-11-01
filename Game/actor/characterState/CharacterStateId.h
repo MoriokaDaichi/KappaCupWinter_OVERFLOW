@@ -18,7 +18,7 @@ constexpr const char* STATE_NAMES[] =
     "Idle", "Run", "Air", "WallRun", "Swing"
 };
 
-static_assert(sizeof(STATE_NAMES) / sizeof(STATE_NAMES[0]) == static_cast<int>(EnCharacterState::Num),
+static_assert(ARRAYSIZE(STATE_NAMES) == static_cast<int>(EnCharacterState::Num),
     "STATE_NAMES の数を EnCharacterState と合わせてください");
 
 /** name に合う EnCharacterState を outId に入れる。知らない名前なら false */

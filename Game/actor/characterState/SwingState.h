@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "actor/characterState/CharacterState.h"
+#include "actor/characterState/BattleCharacterState.h"
 #include "param/GameParam.h"
 #include <limits>
 
@@ -7,7 +7,7 @@ class BattleCharacter;
 class Anchor;
 
 /** アンカーにぶら下がって振り子のように動いている状態 */
-class SwingState : public CharacterState
+class SwingState : public BattleCharacterState
 {
 public:
 	explicit SwingState(BattleCharacter* owner);

@@ -265,7 +265,8 @@
     <ClInclude Include="actor\BattleCharacter.h" />
     <ClInclude Include="actor\CharacterAnimation.h" />
     <ClInclude Include="actor\HandBones.h" />
-    <ClInclude Include="actor\characterState\CharacterState.h" />
+    <ClInclude Include="actor\characterState\BattleCharacterState.h" />
+    <ClInclude Include="actor\characterState\CharacterStateId.h" />
     <ClInclude Include="actor\characterState\StateTransition.h" />
     <ClInclude Include="actor\characterState\TransitionTable.h" />
     <ClInclude Include="param\NameToEnum.h" />

@@ -11,7 +11,7 @@ void HandBones::Init(const ModelRender& model, const CharacterParam::Hands& hand
 
 bool HandBones::GetRopeHandPosition(Vector3& outPosition) const
 {
-	if (m_leftHandBoneId < 0 || m_rightHandBoneId < 0)
+	if (m_leftHandBoneId == INVALID_BONE_ID || m_rightHandBoneId == INVALID_BONE_ID)
 	{
 		return false;
 	}
@@ -22,7 +22,7 @@ bool HandBones::GetRopeHandPosition(Vector3& outPosition) const
 
 bool HandBones::GetGrip(Matrix& outHandMatrix, Vector3& outGripPosition) const
 {
-	if (m_rightHandBoneId < 0 || m_rightMiddleBoneId < 0)
+	if (m_rightHandBoneId == INVALID_BONE_ID || m_rightMiddleBoneId == INVALID_BONE_ID)
 	{
 		return false;
 	}

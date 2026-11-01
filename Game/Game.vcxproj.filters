@@ -238,7 +238,10 @@
     <ClInclude Include="actor\HandBones.h">
       <Filter>actor</Filter>
     </ClInclude>
-    <ClInclude Include="actor\characterState\CharacterState.h">
+    <ClInclude Include="actor\characterState\BattleCharacterState.h">
+      <Filter>actor\characterState</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\characterState\CharacterStateId.h">
       <Filter>actor\characterState</Filter>
     </ClInclude>
     <ClInclude Include="actor\characterState\StateTransition.h">

@@ -1,13 +1,13 @@
 ﻿#pragma once
-#include "actor/characterState/CharacterState.h"
+#include "actor/characterState/BattleCharacterState.h"
 
 class BattleCharacter;
 
 /** 空中にいる状態 */
-class AirState : public CharacterState
+class AirState : public BattleCharacterState
 {
 public:
-	explicit AirState(BattleCharacter* owner) : CharacterState(owner) {}
+	explicit AirState(BattleCharacter* owner) : BattleCharacterState(owner) {}
 
 	/** 足場から落ちてきたときは、地上のジャンプを使ったことにする */
 	void Enter() override;

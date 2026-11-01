@@ -47,10 +47,11 @@ protected:
 	virtual void OnBodyUpdated() {}
 	/**
 	 * モデルとキャラコンの初期化。子クラスの Start から呼ぶ
-	 * clips はアニメーション（なければ nullptr と 0）。AnimationClip は ModelRender が借りるだけなので、呼ぶ側が持っておく（BattleCharacter なら CharacterAnimation）
+	 * アニメーションがなければ clips のない方を呼ぶ。AnimationClip は ModelRender が借りるだけなので、呼ぶ側が持っておく（BattleCharacter なら CharacterAnimation）
 	 * カプセルの高さは height + radius × 2（position は足元）
 	 */
-	void InitCharacter(const char* filePath, AnimationClip* clips, const int clipCount, const float radius, const float height, const Vector3& position);
+	void InitCharacter(const char* filePath, std::vector<AnimationClip>& clips, const float radius, const float height, const Vector3& position);
+	void InitCharacter(const char* filePath, const float radius, const float height, const Vector3& position);
 
 private:
 	/** キャラクター共通（Execute → モデルに位置と向きを反映 → モデル更新） */

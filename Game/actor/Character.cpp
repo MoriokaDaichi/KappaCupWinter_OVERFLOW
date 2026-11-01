@@ -41,7 +41,7 @@ void Character::ApproachHorizontal(const Vector3& target, const float rate)
 
 	const float step = rate * g_gameTime->GetFrameDeltaTime();
 
-	if (diff.Length() <= step)
+	if (diff.LengthSq() <= step * step)
 	{
 		m_moveSpeed.x = target.x;
 		m_moveSpeed.z = target.z;
@@ -78,8 +78,14 @@ void Character::SetModelTiltTarget(const Quaternion& target, const float pivotHe
 	m_modelTiltPivotHeight = pivotHeight;
 }
 
-void Character::InitCharacter(const char* filePath, AnimationClip* clips, const int clipCount, const float radius, const float height, const Vector3& position)
+void Character::InitCharacter(const char* filePath, std::vector<AnimationClip>& clips, const float radius, const float height, const Vector3& position)
 {
-	m_modelRender.Init(filePath, clips, clipCount);
+	m_modelRender.Init(filePath, clips);
+	m_charaCon.Init(radius, height, position);
+}
+
+void Character::InitCharacter(const char* filePath, const float radius, const float height, const Vector3& position)
+{
+	m_modelRender.Init(filePath);
 	m_charaCon.Init(radius, height, position);
 }

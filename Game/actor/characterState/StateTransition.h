@@ -33,7 +33,7 @@ constexpr const char* CONDITION_NAMES[] =
     "GrappleStart", "GrappleRelease", "WallFound", "WallLost", "Hooked"
 };
 
-static_assert(sizeof(CONDITION_NAMES) / sizeof(CONDITION_NAMES[0]) == static_cast<int>(EnCondition::Num),
+static_assert(ARRAYSIZE(CONDITION_NAMES) == static_cast<int>(EnCondition::Num),
     "CONDITION_NAMES の数を EnCondition と合わせてください");
 
 /**
@@ -47,7 +47,7 @@ constexpr EnCharacterState CONDITION_ONLY_FROM[] =
     EnCharacterState::Num, EnCharacterState::Swing
 };
 
-static_assert(sizeof(CONDITION_ONLY_FROM) / sizeof(CONDITION_ONLY_FROM[0]) == static_cast<int>(EnCondition::Num),
+static_assert(ARRAYSIZE(CONDITION_ONLY_FROM) == static_cast<int>(EnCondition::Num),
     "CONDITION_ONLY_FROM の数を EnCondition と合わせてください");
 
 /** 切り替える前にやること。中身は C++ に書き、JSON には名前だけを書く */
@@ -64,7 +64,7 @@ constexpr const char* ACTION_NAMES[] =
     "Jump", "WallJump", "ReleaseBoost"
 };
 
-static_assert(sizeof(ACTION_NAMES) / sizeof(ACTION_NAMES[0]) == static_cast<int>(EnTransitionAction::Num),
+static_assert(ARRAYSIZE(ACTION_NAMES) == static_cast<int>(EnTransitionAction::Num),
     "ACTION_NAMES の数を EnTransitionAction と合わせてください");
 
 /** その State でしかできない動作と、その State（それ以外は Num ＝どこでも使える） */
@@ -73,7 +73,7 @@ constexpr EnCharacterState ACTION_ONLY_FROM[] =
     EnCharacterState::Num, EnCharacterState::WallRun, EnCharacterState::Swing
 };
 
-static_assert(sizeof(ACTION_ONLY_FROM) / sizeof(ACTION_ONLY_FROM[0]) == static_cast<int>(EnTransitionAction::Num),
+static_assert(ARRAYSIZE(ACTION_ONLY_FROM) == static_cast<int>(EnTransitionAction::Num),
     "ACTION_ONLY_FROM の数を EnTransitionAction と合わせてください");
 
 /** JSON の from に書くと「どの State からでも」になる名前 */

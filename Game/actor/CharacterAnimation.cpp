@@ -11,7 +11,7 @@ namespace
 		EnCharacterAnim::Run,		// WallRun（体を傾けて、壁を走って見せる）
 		EnCharacterAnim::Swing,		// Swing
 	};
-	static_assert(sizeof(STATE_TO_ANIM) / sizeof(STATE_TO_ANIM[0]) == static_cast<int>(EnCharacterState::Num),
+	static_assert(ARRAYSIZE(STATE_TO_ANIM) == static_cast<int>(EnCharacterState::Num),
 		"STATE_TO_ANIM を EnCharacterState に合わせてください");
 }
 

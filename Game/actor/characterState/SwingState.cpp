@@ -6,7 +6,7 @@
 #include "grapple/GrappleWire.h"
 
 SwingState::SwingState(BattleCharacter* owner)
-	: CharacterState(owner)
+	: BattleCharacterState(owner)
 	, m_param(owner->GetParam().swing)
 	, m_bodyParam(owner->GetParam().body)
 {

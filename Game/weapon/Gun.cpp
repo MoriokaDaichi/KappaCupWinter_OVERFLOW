@@ -49,7 +49,7 @@ void Gun::Shoot(const Vector3& muzzle, const GunParam::Level& levelParam)
 	}
 
 	Vector3 dir = CalcAimPoint() - muzzle;
-	if (dir.Length() < AIM_MIN_DISTANCE)
+	if (dir.LengthSq() < AIM_MIN_DISTANCE_SQ)
 	{
 		dir = g_camera3D->GetForward();
 	}
@@ -99,7 +99,7 @@ void Gun::FireAtLocked(const Vector3& muzzle, const GunParam::Level& levelParam)
 	
 	// 全部の弾を照準の方へ出し、飛びながらそれぞれの敵へ曲がっていく
 	Vector3 dir = CalcAimPoint() - muzzle;
-	if (dir.Length() < AIM_MIN_DISTANCE)
+	if (dir.LengthSq() < AIM_MIN_DISTANCE_SQ)
 	{
 		dir = g_camera3D->GetForward();
 	}
