@@ -2,6 +2,7 @@
 #include "actor/BattleCharacter.h"
 
 #include "controller/IController.h"
+#include "collision/RayCast.h"
 #include "weapon/BulletManager.h"
 #include "actor/characterState/IdleState.h"
 #include "actor/characterState/RunState.h"
@@ -22,6 +23,14 @@ bool BattleCharacter::Start()
 		m_animation = std::make_unique<CharacterAnimation>();
 		m_animation->Load(m_param->animation);
 	}
+	m_hp = m_param->health.maxHp;
+
+	// 体力があるキャラは倒されて消え、湧き直すこともある。レイトレの世界は作るたび・消すたびに重いので入れない
+	if (m_param->hasHealth)
+	{
+		m_modelRender.SetRaytracingWorld(false);
+	}
+
 	const char* modelPath = m_param->model.c_str();
 	const CharacterParam::Body& body = m_param->body;
 
@@ -56,6 +65,56 @@ bool BattleCharacter::Start()
 	}
 
 	return true;
+}
+
+bool BattleCharacter::TakeDamage(const float damage)
+{
+	if (!m_param->hasHealth || IsDead())
+	{
+		return false;
+	}
+
+	m_hp -= damage;
+	if (m_hp > 0.0f)
+	{
+		return false;
+	}
+
+	if (m_isReuseOnDefeat)
+	{
+		Hide();
+	}
+	else
+	{
+		DeleteGO(this);
+	}
+	return true;
+}
+
+void BattleCharacter::Respawn(const Vector3& position)
+{
+	m_hp = m_param->health.maxHp;
+	m_speed.Reset();
+	Warp(position);
+	Activate();
+}
+
+void BattleCharacter::Hide()
+{
+	Deactivate();
+	m_charaCon.GetRigidBody()->GetBody()->getWorldTransform().setOrigin(btVector3(0.0f, HIDDEN_HEIGHT, 0.0f));
+}
+
+bool BattleCharacter::IsHitBySegment(const Vector3& start, const Vector3& end, const float extraRadius, Vector3& hitPoint) const
+{
+	// カプセルの軸は、足元から半径の分だけ上がった所から、筒の長さの分だけ上まで
+	const CharacterParam::Body& body = m_param->body;
+	Vector3 bottom = GetPosition();
+	bottom.y += body.radius;
+	Vector3 top = bottom;
+	top.y += body.height;
+
+	return nsCollision::SegmentHitsCapsule(start, end, bottom, top, body.radius + extraRadius, hitPoint);
 }
 
 void BattleCharacter::Warp(const Vector3& position)
@@ -399,6 +458,6 @@ void BattleCharacter::InitAbilities()
 	if (HasAbility("Gun"))
 	{
 		m_gun = std::make_unique<Gun>();
-		m_gun->Init(FindGO<BulletManager>("bulletManager"));
+		m_gun->Init(FindGO<BulletManager>("bulletManager"), this);
 	}
 }

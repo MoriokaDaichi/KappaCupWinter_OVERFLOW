@@ -224,6 +224,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="actor\BattleCharacter.cpp" />
+    <ClCompile Include="actor\EnemySpawner.cpp" />
     <ClCompile Include="actor\CharacterAnimation.cpp" />
     <ClCompile Include="actor\HandBones.cpp" />
     <ClCompile Include="actor\characterState\TransitionTable.cpp" />
@@ -263,6 +264,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="actor\BattleCharacter.h" />
+    <ClInclude Include="actor\EnemySpawner.h" />
     <ClInclude Include="actor\CharacterAnimation.h" />
     <ClInclude Include="actor\HandBones.h" />
     <ClInclude Include="actor\characterState\BattleCharacterState.h" />

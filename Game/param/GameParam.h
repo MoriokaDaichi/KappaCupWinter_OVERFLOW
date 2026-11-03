@@ -102,6 +102,13 @@ struct CharacterParam
 		std::string rightMiddle;				///< 右手の中指の付け根（銃を握る位置＝右手との間）
 	};
 
+	/** 体力（書いたキャラだけ弾が当たる。プレイヤーは速度が盾なので持たない） */
+	struct Health
+	{
+		float maxHp = 0.0f;				///< 最初の体力。弾の damage の分だけ減り、0 以下で倒れる
+		float killBoost = 0.0f;			///< 倒した相手の基礎速度に足す量（敵の種類で変える）
+	};
+
 	std::string model;		///< モデルのファイル名（.tkm）
 	std::vector<std::string> abilities;		///< 持つ能力の名前（"Grapple"・"Gun"）。書いていない能力は作らない
 	std::vector<std::string> states;		///< 使う State の名前（"Idle"・"Run"・"Air"・"WallRun"・"Swing"）
@@ -116,6 +123,8 @@ struct CharacterParam
 	bool hasAnimation = false;		///< JSON に animation を書いたか
 	Hands hands;
 	bool hasHands = false;			///< JSON に hands を書いたか
+	Health health;
+	bool hasHealth = false;			///< JSON に health を書いたか
 };
 
 /** カメラの値（camera.json） */
@@ -174,6 +183,7 @@ struct GunParam
 	struct Level
 	{
 		float shootInterval = 0.0f;			///< 射撃間隔（秒）
+		float damage = 0.0f;				///< 弾 1 発のダメージ（爆発も同じ量）
 		float bulletSpeed = 0.0f;			///< 弾丸の速さ
 		float bulletScale = 0.0f;			///< 弾丸の大きさ
 		bool pierce = false;				///< 弾が貫通するかどうか
@@ -203,6 +213,21 @@ struct SpeedParam
 	float maxSpeed = 0.0f;				///< メーターが振り切る速さ
 };
 
+/** 敵を出す場所の値（spawn.json） */
+struct SpawnParam
+{
+	/** 敵を出す場所 1 つ */
+	struct Point
+	{
+		std::string chara;					///< どの敵か（"Walker"・"Firewall"・"Crawler"）
+		std::array<float, 3> position = {};	///< 足元の位置（x, y, z）
+		float respawnTime = 0.0f;			///< 倒されてから湧き直すまでの時間（秒）。0 なら湧き直さない
+		float respawnRadius = 0.0f;			///< プレイヤーがここからこの距離以内にいる間だけ、湧き直しの時間が進む（敵が湧き直す区間）
+	};
+
+	std::vector<Point> points;				///< 敵を出す場所の一覧
+};
+
 /** デバッグ画面の値（debug.json） */
 struct DebugParam
 {
@@ -221,6 +246,9 @@ struct GameParam
 {
 	CharacterParam player;			///< プレイヤー（chara/player.json）
 	CharacterParam enemyWalker;		///< 歩く敵（chara/enemy_walker.json）
+	CharacterParam enemyFirewall;	///< 固定砲台 FIREWALL（chara/enemy_firewall.json）
+	CharacterParam enemyCrawler;	///< 飛行型 CRAWLER（chara/enemy_crawler.json）
+	SpawnParam spawn;
 	CameraParam camera;
 	GravityParam gravity;
 	AnchorParam anchor;
@@ -238,4 +266,6 @@ namespace nsGameParam
 	void Reload();
 	/** 読んだ値を返す。読み直しても同じ場所の中身が書き換わるので、参照を持っておいてよい */
 	const GameParam& Get();
+	/** spawn.json の chara の名前から敵の設定を返す。読み直しても同じ場所を返す。知らない名前なら nullptr */
+	const CharacterParam* FindEnemy(const std::string& name);
 }

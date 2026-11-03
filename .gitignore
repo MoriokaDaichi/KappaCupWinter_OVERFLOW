@@ -51,3 +51,7 @@ imgui.ini
 !/Game/debug/
 # Visual Studio が文字コードを変えて保存するときの一時フォルダ
 enc_temp_folder/
+
+# エフェクト（War FX など）。Asset Store の規約で、素材を取り出せる形では配れないので Git に入れない
+# 元データは 05_Assets/02_OVERFLOW に置き、別の PC へは手でコピーする
+/Game/Assets/effect/

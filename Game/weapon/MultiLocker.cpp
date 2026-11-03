@@ -5,6 +5,16 @@
 #include "collision/RayCast.h"
 #include <algorithm>
 
+namespace
+{
+	/** まだ狙えるか（消えた敵は Get が nullptr を返し、隠れている敵は CanBeTargeted が false を返す） */
+	bool CanStillTarget(const GOHandle<BattleCharacter>& handle)
+	{
+		const BattleCharacter* target = handle.Get();
+		return target != nullptr && target->CanBeTargeted();
+	}
+}
+
 void MultiLocker::Update(const Vector3& aimOrigin, const Vector3& aimDirection, const int maxCount)
 {
 	// 1 秒で lockTime 分の 1 だけ満ちる
@@ -17,7 +27,7 @@ void MultiLocker::Update(const Vector3& aimOrigin, const Vector3& aimDirection, 
 	{
 		QueryGOs<BattleCharacter>("enemy", [&](BattleCharacter* enemy)
 			{
-				if (!IsLocked(enemy) && CanLock(*enemy, aimOrigin, aimDirection))
+				if (enemy->CanBeTargeted() && !IsLocked(enemy) && CanLock(*enemy, aimOrigin, aimDirection))
 				{
 					inAim.push_back(enemy);
 				}
@@ -29,7 +39,8 @@ void MultiLocker::Update(const Vector3& aimOrigin, const Vector3& aimDirection, 
 	// 外れた敵は減らす
 	for (Candidate& candidate : m_candidates)
 	{
-		if (std::find(inAim.begin(), inAim.end(), candidate.target) == inAim.end())
+		const bool isInAim = std::find(inAim.begin(), inAim.end(), candidate.target.Get()) != inAim.end();
+		if (!isInAim)
 		{
 			candidate.progress -= step;
 		}
@@ -41,7 +52,7 @@ void MultiLocker::Update(const Vector3& aimOrigin, const Vector3& aimDirection, 
 		Candidate* candidate = FindCandidate(enemy);
 		if (candidate == nullptr)
 		{
-			m_candidates.push_back({ enemy, 0.0f });
+			m_candidates.push_back({ GOHandle<BattleCharacter>(enemy), 0.0f });
 			candidate = &m_candidates.back();
 		}
 
@@ -67,6 +78,14 @@ void MultiLocker::Update(const Vector3& aimOrigin, const Vector3& aimDirection, 
 			++it;
 		}
 	}
+}
+
+void MultiLocker::RemoveDeadTargets()
+{
+	m_targets.erase(std::remove_if(m_targets.begin(), m_targets.end(),
+		[](const GOHandle<BattleCharacter>& target) { return !CanStillTarget(target); }), m_targets.end());
+	m_candidates.erase(std::remove_if(m_candidates.begin(), m_candidates.end(),
+		[](const Candidate& candidate) { return !CanStillTarget(candidate.target); }), m_candidates.end());
 }
 
 void MultiLocker::Clear()
@@ -105,14 +124,15 @@ bool MultiLocker::CanLock(const BattleCharacter& target, const Vector3& aimOrigi
 
 bool MultiLocker::IsLocked(const BattleCharacter* target) const
 {
-	return std::find(m_targets.begin(), m_targets.end(), target) != m_targets.end();
+	return std::find_if(m_targets.begin(), m_targets.end(),
+		[target](const GOHandle<BattleCharacter>& locked) { return locked.GetInstanceID() == target->GetInstanceID(); }) != m_targets.end();
 }
 
 MultiLocker::Candidate* MultiLocker::FindCandidate(const BattleCharacter* target)
 {
 	for (Candidate& candidate : m_candidates)
 	{
-		if (candidate.target == target)
+		if (candidate.target.GetInstanceID() == target->GetInstanceID())
 		{
 			return &candidate;
 		}

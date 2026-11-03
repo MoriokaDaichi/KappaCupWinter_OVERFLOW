@@ -3,14 +3,17 @@
 
 class BattleCharacter;
 
-/** LTを押している間、照準に入れ続けた敵を順にロックしていく（マルチロックオン） */
+/**
+ * LTを押している間、照準に入れ続けた敵を順にロックしていく（マルチロックオン）
+ * 敵はロック中に倒されて消えることがあるので、ポインタではなく GOHandle で覚える
+ */
 class MultiLocker
 {
 public:
 	/** ロックしかけている敵 1 体分 */
 	struct Candidate
 	{
-		BattleCharacter* target = nullptr;	///< 敵（借りているだけ）
+		GOHandle<BattleCharacter> target;	///< 敵
 		float progress = 0.0f;				///< ロックまでの進み具合（0〜1。1 でロック）
 	};
 
@@ -19,8 +22,10 @@ public:
 	 * aimOrigin・aimDirection: 狙いの始点と向き（カメラの位置と前向き）
 	 */
 	void Update(const Vector3& aimOrigin, const Vector3& aimDirection, const int maxCount);
-	/** ロックした敵を返す（ロックした順） */
-	const std::vector<BattleCharacter*>& GetTargets() const { return m_targets; }
+	/** 倒された敵をロックから外す。毎フレーム呼ぶ（LT を押していないときも、ロックしかけの敵が倒されることがある） */
+	void RemoveDeadTargets();
+	/** ロックした敵を返す（ロックした順）。使う前に Get で生きているかを確かめる */
+	const std::vector<GOHandle<BattleCharacter>>& GetTargets() const { return m_targets; }
 	/** ロックしかけている敵を返す（HUD でドーナツを出すため） */
 	const std::vector<Candidate>& GetCandidates() const { return m_candidates; }
 	/** ロックと、ロックしかけている敵を全部外す（撃った後に呼ぶ） */
@@ -35,7 +40,7 @@ private:
 	Candidate* FindCandidate(const BattleCharacter* target);
 
 private:
-	std::vector<BattleCharacter*> m_targets;				///< ロックした敵（借りているだけ）
+	std::vector<GOHandle<BattleCharacter>> m_targets;		///< ロックした敵
 	std::vector<Candidate> m_candidates;					///< ロックしかけている敵
 	const GunParam& m_param = nsGameParam::Get().gun;		///< 調整用の値（gun.json）
 

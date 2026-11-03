@@ -11,6 +11,8 @@ void Gun::Update(const bool isShootPress, const bool isAimPress, const int level
 	const int index = max(0, min(level - 1, static_cast<int>(m_param.levels.size()) - 1));
 	const GunParam::Level& levelParam = m_param.levels[index];
 
+	m_multiLocker.RemoveDeadTargets();
+
 	if (isAimPress && levelParam.lockCount > 0)
 	{
 		m_multiLocker.Update(aimOrigin, aimDirection, levelParam.lockCount);
@@ -55,7 +57,7 @@ void Gun::Shoot(const Vector3& muzzle, const GunParam::Level& levelParam)
 	}
 
 	dir.Normalize();
-	m_bulletManager->Fire(muzzle, dir * levelParam.bulletSpeed, levelParam);
+	m_bulletManager->Fire(muzzle, dir * levelParam.bulletSpeed, levelParam, m_owner);
 }
 
 Vector3 Gun::CalcAimPoint() const
@@ -105,8 +107,8 @@ void Gun::FireAtLocked(const Vector3& muzzle, const GunParam::Level& levelParam)
 	}
 
 	dir.Normalize();
-	for (const BattleCharacter* target : m_multiLocker.GetTargets())
+	for (const GOHandle<BattleCharacter>& target : m_multiLocker.GetTargets())
 	{
-		m_bulletManager->FireHoming(muzzle, dir * m_param.homingSpeed, levelParam, target);
+		m_bulletManager->FireHoming(muzzle, dir * m_param.homingSpeed, levelParam, m_owner, target);
 	}
 }

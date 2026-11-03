@@ -42,6 +42,19 @@ public:
 	void SetController(const IController* controller) { m_controller = controller; }
 	/** 設定を渡す（NewGO の直後、Start より前に呼ぶ） */
 	void SetParam(const CharacterParam& param) { m_param = &param; }
+	/** 狙えるか（Start が済んでいて、まだ倒されていない）。Start の前は位置が決まっていないので狙わない */
+	bool CanBeTargeted() const { return IsStart() && !IsDead() && IsActive(); }
+	/** damage だけ体力を減らす。0 以下になったら倒れて true を返す。体力を持たないキャラには効かない */
+	bool TakeDamage(const float damage);
+	/** 倒れたときに消さず、隠しておくようにする（湧き直す敵に使う。作り直すとモデルの準備でゲームが止まるため） */
+	void SetReuseOnDefeat(const bool isReuse) { m_isReuseOnDefeat = isReuse; }
+	/** 隠しておいた体を position に戻す。体力・速さも最初に戻す */
+	void Respawn(const Vector3& position);
+	/**
+	 * 線分 start〜end（太さの半径 extraRadius）が体のカプセルに当たるかを調べる
+	 * 当たったら、線分の上で体に一番近い点を hitPoint に入れる
+	 */
+	bool IsHitBySegment(const Vector3& start, const Vector3& end, const float extraRadius, Vector3& hitPoint) const;
 	/** 出てくる位置（足元）を決める（Start より前に呼ぶ） */
 	void SetStartPosition(const Vector3& position) { m_startPosition = position; }
 	/** 設定を返す（State も読む） */
@@ -128,6 +141,8 @@ protected:
 	void Render(RenderContext& rc) override;
 
 private:
+	/** 倒れた体を隠す（動かさない・描かない。当たり判定の線が見えないように、体も遠くへ動かす） */
+	void Hide();
 	/** 設定の states に書いた State だけを作って登録し、切り替え表を作って、Idle から始める */
 	void InitState();
 	/** 設定の abilities に書いた能力を作る */
@@ -151,6 +166,7 @@ private:
 
 private:
 	static constexpr float MOVE_INPUT_THRESHOLD = 0.001f;						///< スティックを倒したとみなす境目（長さの2乗）
+	static constexpr float HIDDEN_HEIGHT = -100000.0f;							///< 隠している間の、当たり判定の体の高さ（床のずっと下）
 	static constexpr int COOLDOWN_NUM = static_cast<int>(EnCooldown::Num);		///< 待ち時間の種類の数
 
 	const IController* m_controller = nullptr;									///< コマンドを作る係（Game が持っている）
@@ -161,6 +177,8 @@ private:
 	const SpeedParam& m_speedParam = nsGameParam::Get().speed;					///< 速度の調整値（speed.json）
 	Vector3 m_startPosition = Vector3::Zero;									///< 出てくる位置（足元）
 	int m_jumpCount = 0;														///< いま何回跳んだか
+	float m_hp = 0.0f;															///< 今の体力（設定に health があるキャラだけ使う）
+	bool m_isReuseOnDefeat = false;												///< 倒れたときに消さず、隠しておくか
 	StateMachine<BattleCharacter, EnCharacterState, BattleCharacterState> m_stateMachine;	///< 状態の切り替え役
 	TransitionTable m_transitionTable;											///< 切り替え表（設定の transitions から作る）
 	std::unique_ptr<Grapple> m_grapple;											///< グラップルの能力（abilities に "Grapple" があるときだけ作る）

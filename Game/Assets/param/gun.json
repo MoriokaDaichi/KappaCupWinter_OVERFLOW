@@ -12,6 +12,7 @@
   "levels": [
     {
       "shootInterval": 0.15,
+      "damage": 10.0,
       "bulletSpeed": 8000.0,
       "bulletScale": 0.2,
       "pierce": false,
@@ -20,6 +21,7 @@
     },
     {
       "shootInterval": 0.10,
+      "damage": 10.0,
       "bulletSpeed": 9000.0,
       "bulletScale": 0.2,
       "pierce": false,
@@ -28,6 +30,7 @@
     },
     {
       "shootInterval": 0.08,
+      "damage": 15.0,
       "bulletSpeed": 10000.0,
       "bulletScale": 0.2,
       "pierce": false,
@@ -36,6 +39,7 @@
     },
     {
       "shootInterval": 0.08,
+      "damage": 20.0,
       "bulletSpeed": 12000.0,
       "bulletScale": 0.25,
       "pierce": true,
@@ -44,6 +48,7 @@
     },
     {
       "shootInterval": 0.08,
+      "damage": 25.0,
       "bulletSpeed": 12000.0,
       "bulletScale": 0.35,
       "pierce": true,

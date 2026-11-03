@@ -10,7 +10,7 @@
 Game::~Game()
 {
 	DeleteGO(m_player);
-	DeleteGO(m_enemy);
+	m_enemySpawner.DeleteAll();
 	DeleteGO(m_gameCamera);
 	DeleteGO(m_bulletManager);
 	for (int i = 0; i < ANCHOR_NUM; i++)
@@ -97,13 +97,7 @@ bool Game::Start()
 	m_player->SetController(&m_playerController);
 	m_player->SetParam(nsGameParam::Get().player);
 
-	// 仮: アンカーから離れた横の方に置き、プレイヤーの方へ歩かせる（敵のスポーンができたら置き換える）
-	m_enemy = NewGO<BattleCharacter>(0, "enemy");
-	m_enemy->SetStartPosition(Vector3(2500.0f, START_HEIGHT, 0.0f));
-	m_enemyController.SetOwner(m_enemy);
-	m_enemyController.SetTarget(m_player);
-	m_enemy->SetController(&m_enemyController);
-	m_enemy->SetParam(nsGameParam::Get().enemyWalker);
+	m_enemySpawner.Init(m_player);
 
 	m_gameCamera = NewGO<GameCamera>(1, "gameCamera");
 	m_gameCamera->SetTarget(m_player);
@@ -120,6 +114,7 @@ void Game::Update()
 	InputManager::GetInstance().Update();
 
 	m_debugManager.Update();
+	m_enemySpawner.Update();
 }
 
 void Game::Render(RenderContext& rc)

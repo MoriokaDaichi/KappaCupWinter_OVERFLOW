@@ -24,15 +24,18 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Swing, wireShootSpeed, startL
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Animation::Clip, anim, file, loop)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Animation, clips, fastFallSpeed, landMinSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Hands, left, right, rightMiddle)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Health, maxHp, killBoost)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraParam, distance, targetHeight, rotateSpeedX, rotateSpeedY, pitchMin, pitchMax,
 	viewAngleNormal, viewAngleMax, viewAngleLerpRate, maxSpeedForFov, collisionRadius, nearClip, farClip, shoulderOffset,
 	aimDistance, aimShoulderOffset, aimViewAngleDown, aimRotateScale, aimTransitionTime)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GravityParam, gravity, fallMultiplier, maxFallSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnchorParam, normalScale, lockedScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GrappleWireParam, thicknessScale)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam::Level, shootInterval, bulletSpeed, bulletScale, pierce, explosionRadius, lockCount)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam::Level, shootInterval, damage, bulletSpeed, bulletScale, pierce, explosionRadius, lockCount)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam, range, bulletLifeTime, aimHoldTime, muzzleRight, muzzleForward, levels, lockAngle, lockDistance, lockTime, homingSpeed, homingTurnRate)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpeedParam, baseMin, baseMax, bonusMax, groundDecay, idleDecay, wallRunGain, levelUpSpeeds, maxSpeed)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpawnParam::Point, chara, position, respawnTime, respawnRadius)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpawnParam, points)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam::WarpPoint, name, position)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam, warpPoints)
 
@@ -63,13 +66,14 @@ void from_json(const nlohmann::json& j, CharacterParam::Transition& transition)
  * キャラの JSON を読む
  * wallRun・lock・swing は、使うキャラ（states・abilities に書いたもの）だけ必ず読む
  * animation・hands は見た目なので、書いたキャラだけが持つ（書かなければ、アニメーションなし・手の骨なし）
+ * health も書いたキャラだけが持つ（書かなければ、弾が当たらない）
  * 知らないキー（つづりの間違い）があれば止める（書かなくてもいいキーを打ち間違えると、黙って無視されてしまうため）
  */
 void from_json(const nlohmann::json& j, CharacterParam& param)
 {
-	static const std::array<const char*, 12> KNOWN_KEYS = {
+	static const std::array<const char*, 13> KNOWN_KEYS = {
 		"model", "abilities", "states", "transitions", "body", "move", "jump",
-		"wallRun", "lock", "swing", "animation", "hands"
+		"wallRun", "lock", "swing", "animation", "hands", "health"
 	};
 	for (auto it = j.begin(); it != j.end(); ++it)
 	{
@@ -97,6 +101,12 @@ void from_json(const nlohmann::json& j, CharacterParam& param)
 	if (param.hasHands)
 	{
 		j.at("hands").get_to(param.hands);
+	}
+
+	param.hasHealth = j.contains("health");
+	if (param.hasHealth)
+	{
+		j.at("health").get_to(param.health);
 	}
 
 	if (Contains(param.states, "WallRun"))
@@ -283,6 +293,41 @@ namespace
 		CheckAnimation(path, param);
 	}
 
+	/** chara の名前から、param の中の敵の設定を返す。知らない名前なら nullptr */
+	const CharacterParam* FindEnemyIn(const GameParam& param, const std::string& name)
+	{
+		if (name == "Walker")
+		{
+			return &param.enemyWalker;
+		}
+		if (name == "Firewall")
+		{
+			return &param.enemyFirewall;
+		}
+		if (name == "Crawler")
+		{
+			return &param.enemyCrawler;
+		}
+		return nullptr;
+	}
+
+	/** 敵を出す場所が正しいか調べる（知らない敵・体力がない敵）。だめなら例外を投げる */
+	void CheckSpawn(const GameParam& param)
+	{
+		for (const SpawnParam::Point& point : param.spawn.points)
+		{
+			const CharacterParam* enemy = FindEnemyIn(param, point.chara);
+			if (enemy == nullptr)
+			{
+				throw std::runtime_error("Assets/param/spawn.json\nunknown chara: " + point.chara);
+			}
+			if (!enemy->hasHealth)
+			{
+				throw std::runtime_error("Assets/param/spawn.json\nchara \"" + point.chara + "\" needs health");
+			}
+		}
+	}
+
 	/** path の JSON を読んで out に入れる。失敗したら、ファイル名を付けた例外を投げる */
 	template <class T>
 	void ReadFile(const char* path, T& out)
@@ -313,6 +358,9 @@ namespace
 	{
 		ReadFile("Assets/param/chara/player.json", out.player);
 		ReadFile("Assets/param/chara/enemy_walker.json", out.enemyWalker);
+		ReadFile("Assets/param/chara/enemy_firewall.json", out.enemyFirewall);
+		ReadFile("Assets/param/chara/enemy_crawler.json", out.enemyCrawler);
+		ReadFile("Assets/param/spawn.json", out.spawn);
 		ReadFile("Assets/param/camera.json", out.camera);
 		ReadFile("Assets/param/gravity.json", out.gravity);
 		ReadFile("Assets/param/anchor.json", out.anchor);
@@ -323,6 +371,9 @@ namespace
 
 		CheckCharacter("Assets/param/chara/player.json", out.player);
 		CheckCharacter("Assets/param/chara/enemy_walker.json", out.enemyWalker);
+		CheckCharacter("Assets/param/chara/enemy_firewall.json", out.enemyFirewall);
+		CheckCharacter("Assets/param/chara/enemy_crawler.json", out.enemyCrawler);
+		CheckSpawn(out);
 
 		const size_t speedLevelCount = out.speed.levelUpSpeeds.size() + 1;
 		const size_t gunLevelCount = out.gun.levels.size();
@@ -368,5 +419,10 @@ namespace nsGameParam
 	const GameParam& Get()
 	{
 		return s_param;
+	}
+
+	const CharacterParam* FindEnemy(const std::string& name)
+	{
+		return FindEnemyIn(s_param, name);
 	}
 }

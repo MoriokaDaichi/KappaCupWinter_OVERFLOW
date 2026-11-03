@@ -129,6 +129,9 @@
     <ClCompile Include="actor\BattleCharacter.cpp">
       <Filter>actor</Filter>
     </ClCompile>
+    <ClCompile Include="actor\EnemySpawner.cpp">
+      <Filter>actor</Filter>
+    </ClCompile>
     <ClCompile Include="actor\CharacterAnimation.cpp">
       <Filter>actor</Filter>
     </ClCompile>
@@ -260,6 +263,9 @@
       <Filter>grapple</Filter>
     </ClInclude>
     <ClInclude Include="actor\BattleCharacter.h">
+      <Filter>actor</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\EnemySpawner.h">
       <Filter>actor</Filter>
     </ClInclude>
     <ClInclude Include="weapon\MultiLocker.h">

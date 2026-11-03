@@ -1,0 +1,8 @@
+{
+  "points": [
+    { "chara": "Walker",   "position": [ 2500.0, 300.0, 0.0 ],     "respawnTime": 0.0, "respawnRadius": 0.0 },
+    { "chara": "Firewall", "position": [ 1500.0, 300.0, 1500.0 ],  "respawnTime": 0.0, "respawnRadius": 0.0 },
+    { "chara": "Crawler",  "position": [ -1500.0, 300.0, 1500.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 },
+    { "chara": "Walker",   "position": [ 0.0, 300.0, 3000.0 ],     "respawnTime": 5.0, "respawnRadius": 5000.0 }
+  ]
+}

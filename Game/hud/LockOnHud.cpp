@@ -30,14 +30,23 @@ void LockOnHud::Draw(RenderContext& rc)
 	m_usedRingNum = 0;
 	const MultiLocker& locker = m_player->GetGun().GetMultiLocker();
 
-	for (const BattleCharacter* target : locker.GetTargets())
+	// このフレームに倒された敵は描かない（消えた敵は Get が nullptr を返し、隠れている敵は CanBeTargeted が false を返す）
+	for (const GOHandle<BattleCharacter>& handle : locker.GetTargets())
 	{
-		DrawRing(rc, *target, 1.0f, LOCKED_COLOR);
+		const BattleCharacter* target = handle.Get();
+		if (target != nullptr && target->CanBeTargeted())
+		{
+			DrawRing(rc, *target, 1.0f, LOCKED_COLOR);
+		}
 	}
 
 	for (const MultiLocker::Candidate& candidate : locker.GetCandidates())
 	{
-		DrawRing(rc, *candidate.target, candidate.progress, FILLING_COLOR);
+		const BattleCharacter* target = candidate.target.Get();
+		if (target != nullptr && target->CanBeTargeted())
+		{
+			DrawRing(rc, *target, candidate.progress, FILLING_COLOR);
+		}
 	}
 }
 

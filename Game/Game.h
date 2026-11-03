@@ -3,7 +3,7 @@
 #include "Level3DRender/LevelRender.h"
 #include "debug/DebugManager.h"
 #include "controller/PlayerController.h"
-#include "controller/AIController.h"
+#include "actor/EnemySpawner.h"
 #include "hud/LockOnHud.h"
 
 class BattleCharacter;
@@ -22,7 +22,6 @@ public:
 
 private:
 	BattleCharacter* m_player = nullptr;	///< プレイヤー（PlayerController で動かす BattleCharacter）
-	BattleCharacter* m_enemy = nullptr;		///< 仮: 歩く敵（AIController で動かす BattleCharacter。敵のスポーンができたら置き換える）
 	GameCamera* m_gameCamera = nullptr;
 	BulletManager* m_bulletManager = nullptr;
 
@@ -44,7 +43,7 @@ private:
 	LockOnHud m_lockOnHud;				///< マルチロックオンのドーナツ
 	DebugManager m_debugManager;		///< デバッグ画面（ImGui のパネル。F1 で隠せる）
 	PlayerController m_playerController;	///< 入力からプレイヤーのコマンドを作る
-	AIController m_enemyController;			///< 敵のコマンドを作る（プレイヤーの方へ歩く）
-	static constexpr float START_HEIGHT = 300.0f;		///< プレイヤーと敵を置く高さ（床の少し上から落とす）
+	EnemySpawner m_enemySpawner;			///< spawn.json の場所に敵を出す
+	static constexpr float START_HEIGHT = 300.0f;		///< プレイヤーを置く高さ（床の少し上から落とす）
 };
 

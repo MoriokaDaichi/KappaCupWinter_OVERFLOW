@@ -1,0 +1,29 @@
+{
+  "model": "Assets/modelData/enemy/crawler.tkm",
+  "abilities": [],
+  "states": [ "Idle", "Air" ],
+  "transitions": [
+    { "from": "Idle", "when": [ "NotOnGround" ], "to": "Air" },
+    { "from": "Air",  "when": [ "Landed" ],      "to": "Idle" }
+  ],
+
+  "body": {
+    "radius": 40.0,
+    "height": 20.0,
+    "chestHeight": 50.0,
+    "tiltLerpRate": 12.0
+  },
+  "move": {
+    "groundAccel": 2000.0,
+    "groundDecel": 2000.0,
+    "airControl": 0.0
+  },
+  "jump": {
+    "speed": 600.0,
+    "maxCount": 1
+  },
+  "health": {
+    "maxHp": 20.0,
+    "killBoost": 30.0
+  }
+}

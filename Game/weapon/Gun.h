@@ -11,8 +11,12 @@ class BulletManager;
 class Gun
 {
 public:
-	/** 弾を出す BulletManager を受け取る（借りているだけ。消すのは Game） */
-	void Init(BulletManager* bulletManager) { m_bulletManager = bulletManager; }
+	/** 弾を出す BulletManager と、銃を持つキャラを受け取る（借りているだけ。倒したときの基礎速度は owner に入る） */
+	void Init(BulletManager* bulletManager, BattleCharacter* owner)
+	{
+		m_bulletManager = bulletManager;
+		m_owner = owner;
+	}
 	/** 
 	 * 毎フレーム BattleCharacter が呼ぶ。押していて間隔が空いていれば撃つ。
 	 * level は今の速度 Lv（1〜5）。chest は胸の位置、rotation は体の向き（銃口の位置を決める） 
@@ -40,6 +44,7 @@ private:
 
 private:
 	BulletManager* m_bulletManager = nullptr;				///< 弾を出す先（借りているだけ）
+	BattleCharacter* m_owner = nullptr;						///< 銃を持つキャラ（借りているだけ）
 	const GunParam& m_param = nsGameParam::Get().gun;		///< 調整用の値（Assets/param/gun.json）
 	float m_shootTimer = 0.0f;								///< 次に撃てるまでの残り時間（秒）
 	float m_aimTimer = 0.0f;								///< 構えをやめるまでの残り時間（秒）

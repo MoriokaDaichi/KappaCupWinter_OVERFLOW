@@ -29,5 +29,9 @@
   "jump": {
     "speed": 600.0,
     "maxCount": 1
+  },
+  "health": {
+    "maxHp": 30.0,
+    "killBoost": 50.0
   }
 }
