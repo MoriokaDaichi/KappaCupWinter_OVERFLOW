@@ -6,6 +6,7 @@ enum class EnEffect : int
 	Hit,			///< 着弾（敵・壁）
 	Defeat,			///< 撃破
 	Explosion,		///< 爆発弾
+	Bullet,			///< 飛んでいる弾（光の筋。止めるまで出続ける）
 	Num				///< 種類の数（いちばん最後に置く）
 };
 
@@ -17,6 +18,9 @@ namespace nsEffect
 {
 	/** すべてのエフェクトを読む。Game の Start で 1 回呼ぶ（再生の途中で読むと止まるため） */
 	void Load();
-	/** position で 1 回再生する。scale は拡大率。終わったらエンジンの EffectEmitter が自分で消える */
-	void Play(const EnEffect id, const Vector3& position, const float scale);
+	/**
+	 * position で再生する。scale は拡大率。終わったら EffectEmitter が自分で消える
+	 * 戻り値は再生している EffectEmitter（動かしたり止めたりするときに使う）。読めなかったエフェクトは nullptr
+	 */
+	EffectEmitter* Play(const EnEffect id, const Vector3& position, const float scale);
 }

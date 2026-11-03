@@ -20,6 +20,8 @@ public:
 		const GOHandle<BattleCharacter>& target);
 
 private:
+	/** 弾の見た目を今の位置と向きに合わせる */
+	void UpdateBulletView(const int index);
 	/** 弾を消して空きに戻す（描かれないように大きさ 0 にする） */
 	void Deactivate(const int index);
 
@@ -37,6 +39,7 @@ private:
 		float damage = 0.0f;		///< ダメージ
 		GOHandle<BattleCharacter> shooter;		///< 撃った本人
 		GOHandle<BattleCharacter> target;		///< ホーミングする相手（空か、相手が倒されたら、まっすぐ飛ぶ）
+		GOHandle<EffectEmitter> tracer;			///< 弾の見た目の光の筋（エフェクトのファイルがないときは空で、代わりに球を描く）
 		std::vector<uint64_t> hitEnemyIds;		///< ダメージを与えた敵のインスタンス ID（貫通弾が同じ敵に何度も当たらないように）
 	};
 
@@ -61,7 +64,7 @@ private:
 	static constexpr float MODEL_RADIUS = 50.0f;			///< 弾のモデル（debug_anchor.tkm）の大きさ 1 のときの半径
 	std::array<Bullet, MAX_BULLET> m_bullets;				///< 全部の弾。isActive が false の枠は空き
 	std::vector<BattleCharacter*> m_enemies;				///< このフレームの敵（Update の中でだけ使う）
-	ModelRender m_modelRender;								///< 弾の見た目（全部の弾でこれ1つ）
+	ModelRender m_modelRender;								///< エフェクトのファイルがないときの弾の見た目（全部の弾でこれ1つ）
 	const GunParam& m_param = nsGameParam::Get().gun;		///< 調整用の値（Assets/param/gun.json）
 	const EffectParam& m_effectParam = nsGameParam::Get().effect;	///< エフェクトの拡大率（Assets/param/effect.json）
 };

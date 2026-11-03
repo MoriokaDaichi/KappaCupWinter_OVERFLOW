@@ -63,8 +63,7 @@ void BulletManager::Update()
 		}
 
 		bullet.position = nextPos;
-		const float scale = bullet.scale;
-		m_modelRender.UpdateInstancingData(i, bullet.position, Quaternion::Identity, Vector3(scale, scale, scale));
+		UpdateBulletView(i);
 	}
 }
 
@@ -87,6 +86,8 @@ void BulletManager::Fire(const Vector3& position, const Vector3& velocity, const
 			bullet.shooter.Reset(shooter);
 			bullet.target.Clear();
 			bullet.hitEnemyIds.clear();
+			bullet.tracer.Reset(nsEffect::Play(EnEffect::Bullet, position, levelParam.bulletScale * m_effectParam.bulletScale));
+			UpdateBulletView(i);
 
 			return;
 		}
@@ -258,9 +259,36 @@ void BulletManager::Explode(Bullet& bullet, const Vector3& center)
 	nsEffect::Play(EnEffect::Explosion, center, bullet.explosionRadius);
 }
 
+void BulletManager::UpdateBulletView(const int index)
+{
+	const Bullet& bullet = m_bullets[index];
+
+	EffectEmitter* tracer = bullet.tracer.Get();
+	if (tracer == nullptr)
+	{
+		const float scale = bullet.scale;
+		m_modelRender.UpdateInstancingData(index, bullet.position, Quaternion::Identity, Vector3(scale, scale, scale));
+		return;
+	}
+
+	// 光の筋はエフェクトの上（Y 軸）に長いので、上を進む向きに合わせる
+	Quaternion rotation;
+	rotation.SetRotation(Vector3::Up, bullet.velocity);
+	tracer->SetPosition(bullet.position);
+	tracer->SetRotation(rotation);
+}
+
 void BulletManager::Deactivate(const int index)
 {
-	m_bullets[index].isActive = false;
+	Bullet& bullet = m_bullets[index];
+	bullet.isActive = false;
+
+	EffectEmitter* tracer = bullet.tracer.Get();
+	if (tracer != nullptr)
+	{
+		// 止めると、次のフレームに EffectEmitter が自分で消える
+		tracer->Stop();
+	}
 	m_modelRender.RemoveInstance(index);
 }
 

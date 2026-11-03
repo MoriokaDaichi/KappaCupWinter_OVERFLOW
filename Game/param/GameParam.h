@@ -218,6 +218,7 @@ struct EffectParam
 {
 	float hitScale = 0.0f;				///< 着弾のエフェクトの拡大率
 	float defeatScale = 0.0f;			///< 撃破のエフェクトの拡大率
+	float bulletScale = 0.0f;			///< 弾の光の筋の拡大率。gun.json の Lv ごとの bulletScale に掛ける
 };
 
 /** 敵を出す場所の値（spawn.json） */

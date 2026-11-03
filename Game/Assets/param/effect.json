@@ -1,4 +1,5 @@
 {
   "hitScale": 60.0,
-  "defeatScale": 120.0
+  "defeatScale": 120.0,
+  "bulletScale": 100.0
 }
