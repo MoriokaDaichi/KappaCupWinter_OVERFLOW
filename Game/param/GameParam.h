@@ -213,6 +213,13 @@ struct SpeedParam
 	float maxSpeed = 0.0f;				///< メーターが振り切る速さ
 };
 
+/** エフェクトの値（effect.json） */
+struct EffectParam
+{
+	float hitScale = 0.0f;				///< 着弾のエフェクトの拡大率
+	float defeatScale = 0.0f;			///< 撃破のエフェクトの拡大率
+};
+
 /** 敵を出す場所の値（spawn.json） */
 struct SpawnParam
 {
@@ -249,6 +256,7 @@ struct GameParam
 	CharacterParam enemyFirewall;	///< 固定砲台 FIREWALL（chara/enemy_firewall.json）
 	CharacterParam enemyCrawler;	///< 飛行型 CRAWLER（chara/enemy_crawler.json）
 	SpawnParam spawn;
+	EffectParam effect;
 	CameraParam camera;
 	GravityParam gravity;
 	AnchorParam anchor;

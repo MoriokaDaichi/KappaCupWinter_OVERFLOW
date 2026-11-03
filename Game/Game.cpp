@@ -6,6 +6,7 @@
 #include "param/GameParam.h"
 #include "weapon/BulletManager.h"
 #include "input/InputManager.h"
+#include "effect/EffectManager.h"
 
 Game::~Game()
 {
@@ -23,6 +24,7 @@ bool Game::Start()
 {
 	// 調整用の値を読む。ほかのオブジェクトが値を使う前に読んでおく
 	nsGameParam::Load();
+	nsEffect::Load();
 
 	// 仮の床（ステージができたら置き換える）
 	m_floorCollider.Create(Vector3(FLOOR_WIDTH, FLOOR_THICKNESS, FLOOR_WIDTH));

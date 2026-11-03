@@ -34,6 +34,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GrappleWireParam, thicknessScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam::Level, shootInterval, damage, bulletSpeed, bulletScale, pierce, explosionRadius, lockCount)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam, range, bulletLifeTime, aimHoldTime, muzzleRight, muzzleForward, levels, lockAngle, lockDistance, lockTime, homingSpeed, homingTurnRate)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpeedParam, baseMin, baseMax, bonusMax, groundDecay, idleDecay, wallRunGain, levelUpSpeeds, maxSpeed)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EffectParam, hitScale, defeatScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpawnParam::Point, chara, position, respawnTime, respawnRadius)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpawnParam, points)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam::WarpPoint, name, position)
@@ -361,6 +362,7 @@ namespace
 		ReadFile("Assets/param/chara/enemy_firewall.json", out.enemyFirewall);
 		ReadFile("Assets/param/chara/enemy_crawler.json", out.enemyCrawler);
 		ReadFile("Assets/param/spawn.json", out.spawn);
+		ReadFile("Assets/param/effect.json", out.effect);
 		ReadFile("Assets/param/camera.json", out.camera);
 		ReadFile("Assets/param/gravity.json", out.gravity);
 		ReadFile("Assets/param/anchor.json", out.anchor);

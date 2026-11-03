@@ -2,6 +2,7 @@
 #include "weapon/BulletManager.h"
 #include "collision/RayCast.h"
 #include "actor/BattleCharacter.h"
+#include "effect/EffectManager.h"
 #include <algorithm>
 
 bool BulletManager::Start()
@@ -16,14 +17,6 @@ bool BulletManager::Start()
 		m_modelRender.RemoveInstance(i);
 	}
 
-	m_explosionRender.SetRaytracingWorld(false);
-	m_explosionRender.Init("Assets/modelData/debug/debug_anchor.tkm", nullptr, 0, enModelUpAxisZ, true, MAX_EXPLOSION);
-
-	for (int i = 0; i < MAX_EXPLOSION; i++)
-	{
-		m_explosionRender.RemoveInstance(i);
-	}
-
 	return true;
 }
 
@@ -31,7 +24,6 @@ void BulletManager::Update()
 {
 	const float dt = g_gameTime->GetFrameDeltaTime();
 
-	UpdateExplosions(dt);
 	CollectEnemies();
 
 	for (int i = 0; i < MAX_BULLET; i++)
@@ -65,10 +57,7 @@ void BulletManager::Update()
 
 		if (hit.isHit)
 		{
-			if (bullet.explosionRadius > 0.0f)
-			{
-				Explode(bullet, hit.position);
-			}
+			OnBulletImpact(bullet, hit.position);
 			Deactivate(i);
 			continue;
 		}
@@ -162,10 +151,7 @@ bool BulletManager::HitEnemies(Bullet& bullet, const Vector3& end)
 	while (enemy != nullptr)
 	{
 		DamageEnemy(bullet, *enemy);
-		if (bullet.explosionRadius > 0.0f)
-		{
-			Explode(bullet, hitPoint);
-		}
+		OnBulletImpact(bullet, hitPoint);
 		if (!bullet.pierce)
 		{
 			return true;
@@ -225,16 +211,31 @@ void BulletManager::DamageEnemy(Bullet& bullet, BattleCharacter& enemy)
 		bullet.target.Clear();
 	}
 
+	// TakeDamage で隠れる・消えることがあるので、胸の位置は先に出しておく
+	const Vector3 chest = enemy.GetChestPosition();
 	if (!enemy.TakeDamage(bullet.damage))
 	{
 		return;
 	}
+
+	nsEffect::Play(EnEffect::Defeat, chest, m_effectParam.defeatScale);
 
 	BattleCharacter* shooter = bullet.shooter.Get();
 	if (shooter != nullptr)
 	{
 		shooter->GetSpeedSystem().AddBase(enemy.GetParam().health.killBoost);
 	}
+}
+
+void BulletManager::OnBulletImpact(Bullet& bullet, const Vector3& position)
+{
+	if (bullet.explosionRadius > 0.0f)
+	{
+		Explode(bullet, position);
+		return;
+	}
+
+	nsEffect::Play(EnEffect::Hit, position, m_effectParam.hitScale);
 }
 
 void BulletManager::Explode(Bullet& bullet, const Vector3& center)
@@ -253,45 +254,8 @@ void BulletManager::Explode(Bullet& bullet, const Vector3& center)
 		}
 	}
 
-	ShowExplosion(center, bullet.explosionRadius);
-}
-
-void BulletManager::ShowExplosion(const Vector3& center, const float radius)
-{
-	for (Explosion& explosion : m_explosions)
-	{
-		if (!explosion.isActive)
-		{
-			explosion.isActive = true;
-			explosion.position = center;
-			explosion.radius = radius;
-			explosion.timer = 0.0f;
-			return;
-		}
-	}
-}
-
-void BulletManager::UpdateExplosions(const float dt)
-{
-	for (int i = 0; i < MAX_EXPLOSION; i++)
-	{
-		Explosion& explosion = m_explosions[i];
-		if (!explosion.isActive)
-		{
-			continue;
-		}
-
-		explosion.timer += dt;
-		if (explosion.timer >= EXPLOSION_SHOW_TIME)
-		{
-			explosion.isActive = false;
-			m_explosionRender.RemoveInstance(i);
-			continue;
-		}
-
-		const float scale = (explosion.radius / MODEL_RADIUS) * (explosion.timer / EXPLOSION_SHOW_TIME);
-		m_explosionRender.UpdateInstancingData(i, explosion.position, Quaternion::Identity, Vector3(scale, scale, scale));
-	}
+	// エフェクトは半径 1 に広がるように作ってあるので、半径をそのまま拡大率にする
+	nsEffect::Play(EnEffect::Explosion, center, bullet.explosionRadius);
 }
 
 void BulletManager::Deactivate(const int index)
@@ -303,5 +267,4 @@ void BulletManager::Deactivate(const int index)
 void BulletManager::Render(RenderContext& rc)
 {
 	m_modelRender.Draw(rc);
-	m_explosionRender.Draw(rc);
 }

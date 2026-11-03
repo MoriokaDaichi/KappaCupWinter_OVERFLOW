@@ -40,6 +40,9 @@
     <Filter Include="weapon">
       <UniqueIdentifier>{78a322bf-28fc-4c4a-b823-ac1542c0223d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="effect">
+      <UniqueIdentifier>{34fad73c-210e-4503-a129-ea6adc4d6418}</UniqueIdentifier>
+    </Filter>
     <Filter Include="debug">
       <UniqueIdentifier>{2b56aad5-b2ca-4023-98f3-3c6130d7382e}</UniqueIdentifier>
     </Filter>
@@ -104,6 +107,9 @@
     </ClCompile>
     <ClCompile Include="weapon\GunModel.cpp">
       <Filter>weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="effect\EffectManager.cpp">
+      <Filter>effect</Filter>
     </ClCompile>
     <ClCompile Include="debug\DebugManager.cpp">
       <Filter>debug</Filter>
@@ -213,6 +219,9 @@
     </ClInclude>
     <ClInclude Include="weapon\GunModel.h">
       <Filter>weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="effect\EffectManager.h">
+      <Filter>effect</Filter>
     </ClInclude>
     <ClInclude Include="debug\DebugManager.h">
       <Filter>debug</Filter>
