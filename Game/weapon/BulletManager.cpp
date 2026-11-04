@@ -24,7 +24,7 @@ void BulletManager::Update()
 {
 	const float dt = g_gameTime->GetFrameDeltaTime();
 
-	CollectEnemies();
+	CollectTargets();
 
 	for (int i = 0; i < MAX_BULLET; i++)
 	{
@@ -48,8 +48,8 @@ void BulletManager::Update()
 		// 今の位置から次の位置まで線で調べる（速いので、点で調べると薄い壁をすり抜ける）
 		const RayHitInfo hit = nsCollision::RayCast(bullet.position, nextPos);
 
-		// 壁の向こうの敵には当てない
-		if (HitEnemies(bullet, hit.isHit ? hit.position : nextPos))
+		// 壁の向こうの相手には当てない
+		if (HitTargets(bullet, hit.isHit ? hit.position : nextPos))
 		{
 			Deactivate(i);
 			continue;
@@ -67,7 +67,7 @@ void BulletManager::Update()
 	}
 }
 
-void BulletManager::Fire(const Vector3& position, const Vector3& velocity, const GunParam::Level& levelParam, BattleCharacter* shooter)
+void BulletManager::Fire(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter)
 {
 	for (int i = 0; i < MAX_BULLET; i++)
 	{
@@ -78,15 +78,15 @@ void BulletManager::Fire(const Vector3& position, const Vector3& velocity, const
 			bullet.isActive = true;
 			bullet.position = position;
 			bullet.velocity = velocity;
-			bullet.lifeTimer = m_param.bulletLifeTime;
-			bullet.scale = levelParam.bulletScale;
-			bullet.pierce = levelParam.pierce;
-			bullet.explosionRadius = levelParam.explosionRadius;
-			bullet.damage = levelParam.damage;
+			bullet.lifeTimer = shot.lifeTime;
+			bullet.scale = shot.scale;
+			bullet.pierce = shot.pierce;
+			bullet.explosionRadius = shot.explosionRadius;
+			bullet.damage = shot.damage;
 			bullet.shooter.Reset(shooter);
 			bullet.target.Clear();
-			bullet.hitEnemyIds.clear();
-			bullet.tracer.Reset(nsEffect::Play(EnEffect::Bullet, position, levelParam.bulletScale * m_effectParam.bulletScale));
+			bullet.hitTargetIds.clear();
+			bullet.tracer.Reset(nsEffect::Play(shot.tracer, position, shot.scale * m_effectParam.bulletScale));
 			UpdateBulletView(i);
 
 			return;
@@ -94,7 +94,7 @@ void BulletManager::Fire(const Vector3& position, const Vector3& velocity, const
 	}
 }
 
-void BulletManager::FireHoming(const Vector3& position, const Vector3& velocity, const GunParam::Level& levelParam, BattleCharacter* shooter,
+void BulletManager::FireHoming(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter,
 	const GOHandle<BattleCharacter>& target)
 {
 	for (int i = 0; i < MAX_BULLET; i++)
@@ -102,7 +102,7 @@ void BulletManager::FireHoming(const Vector3& position, const Vector3& velocity,
 		if (!m_bullets[i].isActive)
 		{
 			// Fire は最初に見つけた空きを使うので、同じ枠に入る
-			Fire(position, velocity, levelParam, shooter);
+			Fire(position, velocity, shot, shooter);
 			m_bullets[i].target = target;
 			return;
 		}
@@ -134,31 +134,31 @@ void BulletManager::UpdateHoming(Bullet& bullet, const float dt) const
 	bullet.velocity = dir * m_param.homingSpeed;
 }
 
-void BulletManager::CollectEnemies()
+void BulletManager::CollectTargets()
 {
-	m_enemies.clear();
-	QueryGOs<BattleCharacter>("enemy", [&](BattleCharacter* enemy)
+	m_hitTargets.clear();
+	QueryGOs<BattleCharacter>(m_targetName, [&](BattleCharacter* hitTarget)
 		{
-			m_enemies.push_back(enemy);
+			m_hitTargets.push_back(hitTarget);
 			return true;
 		});
 }
 
-bool BulletManager::HitEnemies(Bullet& bullet, const Vector3& end)
+bool BulletManager::HitTargets(Bullet& bullet, const Vector3& end)
 {
 	Vector3 hitPoint;
-	BattleCharacter* enemy = FindFirstHit(bullet, end, hitPoint);
-	// 当たった敵は hitEnemyIds に入って次は探さないので、このループは必ず終わる
-	while (enemy != nullptr)
+	BattleCharacter* hitTarget = FindFirstHit(bullet, end, hitPoint);
+	// 当たった相手は hitTargetIds に入って次は探さないので、このループは必ず終わる
+	while (hitTarget != nullptr)
 	{
-		DamageEnemy(bullet, *enemy);
+		DamageTarget(bullet, *hitTarget);
 		OnBulletImpact(bullet, hitPoint);
 		if (!bullet.pierce)
 		{
 			return true;
 		}
 
-		enemy = FindFirstHit(bullet, end, hitPoint);
+		hitTarget = FindFirstHit(bullet, end, hitPoint);
 	}
 
 	return false;
@@ -170,16 +170,16 @@ BattleCharacter* BulletManager::FindFirstHit(const Bullet& bullet, const Vector3
 	BattleCharacter* first = nullptr;
 	float firstDistanceSq = 0.0f;
 
-	for (BattleCharacter* enemy : m_enemies)
+	for (BattleCharacter* hitTarget : m_hitTargets)
 	{
-		// 同じフレームのうちに倒された敵も入っているので、確かめる
-		if (!enemy->CanBeTargeted() || HasHit(bullet, *enemy))
+		// 同じフレームのうちに倒された相手も入っているので、確かめる
+		if (!hitTarget->CanBeTargeted() || HasHit(bullet, *hitTarget))
 		{
 			continue;
 		}
 
 		Vector3 point;
-		if (!enemy->IsHitBySegment(bullet.position, end, bulletRadius, point))
+		if (!hitTarget->IsHitBySegment(bullet.position, end, bulletRadius, point))
 		{
 			continue;
 		}
@@ -188,7 +188,7 @@ BattleCharacter* BulletManager::FindFirstHit(const Bullet& bullet, const Vector3
 		const float distanceSq = fromBullet.LengthSq();
 		if (first == nullptr || distanceSq < firstDistanceSq)
 		{
-			first = enemy;
+			first = hitTarget;
 			firstDistanceSq = distanceSq;
 			hitPoint = point;
 		}
@@ -197,24 +197,24 @@ BattleCharacter* BulletManager::FindFirstHit(const Bullet& bullet, const Vector3
 	return first;
 }
 
-bool BulletManager::HasHit(const Bullet& bullet, const BattleCharacter& enemy) const
+bool BulletManager::HasHit(const Bullet& bullet, const BattleCharacter& hitTarget) const
 {
-	return std::find(bullet.hitEnemyIds.begin(), bullet.hitEnemyIds.end(), enemy.GetInstanceID()) != bullet.hitEnemyIds.end();
+	return std::find(bullet.hitTargetIds.begin(), bullet.hitTargetIds.end(), hitTarget.GetInstanceID()) != bullet.hitTargetIds.end();
 }
 
-void BulletManager::DamageEnemy(Bullet& bullet, BattleCharacter& enemy)
+void BulletManager::DamageTarget(Bullet& bullet, BattleCharacter& hitTarget)
 {
-	bullet.hitEnemyIds.push_back(enemy.GetInstanceID());
+	bullet.hitTargetIds.push_back(hitTarget.GetInstanceID());
 
 	// 貫通弾は相手を抜けたらまっすぐ飛ぶ（追い続けると、相手のまわりを回ってしまう）
-	if (bullet.target.GetInstanceID() == enemy.GetInstanceID())
+	if (bullet.target.GetInstanceID() == hitTarget.GetInstanceID())
 	{
 		bullet.target.Clear();
 	}
 
 	// TakeDamage で隠れる・消えることがあるので、胸の位置は先に出しておく
-	const Vector3 chest = enemy.GetChestPosition();
-	if (!enemy.TakeDamage(bullet.damage))
+	const Vector3 chest = hitTarget.GetChestPosition();
+	if (!hitTarget.TakeDamage(bullet.damage))
 	{
 		return;
 	}
@@ -224,7 +224,7 @@ void BulletManager::DamageEnemy(Bullet& bullet, BattleCharacter& enemy)
 	BattleCharacter* shooter = bullet.shooter.Get();
 	if (shooter != nullptr)
 	{
-		shooter->GetSpeedSystem().AddBase(enemy.GetParam().health.killBoost);
+		shooter->GetSpeedSystem().AddBase(hitTarget.GetParam().health.killBoost);
 	}
 }
 
@@ -241,17 +241,17 @@ void BulletManager::OnBulletImpact(Bullet& bullet, const Vector3& position)
 
 void BulletManager::Explode(Bullet& bullet, const Vector3& center)
 {
-	for (BattleCharacter* enemy : m_enemies)
+	for (BattleCharacter* hitTarget : m_hitTargets)
 	{
-		if (!enemy->CanBeTargeted() || HasHit(bullet, *enemy))
+		if (!hitTarget->CanBeTargeted() || HasHit(bullet, *hitTarget))
 		{
 			continue;
 		}
 
 		Vector3 point;
-		if (enemy->IsHitBySegment(center, center, bullet.explosionRadius, point))
+		if (hitTarget->IsHitBySegment(center, center, bullet.explosionRadius, point))
 		{
-			DamageEnemy(bullet, *enemy);
+			DamageTarget(bullet, *hitTarget);
 		}
 	}
 

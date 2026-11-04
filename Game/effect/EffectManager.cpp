@@ -14,6 +14,7 @@ namespace
 		u"Assets/effect/defeat.efk",
 		u"Assets/effect/explosion.efk",
 		u"Assets/effect/bullet.efk",
+		u"Assets/effect/enemy_bullet.efk"
 	};
 	static_assert(ARRAYSIZE(EFFECT_FILES) == EFFECT_NUM, "EFFECT_FILES の数が EnEffect と合っていません");
 

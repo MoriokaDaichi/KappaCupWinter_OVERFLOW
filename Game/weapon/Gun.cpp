@@ -57,7 +57,7 @@ void Gun::Shoot(const Vector3& muzzle, const GunParam::Level& levelParam)
 	}
 
 	dir.Normalize();
-	m_bulletManager->Fire(muzzle, dir * levelParam.bulletSpeed, levelParam, m_owner);
+	m_bulletManager->Fire(muzzle, dir * levelParam.bulletSpeed, MakeShot(levelParam), m_owner);
 }
 
 Vector3 Gun::CalcAimPoint() const
@@ -109,6 +109,19 @@ void Gun::FireAtLocked(const Vector3& muzzle, const GunParam::Level& levelParam)
 	dir.Normalize();
 	for (const GOHandle<BattleCharacter>& target : m_multiLocker.GetTargets())
 	{
-		m_bulletManager->FireHoming(muzzle, dir * m_param.homingSpeed, levelParam, m_owner, target);
+		m_bulletManager->FireHoming(muzzle, dir * m_param.homingSpeed, MakeShot(levelParam), m_owner, target);
 	}
+}
+
+BulletShot Gun::MakeShot(const GunParam::Level& levelParam) const
+{
+	BulletShot shot;
+	shot.tracer = EnEffect::Bullet;
+	shot.lifeTime = m_param.bulletLifeTime;
+	shot.scale = levelParam.bulletScale;
+	shot.damage = levelParam.damage;
+	shot.pierce = levelParam.pierce;
+	shot.explosionRadius = levelParam.explosionRadius;
+
+	return shot;
 }

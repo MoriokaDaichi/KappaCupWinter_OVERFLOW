@@ -24,6 +24,7 @@ private:
 	BattleCharacter* m_player = nullptr;	///< プレイヤー（PlayerController で動かす BattleCharacter）
 	GameCamera* m_gameCamera = nullptr;
 	BulletManager* m_bulletManager = nullptr;
+	BulletManager* m_enemyBulletManager = nullptr;
 
 	static constexpr int WALL_NUM = 2;
 	static constexpr int ANCHOR_NUM = 8;

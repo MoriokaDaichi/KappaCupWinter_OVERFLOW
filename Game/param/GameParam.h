@@ -194,6 +194,14 @@ struct GunParam
 	std::vector<Level> levels;				///< レベルの一覧
 };
 
+/** 敵の弾の値（enemy_bullet.json） */
+struct EnemyBulletParam
+{
+	float speed = 0.0f;				///< 弾の速さ
+	float lifeTime = 0.0f;			///< 弾が何秒残るか
+	float scale = 0.0f;				///< 弾の大きさ
+};
+
 /** グラップルのワイヤーの値（grappleWire.json） */
 struct GrappleWireParam
 {
@@ -263,6 +271,7 @@ struct GameParam
 	AnchorParam anchor;
 	GrappleWireParam grappleWire;
 	GunParam gun;
+	EnemyBulletParam enemyBullet;
 	SpeedParam speed;
 	DebugParam debug;
 };

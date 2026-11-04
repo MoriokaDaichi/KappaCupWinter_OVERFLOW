@@ -3,10 +3,12 @@
 
 #include "actor/BattleCharacter.h"
 #include "param/GameParam.h"
+#include "weapon/BulletManager.h"
 
-void EnemySpawner::Init(const BattleCharacter* player)
+void EnemySpawner::Init(const BattleCharacter* player, BulletManager* bulletManager)
 {
 	m_player = player;
+	m_bulletManager = bulletManager;
 
 	const std::vector<SpawnParam::Point>& points = nsGameParam::Get().spawn.points;
 	m_spawns.resize(points.size());
@@ -19,6 +21,7 @@ void EnemySpawner::Init(const BattleCharacter* player)
 		spawn.position = Vector3(point.position[0], point.position[1], point.position[2]);
 		spawn.respawnTime = point.respawnTime;
 		spawn.respawnRadius = point.respawnRadius;
+		spawn.canShoot = point.chara == "Firewall";
 		SpawnEnemy(spawn);
 	}
 }
@@ -30,6 +33,16 @@ void EnemySpawner::Update()
 	for (Spawn& spawn : m_spawns)
 	{
 		BattleCharacter* enemy = spawn.enemy.Get();
+		if (spawn.canShoot && enemy != nullptr && enemy->CanBeTargeted())
+		{
+			spawn.shootTimer -= dt;
+			if (spawn.shootTimer <= 0.0f)
+			{
+				Shoot(*enemy);
+				spawn.shootTimer = TEMP_SHOOT_INTERVAL;
+			}
+		}
+
 		if (spawn.respawnTime <= 0.0f || enemy == nullptr || enemy->IsActive())
 		{
 			continue;
@@ -75,4 +88,19 @@ void EnemySpawner::SpawnEnemy(Spawn& spawn)
 
 	spawn.enemy.Reset(enemy);
 	spawn.respawnTimer = spawn.respawnTime;
+}
+
+void EnemySpawner::Shoot(const BattleCharacter& enemy)
+{
+	const EnemyBulletParam& param = nsGameParam::Get().enemyBullet;
+
+	Vector3 direction = m_player->GetChestPosition() - enemy.GetChestPosition();
+	direction.Normalize();
+
+	BulletShot shot;
+	shot.tracer = EnEffect::EnemyBullet;
+	shot.lifeTime = param.lifeTime;
+	shot.scale = param.scale;
+
+	m_bulletManager->Fire(enemy.GetChestPosition(), direction * param.speed, shot, nullptr);
 }

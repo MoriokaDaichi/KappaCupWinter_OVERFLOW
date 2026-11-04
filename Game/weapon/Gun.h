@@ -3,6 +3,7 @@
 #include "weapon/MultiLocker.h"
 
 class BulletManager;
+struct BulletShot;
 
 /**
  * RT を押している間、一定の間隔で照準の先へ弾を撃つ。Lv3 からは LT で敵をロックし、離すとホーミング弾を撃つ。
@@ -41,6 +42,8 @@ private:
 	Vector3 CalcMuzzle(const Vector3& chest, const Quaternion& rotation) const;
 	/** ロックした敵へ 1 発ずつホーミング弾を撃つ */
 	void FireAtLocked(const Vector3& muzzle, const GunParam::Level& levelParam);
+	/** Level から BulletShot を作る */
+	BulletShot MakeShot(const GunParam::Level& levelParam) const;
 
 private:
 	BulletManager* m_bulletManager = nullptr;				///< 弾を出す先（借りているだけ）

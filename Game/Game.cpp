@@ -14,6 +14,7 @@ Game::~Game()
 	m_enemySpawner.DeleteAll();
 	DeleteGO(m_gameCamera);
 	DeleteGO(m_bulletManager);
+	DeleteGO(m_enemyBulletManager);
 	for (int i = 0; i < ANCHOR_NUM; i++)
 	{
 		DeleteGO(m_anchor[i]);
@@ -91,6 +92,10 @@ bool Game::Start()
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 
 	m_bulletManager = NewGO<BulletManager>(0, "bulletManager");
+	m_bulletManager->Init("enemy");
+
+	m_enemyBulletManager = NewGO<BulletManager>(0, "enemyBulletManager");
+	m_enemyBulletManager->Init("player");
 
 	// プレイヤーも敵も同じ BattleCharacter。違うのは、渡す設定（JSON）と Controller だけ
 	m_player = NewGO<BattleCharacter>(0, "player");
@@ -99,7 +104,7 @@ bool Game::Start()
 	m_player->SetController(&m_playerController);
 	m_player->SetParam(nsGameParam::Get().player);
 
-	m_enemySpawner.Init(m_player);
+	m_enemySpawner.Init(m_player, m_enemyBulletManager);
 
 	m_gameCamera = NewGO<GameCamera>(1, "gameCamera");
 	m_gameCamera->SetTarget(m_player);

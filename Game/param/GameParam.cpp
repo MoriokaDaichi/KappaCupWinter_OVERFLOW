@@ -33,6 +33,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnchorParam, normalScale, lockedScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GrappleWireParam, thicknessScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam::Level, shootInterval, damage, bulletSpeed, bulletScale, pierce, explosionRadius, lockCount)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam, range, bulletLifeTime, aimHoldTime, muzzleRight, muzzleForward, levels, lockAngle, lockDistance, lockTime, homingSpeed, homingTurnRate)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EnemyBulletParam, speed, lifeTime, scale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpeedParam, baseMin, baseMax, bonusMax, groundDecay, idleDecay, wallRunGain, levelUpSpeeds, maxSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EffectParam, hitScale, defeatScale, bulletScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpawnParam::Point, chara, position, respawnTime, respawnRadius)
@@ -368,6 +369,7 @@ namespace
 		ReadFile("Assets/param/anchor.json", out.anchor);
 		ReadFile("Assets/param/grappleWire.json", out.grappleWire);
 		ReadFile("Assets/param/gun.json", out.gun);
+		ReadFile("Assets/param/enemy_bullet.json", out.enemyBullet);
 		ReadFile("Assets/param/speed.json", out.speed);
 		ReadFile("Assets/param/debug.json", out.debug);
 

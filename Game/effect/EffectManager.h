@@ -7,6 +7,7 @@ enum class EnEffect : int
 	Defeat,			///< 撃破
 	Explosion,		///< 爆発弾
 	Bullet,			///< 飛んでいる弾（光の筋。止めるまで出続ける）
+	EnemyBullet,	///< 敵用の飛んでいる弾
 	Num				///< 種類の数（いちばん最後に置く）
 };
 
