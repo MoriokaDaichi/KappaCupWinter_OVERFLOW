@@ -256,7 +256,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Preview|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="system\system.cpp" />
-    <ClCompile Include="weapon\BulletManager.cpp" />
+    <ClCompile Include="weapon\BulletSystem.cpp" />
     <ClCompile Include="weapon\Gun.cpp" />
     <ClCompile Include="weapon\GunModel.cpp" />
     <ClCompile Include="weapon\TurretModel.cpp" />
@@ -303,7 +303,7 @@
     <ClInclude Include="state\StateMachine.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system\system.h" />
-    <ClInclude Include="weapon\BulletManager.h" />
+    <ClInclude Include="weapon\BulletSystem.h" />
     <ClInclude Include="weapon\Gun.h" />
     <ClInclude Include="weapon\GunModel.h" />
     <ClInclude Include="weapon\TurretModel.h" />

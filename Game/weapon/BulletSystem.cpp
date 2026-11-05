@@ -1,11 +1,11 @@
 ﻿#include "stdafx.h"
-#include "weapon/BulletManager.h"
+#include "weapon/BulletSystem.h"
 #include "collision/RayCast.h"
 #include "actor/BattleCharacter.h"
 #include "effect/EffectManager.h"
 #include <algorithm>
 
-bool BulletManager::Start()
+bool BulletSystem::Start()
 {
 	// 弾はすぐ消えるので、レイトレには入れない（入れると作るたび・消すたびに重くなる）
 	m_modelRender.SetRaytracingWorld(false);
@@ -20,7 +20,7 @@ bool BulletManager::Start()
 	return true;
 }
 
-void BulletManager::Update()
+void BulletSystem::Update()
 {
 	const float dt = g_gameTime->GetFrameDeltaTime();
 
@@ -68,7 +68,7 @@ void BulletManager::Update()
 	}
 }
 
-void BulletManager::Fire(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter)
+void BulletSystem::Fire(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter)
 {
 	for (int i = 0; i < MAX_BULLET; i++)
 	{
@@ -96,7 +96,7 @@ void BulletManager::Fire(const Vector3& position, const Vector3& velocity, const
 	}
 }
 
-void BulletManager::FireHoming(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter,
+void BulletSystem::FireHoming(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter,
 	const GOHandle<BattleCharacter>& target)
 {
 	for (int i = 0; i < MAX_BULLET; i++)
@@ -111,7 +111,7 @@ void BulletManager::FireHoming(const Vector3& position, const Vector3& velocity,
 	}
 }
 
-void BulletManager::FireSplit(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter,
+void BulletSystem::FireSplit(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter,
 	const std::vector<GOHandle<BattleCharacter>>& targets)
 {
 	for (int i = 0; i < MAX_BULLET; i++)
@@ -128,7 +128,7 @@ void BulletManager::FireSplit(const Vector3& position, const Vector3& velocity, 
 	}
 }
 
-void BulletManager::UpdateHoming(Bullet& bullet, const float dt) const
+void BulletSystem::UpdateHoming(Bullet& bullet, const float dt) const
 {
 	const BattleCharacter* target = bullet.target.Get();
 	if (target == nullptr || !target->CanBeTargeted())
@@ -153,7 +153,7 @@ void BulletManager::UpdateHoming(Bullet& bullet, const float dt) const
 	bullet.velocity = dir * m_param.homingSpeed;
 }
 
-void BulletManager::CollectTargets()
+void BulletSystem::CollectTargets()
 {
 	m_hitTargets.clear();
 	QueryGOs<BattleCharacter>(m_targetName, [&](BattleCharacter* hitTarget)
@@ -163,7 +163,7 @@ void BulletManager::CollectTargets()
 		});
 }
 
-bool BulletManager::HitTargets(Bullet& bullet, const Vector3& end)
+bool BulletSystem::HitTargets(Bullet& bullet, const Vector3& end)
 {
 	Vector3 hitPoint;
 	BattleCharacter* hitTarget = FindFirstHit(bullet, end, hitPoint);
@@ -183,7 +183,7 @@ bool BulletManager::HitTargets(Bullet& bullet, const Vector3& end)
 	return false;
 }
 
-BattleCharacter* BulletManager::FindFirstHit(const Bullet& bullet, const Vector3& end, Vector3& hitPoint) const
+BattleCharacter* BulletSystem::FindFirstHit(const Bullet& bullet, const Vector3& end, Vector3& hitPoint) const
 {
 	const float bulletRadius = bullet.scale * MODEL_RADIUS;
 	BattleCharacter* first = nullptr;
@@ -216,12 +216,12 @@ BattleCharacter* BulletManager::FindFirstHit(const Bullet& bullet, const Vector3
 	return first;
 }
 
-bool BulletManager::HasHit(const Bullet& bullet, const BattleCharacter& hitTarget) const
+bool BulletSystem::HasHit(const Bullet& bullet, const BattleCharacter& hitTarget) const
 {
 	return std::find(bullet.hitTargetIds.begin(), bullet.hitTargetIds.end(), hitTarget.GetInstanceID()) != bullet.hitTargetIds.end();
 }
 
-void BulletManager::DamageTarget(Bullet& bullet, BattleCharacter& hitTarget)
+void BulletSystem::DamageTarget(Bullet& bullet, BattleCharacter& hitTarget)
 {
 	bullet.hitTargetIds.push_back(hitTarget.GetInstanceID());
 
@@ -247,7 +247,7 @@ void BulletManager::DamageTarget(Bullet& bullet, BattleCharacter& hitTarget)
 	}
 }
 
-void BulletManager::OnBulletImpact(Bullet& bullet, const Vector3& position)
+void BulletSystem::OnBulletImpact(Bullet& bullet, const Vector3& position)
 {
 	if (bullet.explosionRadius > 0.0f)
 	{
@@ -258,7 +258,7 @@ void BulletManager::OnBulletImpact(Bullet& bullet, const Vector3& position)
 	nsEffect::Play(EnEffect::Hit, position, m_effectParam.hitScale);
 }
 
-void BulletManager::Explode(Bullet& bullet, const Vector3& center)
+void BulletSystem::Explode(Bullet& bullet, const Vector3& center)
 {
 	for (BattleCharacter* hitTarget : m_hitTargets)
 	{
@@ -278,7 +278,7 @@ void BulletManager::Explode(Bullet& bullet, const Vector3& center)
 	nsEffect::Play(EnEffect::Explosion, center, bullet.explosionRadius);
 }
 
-void BulletManager::UpdateBulletView(const int index)
+void BulletSystem::UpdateBulletView(const int index)
 {
 	const Bullet& bullet = m_bullets[index];
 
@@ -297,7 +297,7 @@ void BulletManager::UpdateBulletView(const int index)
 	tracer->SetRotation(rotation);
 }
 
-void BulletManager::Deactivate(const int index)
+void BulletSystem::Deactivate(const int index)
 {
 	Bullet& bullet = m_bullets[index];
 	bullet.isActive = false;
@@ -311,7 +311,7 @@ void BulletManager::Deactivate(const int index)
 	m_modelRender.RemoveInstance(index);
 }
 
-void BulletManager::UpdateSplit(const int index, const float dt)
+void BulletSystem::UpdateSplit(const int index, const float dt)
 {
 	Bullet& bullet = m_bullets[index];
 
@@ -341,7 +341,7 @@ void BulletManager::UpdateSplit(const int index, const float dt)
 	}
 }
 
-void BulletManager::Render(RenderContext& rc)
+void BulletSystem::Render(RenderContext& rc)
 {
 	m_modelRender.Draw(rc);
 }

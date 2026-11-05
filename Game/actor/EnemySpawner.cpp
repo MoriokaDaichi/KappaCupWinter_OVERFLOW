@@ -3,12 +3,12 @@
 
 #include "actor/BattleCharacter.h"
 #include "param/GameParam.h"
-#include "weapon/BulletManager.h"
+#include "weapon/BulletSystem.h"
 
-void EnemySpawner::Init(const BattleCharacter* player, BulletManager* bulletManager)
+void EnemySpawner::Init(const BattleCharacter* player, BulletSystem* bulletSystem)
 {
 	m_player = player;
-	m_bulletManager = bulletManager;
+	m_bulletSystem = bulletSystem;
 
 	const std::vector<SpawnParam::Point>& points = nsGameParam::Get().spawn.points;
 	m_spawns.resize(points.size());
@@ -104,5 +104,5 @@ void EnemySpawner::Shoot(const BattleCharacter& enemy)
 	shot.scale = param.scale;
 	shot.damage = param.damage;
 
-	m_bulletManager->Fire(muzzle, direction * param.speed, shot, nullptr);
+	m_bulletSystem->Fire(muzzle, direction * param.speed, shot, nullptr);
 }

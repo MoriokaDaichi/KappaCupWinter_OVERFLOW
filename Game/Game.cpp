@@ -4,7 +4,7 @@
 #include "camera/GameCamera.h"
 #include "gimmick/Anchor.h"
 #include "param/GameParam.h"
-#include "weapon/BulletManager.h"
+#include "weapon/BulletSystem.h"
 #include "input/InputManager.h"
 #include "effect/EffectManager.h"
 
@@ -13,8 +13,8 @@ Game::~Game()
 	DeleteGO(m_player);
 	m_enemySpawner.DeleteAll();
 	DeleteGO(m_gameCamera);
-	DeleteGO(m_bulletManager);
-	DeleteGO(m_enemyBulletManager);
+	DeleteGO(m_bulletSystem);
+	DeleteGO(m_enemyBulletSystem);
 	for (int i = 0; i < ANCHOR_NUM; i++)
 	{
 		DeleteGO(m_anchor[i]);
@@ -91,11 +91,11 @@ bool Game::Start()
 	// 当たり判定の形を線で表示する（デバッグ用）
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 
-	m_bulletManager = NewGO<BulletManager>(0, "bulletManager");
-	m_bulletManager->Init("enemy");
+	m_bulletSystem = NewGO<BulletSystem>(0, "bulletSystem");
+	m_bulletSystem->Init("enemy");
 
-	m_enemyBulletManager = NewGO<BulletManager>(0, "enemyBulletManager");
-	m_enemyBulletManager->Init("player");
+	m_enemyBulletSystem = NewGO<BulletSystem>(0, "enemyBulletSystem");
+	m_enemyBulletSystem->Init("player");
 
 	// プレイヤーも敵も同じ BattleCharacter。違うのは、渡す設定（JSON）と Controller だけ
 	m_player = NewGO<BattleCharacter>(0, "player");
@@ -104,7 +104,7 @@ bool Game::Start()
 	m_player->SetController(&m_playerController);
 	m_player->SetParam(nsGameParam::Get().player);
 
-	m_enemySpawner.Init(m_player, m_enemyBulletManager);
+	m_enemySpawner.Init(m_player, m_enemyBulletSystem);
 
 	m_gameCamera = NewGO<GameCamera>(1, "gameCamera");
 	m_gameCamera->SetTarget(m_player);

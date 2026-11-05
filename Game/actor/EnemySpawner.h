@@ -3,7 +3,7 @@
 #include <vector>
 
 class BattleCharacter;
-class BulletManager;
+class BulletSystem;
 struct CharacterParam;
 
 /**
@@ -15,7 +15,7 @@ class EnemySpawner
 {
 public:
 	/** spawn.json の場所すべてに敵を出す。player は敵が追いかける相手で、距離も測る（借りているだけ） */
-	void Init(const BattleCharacter* player, BulletManager* bulletManager);
+	void Init(const BattleCharacter* player, BulletSystem* bulletSystem);
 	/** 毎フレーム Game の Update から呼ぶ。倒された敵の湧き直しの時間を進める */
 	void Update();
 	/** 生きている敵を全部消す（Game が消えるときに呼ぶ） */
@@ -46,5 +46,5 @@ private:
 
 	std::vector<Spawn> m_spawns;					///< 敵を出す場所の一覧
 	const BattleCharacter* m_player = nullptr;		///< プレイヤー（借りているだけ）
-	BulletManager* m_bulletManager = nullptr;	///< 弾を出す先（借りているだけ）
+	BulletSystem* m_bulletSystem = nullptr;	///< 弾を出す先（借りているだけ）
 };

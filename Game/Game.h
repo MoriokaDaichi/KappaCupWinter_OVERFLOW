@@ -9,7 +9,7 @@
 class BattleCharacter;
 class GameCamera;
 class Anchor;
-class BulletManager;
+class BulletSystem;
 
 class Game : public IGameObject
 {
@@ -23,8 +23,8 @@ public:
 private:
 	BattleCharacter* m_player = nullptr;	///< プレイヤー（PlayerController で動かす BattleCharacter）
 	GameCamera* m_gameCamera = nullptr;
-	BulletManager* m_bulletManager = nullptr;
-	BulletManager* m_enemyBulletManager = nullptr;
+	BulletSystem* m_bulletSystem = nullptr;
+	BulletSystem* m_enemyBulletSystem = nullptr;
 
 	static constexpr int WALL_NUM = 2;
 	static constexpr int ANCHOR_NUM = 8;

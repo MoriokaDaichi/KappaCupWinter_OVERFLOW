@@ -3,7 +3,7 @@
 
 #include "controller/IController.h"
 #include "collision/RayCast.h"
-#include "weapon/BulletManager.h"
+#include "weapon/BulletSystem.h"
 #include "actor/characterState/IdleState.h"
 #include "actor/characterState/RunState.h"
 #include "actor/characterState/AirState.h"
@@ -487,6 +487,6 @@ void BattleCharacter::InitAbilities()
 	if (HasAbility("Gun"))
 	{
 		m_gun = std::make_unique<Gun>();
-		m_gun->Init(FindGO<BulletManager>("bulletManager"), this);
+		m_gun->Init(FindGO<BulletSystem>("bulletSystem"), this);
 	}
 }

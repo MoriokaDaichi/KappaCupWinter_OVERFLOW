@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "weapon/Gun.h"
 
-#include "weapon/BulletManager.h"
+#include "weapon/BulletSystem.h"
 #include "collision/RayCast.h"
 #include "actor/BattleCharacter.h"
 
@@ -50,7 +50,7 @@ void Gun::Update(const bool isShootPress, const bool isAimPress, const int level
 
 void Gun::Shoot(const Vector3& muzzle, const GunParam::Level& levelParam)
 {
-	if (m_bulletManager == nullptr)
+	if (m_bulletSystem == nullptr)
 	{
 		return;
 	}
@@ -62,7 +62,7 @@ void Gun::Shoot(const Vector3& muzzle, const GunParam::Level& levelParam)
 	}
 
 	dir.Normalize();
-	m_bulletManager->Fire(muzzle, dir * levelParam.bulletSpeed, MakeShot(levelParam), m_owner);
+	m_bulletSystem->Fire(muzzle, dir * levelParam.bulletSpeed, MakeShot(levelParam), m_owner);
 }
 
 Vector3 Gun::CalcAimPoint() const
@@ -99,7 +99,7 @@ Vector3 Gun::CalcMuzzle(const Vector3& chest, const Quaternion& rotation) const
 
 void Gun::FireAtLocked(const Vector3& muzzle, const GunParam::Level& levelParam)
 {
-	if (m_bulletManager == nullptr)
+	if (m_bulletSystem == nullptr)
 	{
 		return;
 	}
@@ -112,7 +112,7 @@ void Gun::FireAtLocked(const Vector3& muzzle, const GunParam::Level& levelParam)
 	}
 
 	dir.Normalize();
-	m_bulletManager->FireSplit(muzzle, dir * m_param.homingSpeed, MakeShot(levelParam), m_owner, m_multiLocker.GetTargets());
+	m_bulletSystem->FireSplit(muzzle, dir * m_param.homingSpeed, MakeShot(levelParam), m_owner, m_multiLocker.GetTargets());
 }
 
 BulletShot Gun::MakeShot(const GunParam::Level& levelParam) const

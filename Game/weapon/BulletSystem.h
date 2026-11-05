@@ -17,7 +17,7 @@ struct BulletShot
 };
 
 /** 撃った弾をまとめて動かし、まとめて描く（１発ごとにInitすると重いため）。Init で渡した名前の相手に当たったらダメージを与える。Game が NewGO する */
-class BulletManager : public IGameObject
+class BulletSystem : public IGameObject
 {
 public:
 	bool Start() override;

@@ -2,7 +2,7 @@
 #include "param/GameParam.h"
 #include "weapon/MultiLocker.h"
 
-class BulletManager;
+class BulletSystem;
 struct BulletShot;
 
 /**
@@ -12,10 +12,10 @@ struct BulletShot;
 class Gun
 {
 public:
-	/** 弾を出す BulletManager と、銃を持つキャラを受け取る（借りているだけ。倒したときの基礎速度は owner に入る） */
-	void Init(BulletManager* bulletManager, BattleCharacter* owner)
+	/** 弾を出す BulletSystem と、銃を持つキャラを受け取る（借りているだけ。倒したときの基礎速度は owner に入る） */
+	void Init(BulletSystem* bulletSystem, BattleCharacter* owner)
 	{
-		m_bulletManager = bulletManager;
+		m_bulletSystem = bulletSystem;
 		m_owner = owner;
 	}
 	/** 
@@ -46,7 +46,7 @@ private:
 	BulletShot MakeShot(const GunParam::Level& levelParam) const;
 
 private:
-	BulletManager* m_bulletManager = nullptr;				///< 弾を出す先（借りているだけ）
+	BulletSystem* m_bulletSystem = nullptr;				///< 弾を出す先（借りているだけ）
 	BattleCharacter* m_owner = nullptr;						///< 銃を持つキャラ（借りているだけ）
 	const GunParam& m_param = nsGameParam::Get().gun;		///< 調整用の値（Assets/param/gun.json）
 	float m_shootTimer = 0.0f;								///< 次に撃てるまでの残り時間（秒）
