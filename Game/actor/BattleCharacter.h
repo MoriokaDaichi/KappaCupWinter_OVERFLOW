@@ -45,7 +45,7 @@ public:
 	void SetParam(const CharacterParam& param) { m_param = &param; }
 	/** 狙えるか（Start が済んでいて、まだ倒されていない）。Start の前は位置が決まっていないので狙わない */
 	bool CanBeTargeted() const { return IsStart() && !IsDead() && IsActive(); }
-	/** damage だけ体力を減らす。0 以下になったら倒れて true を返す。体力を持たないキャラには効かない */
+	/** damage だけ体力を減らす。0 以下になったら倒れて true を返す。体力を持たないキャラは、代わりに基礎速度が減る */
 	bool TakeDamage(const float damage);
 	/** 倒れたときに消さず、隠しておくようにする（湧き直す敵に使う。作り直すとモデルの準備でゲームが止まるため） */
 	void SetReuseOnDefeat(const bool isReuse) { m_isReuseOnDefeat = isReuse; }

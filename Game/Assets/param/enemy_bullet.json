@@ -1,5 +1,6 @@
 {
   "speed": 2500.0,
   "lifeTime": 3.0,
-  "scale": 0.3
+  "scale": 0.3,
+  "damage": 100.0
 }

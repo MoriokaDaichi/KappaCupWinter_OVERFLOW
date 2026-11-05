@@ -102,6 +102,7 @@ void EnemySpawner::Shoot(const BattleCharacter& enemy)
 	shot.tracer = EnEffect::EnemyBullet;
 	shot.lifeTime = param.lifeTime;
 	shot.scale = param.scale;
+	shot.damage = param.damage;
 
 	m_bulletManager->Fire(muzzle, direction * param.speed, shot, nullptr);
 }

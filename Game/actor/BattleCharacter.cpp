@@ -75,8 +75,15 @@ bool BattleCharacter::Start()
 
 bool BattleCharacter::TakeDamage(const float damage)
 {
-	if (!m_param->hasHealth || IsDead())
+	if (IsDead())
 	{
+		return false;
+	}
+
+	//体力を持たないキャラ（プレイヤー）は、速度が盾なので基礎速度が減る
+	if (!m_param->hasHealth)
+	{
+		m_speed.AddBase(-damage);
 		return false;
 	}
 

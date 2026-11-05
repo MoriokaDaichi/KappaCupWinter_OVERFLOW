@@ -213,6 +213,7 @@ struct EnemyBulletParam
 	float speed = 0.0f;				///< 弾の速さ
 	float lifeTime = 0.0f;			///< 弾が何秒残るか
 	float scale = 0.0f;				///< 弾の大きさ
+	float damage = 0.0f;			///< 当たったときに相手の基礎速度を減らす量
 };
 
 /** グラップルのワイヤーの値（grappleWire.json） */
