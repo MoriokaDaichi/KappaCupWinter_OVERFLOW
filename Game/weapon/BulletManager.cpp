@@ -64,6 +64,7 @@ void BulletManager::Update()
 
 		bullet.position = nextPos;
 		UpdateBulletView(i);
+		UpdateSplit(i, dt);
 	}
 }
 
@@ -87,6 +88,7 @@ void BulletManager::Fire(const Vector3& position, const Vector3& velocity, const
 			bullet.target.Clear();
 			bullet.hitTargetIds.clear();
 			bullet.tracer.Reset(nsEffect::Play(shot.tracer, position, shot.scale * m_effectParam.bulletScale));
+			bullet.splitTargets.clear();
 			UpdateBulletView(i);
 
 			return;
@@ -104,6 +106,23 @@ void BulletManager::FireHoming(const Vector3& position, const Vector3& velocity,
 			// Fire は最初に見つけた空きを使うので、同じ枠に入る
 			Fire(position, velocity, shot, shooter);
 			m_bullets[i].target = target;
+			return;
+		}
+	}
+}
+
+void BulletManager::FireSplit(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter,
+	const std::vector<GOHandle<BattleCharacter>>& targets)
+{
+	for (int i = 0; i < MAX_BULLET; i++)
+	{
+		if (!m_bullets[i].isActive)
+		{
+			// Fire は最初に見つけた空きを使うので、同じ枠に入る
+			Fire(position, velocity, shot, shooter);
+			m_bullets[i].splitShot = shot;
+			m_bullets[i].splitTimer = m_param.splitDelay;
+			m_bullets[i].splitTargets = targets;
 			return;
 		}
 	}
@@ -290,6 +309,36 @@ void BulletManager::Deactivate(const int index)
 		tracer->Stop();
 	}
 	m_modelRender.RemoveInstance(index);
+}
+
+void BulletManager::UpdateSplit(const int index, const float dt)
+{
+	Bullet& bullet = m_bullets[index];
+
+	if (bullet.splitTargets.empty())
+	{
+		return;
+	}
+
+	bullet.splitTimer -= dt;
+	if (bullet.splitTimer > 0.0f)
+	{
+		return;
+	}
+
+	// Deactivate で空いた枠に Fire が別の弾を入れるので、先に写しておく
+	const Vector3 position = bullet.position;
+	const Vector3 velocity = bullet.velocity;
+	const BulletShot shot = bullet.splitShot;
+	BattleCharacter* shooter = bullet.shooter.Get();
+	const std::vector<GOHandle<BattleCharacter>> targets = bullet.splitTargets;
+
+	Deactivate(index);
+
+	for (const GOHandle<BattleCharacter>& target : targets)
+	{
+		FireHoming(position, velocity, shot, shooter, target);
+	}
 }
 
 void BulletManager::Render(RenderContext& rc)

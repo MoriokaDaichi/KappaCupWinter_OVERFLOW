@@ -192,6 +192,8 @@ struct GunParam
 	float lockTime = 0.0f;				///< 照準に入れ続けてからロックするまでの時間（秒）
 	float homingSpeed = 0.0f;			///< ホーミング弾の速さ
 	float homingTurnRate = 0.0f;		///< ホーミング弾が 1 秒に相手の方へ曲がる割合
+	float lockShootInterval = 0.0f;		///< ロック中に撃つ間隔（秒）
+	float splitDelay = 0.0f;			///< ロック中に撃った弾が分裂するまでの時間（秒）
 
 	struct Level
 	{

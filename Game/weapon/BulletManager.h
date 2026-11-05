@@ -32,12 +32,17 @@ public:
 	/** target の方へ曲がっていく弾を出す */
 	void FireHoming(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter,
 		const GOHandle<BattleCharacter>& target);
+	/** 少し飛んだ後に、targets の数に分裂してホーミングする弾を出す */
+	void FireSplit(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter,
+		const std::vector<GOHandle<BattleCharacter>>& targets);
 
 private:
 	/** 弾の見た目を今の位置と向きに合わせる */
 	void UpdateBulletView(const int index);
 	/** 弾を消して空きに戻す（描かれないように大きさ 0 にする） */
 	void Deactivate(const int index);
+	/** 時間が来た弾を分裂させて消す。消したら true */
+	void UpdateSplit(const int index, const float dt);
 
 private:
 	/** 弾1発分 */
@@ -51,6 +56,9 @@ private:
 		bool pierce = false;		///< 弾が貫通するかどうか
 		float explosionRadius = 0.0f;	///< 爆発の半径（0 なら爆発しない）
 		float damage = 0.0f;		///< ダメージ
+		BulletShot splitShot;										///< 分裂した後の弾の設定
+		float splitTimer = 0.0f;									///< 分裂するまでの残り時間
+		std::vector<GOHandle<BattleCharacter>> splitTargets;		///< 分裂して向かう相手（空なら分裂しない）
 		GOHandle<BattleCharacter> shooter;		///< 撃った本人
 		GOHandle<BattleCharacter> target;		///< ホーミングする相手（空か、相手が倒されたら、まっすぐ飛ぶ）
 		GOHandle<EffectEmitter> tracer;			///< 弾の見た目の光の筋（エフェクトのファイルがないときは空で、代わりに球を描く）

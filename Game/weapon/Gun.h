@@ -6,7 +6,7 @@ class BulletManager;
 struct BulletShot;
 
 /**
- * RT を押している間、一定の間隔で照準の先へ弾を撃つ。Lv3 からは LT で敵をロックし、離すとホーミング弾を撃つ。
+ * RT を押している間、一定の間隔で照準の先へ弾を撃つ。Lv3 からは LT で敵をロックし、ロック中に RT で撃つとホーミング弾になる。
  * BattleCharacter が持つ（abilities に "Gun" があるときだけ）
  */
 class Gun
@@ -21,7 +21,7 @@ public:
 	/** 
 	 * 毎フレーム BattleCharacter が呼ぶ。押していて間隔が空いていれば撃つ。
 	 * level は今の速度 Lv（1〜5）。chest は胸の位置、rotation は体の向き（銃口の位置を決める） 
-	 * isAimPress は LT（構え）。押している間に敵をロックし、離したらロックした敵へ撃つ
+	 * isAimPress は LT（構え）。押している間に敵をロックし、離すとロックを外す
 	 * aimOrigin・aimDirection は狙いの始点と向き（マルチロックオンで使う）
 	 */
 	void Update(const bool isShootPress, const bool isAimPress, const int level, const Vector3& chest, const Quaternion& rotation,
@@ -40,7 +40,7 @@ private:
 	Vector3 CalcAimPoint() const;
 	/** 銃口の位置を返す（胸から体の右前へずらした点）。壁に埋まるときは胸を返す */
 	Vector3 CalcMuzzle(const Vector3& chest, const Quaternion& rotation) const;
-	/** ロックした敵へ 1 発ずつホーミング弾を撃つ */
+	/** ロックした敵の数に分裂する弾を 1 発撃つ */
 	void FireAtLocked(const Vector3& muzzle, const GunParam::Level& levelParam);
 	/** Level から BulletShot を作る */
 	BulletShot MakeShot(const GunParam::Level& levelParam) const;
@@ -52,7 +52,6 @@ private:
 	float m_shootTimer = 0.0f;								///< 次に撃てるまでの残り時間（秒）
 	float m_aimTimer = 0.0f;								///< 構えをやめるまでの残り時間（秒）
 	MultiLocker m_multiLocker;								///< LT を押している間に敵をロックする（Lv3 から）
-	bool m_wasAimPress = false;								///< 前のフレームに LT を押していたか（離した瞬間を知るため）
 
 	static constexpr float AIM_MIN_DISTANCE = 1.0f;			///< 狙う点が手元からこれより近いと、向きを出せない
 	static constexpr float AIM_MIN_DISTANCE_SQ = AIM_MIN_DISTANCE * AIM_MIN_DISTANCE;		///< AIM_MIN_DISTANCEを2乗した値（LengthSq と比べるため）

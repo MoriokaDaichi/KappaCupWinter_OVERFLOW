@@ -9,6 +9,8 @@
   "lockTime": 0.4,
   "homingSpeed": 6000.0,
   "homingTurnRate": 4.0,
+  "lockShootInterval": 0.3,
+  "splitDelay": 0.15,
   "levels": [
     {
       "shootInterval": 0.15,

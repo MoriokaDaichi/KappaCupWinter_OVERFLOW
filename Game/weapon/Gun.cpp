@@ -17,14 +17,11 @@ void Gun::Update(const bool isShootPress, const bool isAimPress, const int level
 	{
 		m_multiLocker.Update(aimOrigin, aimDirection, levelParam.lockCount);
 	}
-
-	if (m_wasAimPress && !isAimPress)
+	else
 	{
-		FireAtLocked(CalcMuzzle(chest, rotation), levelParam);
+		// LT を離したときと、被弾してロックできない Lv に下がったときは外す
 		m_multiLocker.Clear();
 	}
-
-	m_wasAimPress = isAimPress;
 
 	if (isShootPress)
 	{
@@ -39,8 +36,16 @@ void Gun::Update(const bool isShootPress, const bool isAimPress, const int level
 		return;
 	}
 
-	Shoot(CalcMuzzle(chest, rotation), levelParam);
-	m_shootTimer = levelParam.shootInterval;
+	if (m_multiLocker.GetTargets().empty())
+	{
+		Shoot(CalcMuzzle(chest, rotation), levelParam);
+		m_shootTimer = levelParam.shootInterval;
+	}
+	else
+	{
+		FireAtLocked(CalcMuzzle(chest, rotation), levelParam);
+		m_shootTimer = m_param.lockShootInterval;
+	}
 }
 
 void Gun::Shoot(const Vector3& muzzle, const GunParam::Level& levelParam)
@@ -107,10 +112,7 @@ void Gun::FireAtLocked(const Vector3& muzzle, const GunParam::Level& levelParam)
 	}
 
 	dir.Normalize();
-	for (const GOHandle<BattleCharacter>& target : m_multiLocker.GetTargets())
-	{
-		m_bulletManager->FireHoming(muzzle, dir * m_param.homingSpeed, MakeShot(levelParam), m_owner, target);
-	}
+	m_bulletManager->FireSplit(muzzle, dir * m_param.homingSpeed, MakeShot(levelParam), m_owner, m_multiLocker.GetTargets());
 }
 
 BulletShot Gun::MakeShot(const GunParam::Level& levelParam) const
