@@ -9,6 +9,7 @@
 #include "grapple/Grapple.h"
 #include "weapon/Gun.h"
 #include "weapon/GunModel.h"
+#include "weapon/TurretModel.h"
 #include "speed/SpeedSystem.h"
 #include "param/GameParam.h"
 #include "state/StateMachine.h"
@@ -123,6 +124,8 @@ public:
 	bool CanStartWallRun() const;
 	/** 胸の位置を返す。ロープの手元と、銃口を決める基準に使う */
 	Vector3 GetChestPosition() const;
+	/** 弾を出す位置を返す。砲身があれば砲口、なければ胸 */
+	Vector3 GetMuzzlePosition() const;
 
 public:
 	/** 状態を切り替える（ふつうは切り替え表が呼ぶ。ワープのように表の外から変えたいときだけ直接呼ぶ） */
@@ -135,9 +138,9 @@ public:
 protected:
 	/** 1 フレームの行動。コマンド → ロック → 切り替え表と State → 体の傾き・アニメーション → 速さ → 構え → 射撃 の順に動かす */
 	void UpdateAction() override final;
-	/** 体を動かした後（骨の位置が決まった後）に、ワイヤーの手元と銃の見た目を手に合わせる */
+	/** 体を動かした後（骨の位置が決まった後）に、ワイヤーの手元と銃の見た目を手に合わせ、砲身を体の上に置く */
 	void OnBodyUpdated() override;
-	/** 体と、手に持つ銃を描く */
+	/** 体と、手に持つ銃と、砲身を描く */
 	void Render(RenderContext& rc) override;
 
 private:
@@ -186,4 +189,5 @@ private:
 	std::unique_ptr<CharacterAnimation> m_animation;							///< アニメーション（設定に animation があるときだけ作る）
 	std::unique_ptr<HandBones> m_handBones;										///< 手の骨（設定に hands があるときだけ作る）
 	std::unique_ptr<GunModel> m_gunModel;										///< 手に持つ銃の見た目（銃と手の骨の両方があるときだけ作る）
+	std::unique_ptr<TurretModel> m_turretModel;									///< 砲身の見た目（設定に turret があるときだけ作る）
 };

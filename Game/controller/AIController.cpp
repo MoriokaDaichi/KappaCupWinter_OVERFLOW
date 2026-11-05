@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "controller/AIController.h"
 
-#include "actor/Character.h"
+#include "actor/BattleCharacter.h"
 
 void AIController::MakeCommand(CharacterCommand& command) const
 {
@@ -23,10 +23,10 @@ void AIController::MakeCommand(CharacterCommand& command) const
 		command.moveDir = toTarget;
 	}
 
-	// 狙いは相手の方（足元から足元）。撃つのは敵のタスクで足す
-	Vector3 toTargetAim = m_target->GetPosition() - m_owner->GetPosition();
+	// 狙いは相手の方（胸から胸）。砲身もこの向きを見る
+	Vector3 toTargetAim = m_target->GetChestPosition() - m_owner->GetChestPosition();
 	toTargetAim.Normalize();
 
-	command.aimOrigin = m_owner->GetPosition();
+	command.aimOrigin = m_owner->GetChestPosition();
 	command.aimDirection = toTargetAim;
 }

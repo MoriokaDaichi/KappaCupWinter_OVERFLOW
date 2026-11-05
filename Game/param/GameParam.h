@@ -109,6 +109,17 @@ struct CharacterParam
 		float killBoost = 0.0f;			///< 倒した相手の基礎速度に足す量（敵の種類で変える）
 	};
 
+	/** 台座の上に載せる砲身（書いたキャラだけ持つ）。長さはモデルの大きさに合わせる */
+	struct Turret
+	{
+		std::string model;				///< 砲身のモデルのファイル名（.tkm）
+		float height = 0.0f;			///< 足元から砲身のモデルの原点（底）までの高さ
+		float pivotHeight = 0.0f;		///< 砲身の原点から回す中心までの高さ
+		float muzzleHeight = 0.0f;		///< 砲身の原点から砲口までの高さ
+		float muzzleForward = 0.0f;		///< 砲身の原点から砲口までの前への長さ
+		float maxPitch = 0.0f;			///< 上下に向ける角度の上限（度）
+	};
+
 	std::string model;		///< モデルのファイル名（.tkm）
 	std::vector<std::string> abilities;		///< 持つ能力の名前（"Grapple"・"Gun"）。書いていない能力は作らない
 	std::vector<std::string> states;		///< 使う State の名前（"Idle"・"Run"・"Air"・"WallRun"・"Swing"）
@@ -125,6 +136,8 @@ struct CharacterParam
 	bool hasHands = false;			///< JSON に hands を書いたか
 	Health health;
 	bool hasHealth = false;			///< JSON に health を書いたか
+	Turret turret;
+	bool hasTurret = false;			///< JSON に turret を書いたか
 };
 
 /** カメラの値（camera.json） */

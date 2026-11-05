@@ -94,7 +94,8 @@ void EnemySpawner::Shoot(const BattleCharacter& enemy)
 {
 	const EnemyBulletParam& param = nsGameParam::Get().enemyBullet;
 
-	Vector3 direction = m_player->GetChestPosition() - enemy.GetChestPosition();
+	const Vector3 muzzle = enemy.GetMuzzlePosition();
+	Vector3 direction = m_player->GetChestPosition() - muzzle;
 	direction.Normalize();
 
 	BulletShot shot;
@@ -102,5 +103,5 @@ void EnemySpawner::Shoot(const BattleCharacter& enemy)
 	shot.lifeTime = param.lifeTime;
 	shot.scale = param.scale;
 
-	m_bulletManager->Fire(enemy.GetChestPosition(), direction * param.speed, shot, nullptr);
+	m_bulletManager->Fire(muzzle, direction * param.speed, shot, nullptr);
 }

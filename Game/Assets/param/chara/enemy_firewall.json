@@ -10,7 +10,7 @@
   "body": {
     "radius": 60.0,
     "height": 120.0,
-    "chestHeight": 120.0,
+    "chestHeight": 160.0,
     "tiltLerpRate": 12.0
   },
   "move": {
@@ -25,5 +25,13 @@
   "health": {
     "maxHp": 60.0,
     "killBoost": 150.0
+  },
+  "turret": {
+    "model": "Assets/modelData/enemy/firewall_cannon.tkm",
+    "height": 78.0,
+    "pivotHeight": 30.0,
+    "muzzleHeight": 81.0,
+    "muzzleForward": 146.0,
+    "maxPitch": 20.0
   }
 }

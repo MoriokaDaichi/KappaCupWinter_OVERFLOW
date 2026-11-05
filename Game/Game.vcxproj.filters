@@ -108,6 +108,9 @@
     <ClCompile Include="weapon\GunModel.cpp">
       <Filter>weapon</Filter>
     </ClCompile>
+    <ClCompile Include="weapon\TurretModel.cpp">
+      <Filter>weapon</Filter>
+    </ClCompile>
     <ClCompile Include="effect\EffectManager.cpp">
       <Filter>effect</Filter>
     </ClCompile>
@@ -218,6 +221,9 @@
       <Filter>weapon</Filter>
     </ClInclude>
     <ClInclude Include="weapon\GunModel.h">
+      <Filter>weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon\TurretModel.h">
       <Filter>weapon</Filter>
     </ClInclude>
     <ClInclude Include="effect\EffectManager.h">

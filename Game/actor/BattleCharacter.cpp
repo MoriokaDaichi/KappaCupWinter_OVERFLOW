@@ -64,6 +64,12 @@ bool BattleCharacter::Start()
 		m_gunModel->Init();
 	}
 
+	if (m_param->hasTurret)
+	{
+		m_turretModel = std::make_unique<TurretModel>();
+		m_turretModel->Init(m_param->turret, GetPosition());
+	}
+
 	return true;
 }
 
@@ -256,6 +262,11 @@ Vector3 BattleCharacter::GetChestPosition() const
 	return position;
 }
 
+Vector3 BattleCharacter::GetMuzzlePosition() const
+{
+	return m_turretModel ? m_turretModel->GetMuzzlePosition() : GetChestPosition();
+}
+
 void BattleCharacter::ChangeState(const EnCharacterState id)
 {
 	m_stateMachine.ChangeState(id);
@@ -376,6 +387,11 @@ void BattleCharacter::OnBodyUpdated()
 			m_gunModel->Update(handMatrix, gripPosition);
 		}
 	}
+
+	if (m_turretModel)
+	{
+		m_turretModel->Update(GetPosition(), GetCommand().aimDirection);
+	}
 }
 
 void BattleCharacter::Render(RenderContext& rc)
@@ -384,6 +400,10 @@ void BattleCharacter::Render(RenderContext& rc)
 	if (m_gunModel)
 	{
 		m_gunModel->Draw(rc);
+	}
+	if (m_turretModel)
+	{
+		m_turretModel->Draw(rc);
 	}
 }
 

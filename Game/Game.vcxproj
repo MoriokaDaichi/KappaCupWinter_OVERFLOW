@@ -259,6 +259,7 @@
     <ClCompile Include="weapon\BulletManager.cpp" />
     <ClCompile Include="weapon\Gun.cpp" />
     <ClCompile Include="weapon\GunModel.cpp" />
+    <ClCompile Include="weapon\TurretModel.cpp" />
     <ClCompile Include="weapon\MultiLocker.cpp" />
     <ClCompile Include="hud\LockOnRing.cpp" />
     <ClCompile Include="hud\LockOnHud.cpp" />
@@ -305,6 +306,7 @@
     <ClInclude Include="weapon\BulletManager.h" />
     <ClInclude Include="weapon\Gun.h" />
     <ClInclude Include="weapon\GunModel.h" />
+    <ClInclude Include="weapon\TurretModel.h" />
     <ClInclude Include="weapon\MultiLocker.h" />
     <ClInclude Include="hud\LockOnRing.h" />
     <ClInclude Include="hud\LockOnHud.h" />
