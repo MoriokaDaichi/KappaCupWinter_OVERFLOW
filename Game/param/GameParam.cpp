@@ -13,7 +13,7 @@
 #include "thirdParty/nlohmann/json.hpp"
 
 // JSON → 構造体の対応。at() で読むので、キーがなければ例外になる（既定値で黙って動かない）
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Body, radius, height, chestHeight, tiltLerpRate)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Body, radius, height, chestHeight, tiltLerpRate, modelScale, hitRadius, hitHeight)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Move, groundAccel, groundDecel, airControl)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Jump, speed, maxCount)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::WallRun, checkLength, normalYLimit, speed, minSpeed, gravityScale,

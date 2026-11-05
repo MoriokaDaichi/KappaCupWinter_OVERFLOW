@@ -18,8 +18,11 @@
   "body": {
     "radius": 30.0,
     "height": 105.0,
-    "chestHeight": 115.0,
-    "tiltLerpRate": 12.0
+    "chestHeight": 172.0,
+    "tiltLerpRate": 12.0,
+    "modelScale": 1.5,
+    "hitRadius": 150.0,
+    "hitHeight": 120.0
   },
   "move": {
     "groundAccel": 2000.0,

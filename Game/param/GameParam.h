@@ -18,6 +18,9 @@ struct CharacterParam
 		float height = 0.0f;			///< カプセルの筒の部分の長さ（全体の高さは height + radius × 2。Medea の身長 165 に合わせる）
 		float chestHeight = 0.0f;		///< 足元から胸までの高さ。壁を探すレイ・ロープの手元・ロックの視線に使う
 		float tiltLerpRate = 0.0f;		///< 体の見た目の傾き（スイング・壁走り）を目標に近づける速さ。1秒あたりの割合
+		float modelScale = 0.0f;		///< 見た目の倍率（砲身にも掛ける。Start で 1 回だけ使うので、F5 では変わらない）
+		float hitRadius = 0.0f;			///< 弾の当たり判定のカプセルの半径（体がぶつかる判定とは別。敵は見た目より大きくして当てやすくする）
+		float hitHeight = 0.0f;			///< 弾の当たり判定のカプセルの筒の部分の長さ（全体の高さは hitHeight + hitRadius × 2）
 	};
 	/** 地上・空中の移動 */
 	struct Move
@@ -109,7 +112,7 @@ struct CharacterParam
 		float killBoost = 0.0f;			///< 倒した相手の基礎速度に足す量（敵の種類で変える）
 	};
 
-	/** 台座の上に載せる砲身（書いたキャラだけ持つ）。長さはモデルの大きさに合わせる */
+	/** 台座の上に載せる砲身（書いたキャラだけ持つ）。長さは倍率 1 のときのモデルの大きさに合わせる（body.modelScale を掛けて使う） */
 	struct Turret
 	{
 		std::string model;				///< 砲身のモデルのファイル名（.tkm）

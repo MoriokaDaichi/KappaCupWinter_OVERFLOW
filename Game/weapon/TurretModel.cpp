@@ -1,13 +1,15 @@
 ﻿#include "stdafx.h"
 #include "weapon/TurretModel.h"
 
-void TurretModel::Init(const CharacterParam::Turret& param, const Vector3& position)
+void TurretModel::Init(const CharacterParam::Turret& param, const float scale, const Vector3& position)
 {
 	m_param = &param;
+	m_scale = scale;
 
 	// 体と同じく、倒されて消える・湧き直すのでレイトレの世界に入れない
 	m_model.SetRaytracingWorld(false);
 	m_model.Init(param.model.c_str());
+	m_model.SetScale(Vector3(scale, scale, scale));
 
 	Update(position, Vector3::Zero);
 }
@@ -34,10 +36,10 @@ void TurretModel::Update(const Vector3& position, const Vector3& aimDirection)
 	}
 
 	m_pivot = position;
-	m_pivot.y += m_param->height + m_param->pivotHeight;
+	m_pivot.y += (m_param->height + m_param->pivotHeight) * m_scale;
 
 	// モデルの原点は底なので、回す中心が動かないように位置をずらす
-	Vector3 pivotToOrigin(0.0f, -m_param->pivotHeight, 0.0f);
+	Vector3 pivotToOrigin(0.0f, -m_param->pivotHeight * m_scale, 0.0f);
 	m_rotation.Apply(pivotToOrigin);
 
 	m_model.SetRotation(m_rotation);
@@ -52,7 +54,7 @@ void TurretModel::Draw(RenderContext& rc)
 
 Vector3 TurretModel::GetMuzzlePosition() const
 {
-	Vector3 pivotToMuzzle(0.0f, m_param->muzzleHeight - m_param->pivotHeight, -m_param->muzzleForward);
+	Vector3 pivotToMuzzle(0.0f, (m_param->muzzleHeight - m_param->pivotHeight) * m_scale, -m_param->muzzleForward * m_scale);
 	m_rotation.Apply(pivotToMuzzle);
 
 	return m_pivot + pivotToMuzzle;

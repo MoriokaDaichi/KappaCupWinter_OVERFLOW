@@ -46,6 +46,8 @@ bool BattleCharacter::Start()
 		InitCharacter(modelPath, body.radius, body.height, m_startPosition);
 	}
 
+	m_modelRender.SetScale(Vector3(body.modelScale, body.modelScale, body.modelScale));
+
 	if (m_param->hasHands)
 	{
 		m_handBones = std::make_unique<HandBones>();
@@ -67,7 +69,7 @@ bool BattleCharacter::Start()
 	if (m_param->hasTurret)
 	{
 		m_turretModel = std::make_unique<TurretModel>();
-		m_turretModel->Init(m_param->turret, GetPosition());
+		m_turretModel->Init(m_param->turret, body.modelScale, GetPosition());
 	}
 
 	return true;
@@ -123,11 +125,11 @@ bool BattleCharacter::IsHitBySegment(const Vector3& start, const Vector3& end, c
 	// カプセルの軸は、足元から半径の分だけ上がった所から、筒の長さの分だけ上まで
 	const CharacterParam::Body& body = m_param->body;
 	Vector3 bottom = GetPosition();
-	bottom.y += body.radius;
+	bottom.y += body.hitRadius;
 	Vector3 top = bottom;
-	top.y += body.height;
+	top.y += body.hitHeight;
 
-	return nsCollision::SegmentHitsCapsule(start, end, bottom, top, body.radius + extraRadius, hitPoint);
+	return nsCollision::SegmentHitsCapsule(start, end, bottom, top, body.hitRadius + extraRadius, hitPoint);
 }
 
 void BattleCharacter::Warp(const Vector3& position)

@@ -52,7 +52,7 @@ public:
 	/** 隠しておいた体を position に戻す。体力・速さも最初に戻す */
 	void Respawn(const Vector3& position);
 	/**
-	 * 線分 start〜end（太さの半径 extraRadius）が体のカプセルに当たるかを調べる
+	 * 線分 start〜end（太さの半径 extraRadius）が、弾の当たり判定のカプセル（設定の hitRadius・hitHeight）に当たるかを調べる
 	 * 当たったら、線分の上で体に一番近い点を hitPoint に入れる
 	 */
 	bool IsHitBySegment(const Vector3& start, const Vector3& end, const float extraRadius, Vector3& hitPoint) const;
