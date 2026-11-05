@@ -158,6 +158,18 @@ void DebugManager::DrawParam()
 	{
 		nsGameParam::Reload();
 	}
+
+	if (ImGui::Checkbox(U8("当たり判定の線を出す"), &m_isDrawCollision))
+	{
+		if (m_isDrawCollision)
+		{
+			PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
+		}
+		else
+		{
+			PhysicsWorld::GetInstance()->DisableDrawDebugWireFrame();
+		}
+	}
 }
 
 void DebugManager::SetSpeed(const float base, const float bonus)

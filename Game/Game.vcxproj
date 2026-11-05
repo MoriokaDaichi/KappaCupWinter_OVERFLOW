@@ -262,6 +262,10 @@
     <ClCompile Include="weapon\TurretModel.cpp" />
     <ClCompile Include="weapon\MultiLocker.cpp" />
     <ClCompile Include="hud\LockOnRing.cpp" />
+    <ClCompile Include="stage\StageRenderer.cpp" />
+    <ClCompile Include="stage\Stage.cpp" />
+    <ClCompile Include="stage\StageParticle.cpp" />
+    <ClCompile Include="stage\StageProp.cpp" />
     <ClCompile Include="hud\LockOnHud.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -309,6 +313,10 @@
     <ClInclude Include="weapon\TurretModel.h" />
     <ClInclude Include="weapon\MultiLocker.h" />
     <ClInclude Include="hud\LockOnRing.h" />
+    <ClInclude Include="stage\StageRenderer.h" />
+    <ClInclude Include="stage\Stage.h" />
+    <ClInclude Include="stage\StageParticle.h" />
+    <ClInclude Include="stage\StageProp.h" />
     <ClInclude Include="hud\LockOnHud.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

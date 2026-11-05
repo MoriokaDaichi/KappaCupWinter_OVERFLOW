@@ -36,6 +36,7 @@ private:
 	BattleCharacter* m_player = nullptr;			///< 調べる・書き換える相手（借りているだけ。消すのは Game）
 	DebugGuiPanel m_panel;				///< パネルの登録。このクラスが消えると自動で外れる
 	bool m_isReloadKeyDown = false;		///< 前のフレームで F5 を押していたか（押した瞬間だけ読み直すため）
+	bool m_isDrawCollision = false;		///< 当たり判定の線を出すか
 	bool m_isSpeedLocked = false;		///< 速度を固定しているか（地上で上乗せが減らないようにする）
 	float m_lockedBase = 0.0f;			///< 固定している基礎速度
 	float m_lockedBonus = 0.0f;			///< 固定している上乗せ

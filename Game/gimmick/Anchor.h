@@ -10,7 +10,7 @@ public:
 	void Render(RenderContext& rc) override;
 
 public:
-	/** 置く場所を決める。Game が NewGO のすぐ後に呼ぶ */
+	/** 置く場所を決める。Stage が NewGO のすぐ後と、JSON を読み直したときに呼ぶ */
 	void SetPosition(const Vector3& pos) { m_position = pos; }
 	/** 位置を返す。キャラ（AnchorLocker・SwingState）がロックの判定やスイングに使う */
 	const Vector3& GetPosition() const { return m_position; }

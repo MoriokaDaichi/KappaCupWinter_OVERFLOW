@@ -263,6 +263,79 @@ struct SpawnParam
 	std::vector<Point> points;				///< 敵を出す場所の一覧
 };
 
+/** ステージの値（stage.json） */
+struct StageParam
+{
+	static constexpr int MAX_BLOCK = 256;			///< 箱の数の上限（インスタンシングの枠の数）
+	static constexpr int MAX_TOWER = 128;			///< 遠景のビルの数の上限
+	static constexpr int MAX_HAZARD = 32;			///< 穴の底の数の上限
+	static constexpr int MAX_PROP = 512;			///< 小物の数の上限（種類ごと）
+	static constexpr int PROP_TYPE_COUNT = 5;		///< 小物の種類の数
+
+	/** 小物の種類 1 つ */
+	struct PropType
+	{
+		const char* name;	///< JSON の model に書く名前。モデルは Assets/modelData/stage/stage_<name>.tkm
+		float tint;			///< 色（0 でシアン、1 でマゼンタ）
+		float colliderWidth;	///< 当たり判定の幅（倍率が 1 のとき）。0 なら当たり判定なし
+		float colliderHeight;	///< 当たり判定の高さ
+		float colliderDepth;	///< 当たり判定の奥行き
+		float colliderCenterY;	///< 原点から当たり判定の中心までの高さ
+	};
+
+	/** 小物の種類の一覧 */
+	static constexpr PropType PROP_TYPES[PROP_TYPE_COUNT] = {
+		{ "gate_pillar", 0.0f, 200.0f, 2500.0f, 200.0f, 1250.0f },
+		{ "gate_beam", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },		// スイングが引っかかるので付けない
+		{ "wall_pillar", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f },	// 走りと壁走りが引っかかるので付けない
+		{ "cable", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },			// 同じ理由で付けない
+		{ "machine", 1.0f, 700.0f, 500.0f, 700.0f, -250.0f },	// 下へ細くなる形なので、幅は中段に合わせる
+	};
+
+	/** 小物の種類の番号を返す。知らない名前なら -1 */
+	static int FindPropType(const std::string& name)
+	{
+		for (int i = 0; i < PROP_TYPE_COUNT; i++)
+		{
+			if (name == PROP_TYPES[i].name)
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/** 箱 1 つ */
+	struct Block
+	{
+		std::array<float, 3> position = {};	///< 中心の位置（x, y, z）
+		std::array<float, 3> size = {};		///< 幅・高さ・奥行き
+	};
+
+	/** 小物 1 つ（当たり判定の有無は PROP_TYPES で決まる） */
+	struct Prop
+	{
+		std::string model;					///< 小物の種類（PROP_TYPES の name）
+		std::array<float, 3> position = {};	///< 原点の位置（x, y, z）
+		std::array<float, 3> scale = {};	///< 大きさの倍率
+		float yaw = 0.0f;					///< Y 軸の回転（度）
+	};
+
+	/** 区間（①起動〜⑥突破）1 つ。区間ごとに分けるのは、JSON を読みやすくするため */
+	struct Section
+	{
+		std::string name;							///< 区間の名前（エラーの表示に使う）
+		std::vector<Block> blocks;					///< 箱の一覧
+		std::vector<std::array<float, 3>> anchors;	///< アンカーの位置の一覧
+		std::vector<Block> towers;					///< 遠景のビルの一覧（当たり判定なし）
+		std::vector<Block> hazards;					///< 穴の底の一覧（当たり判定なし）
+		std::vector<Prop> props;					///< 小物の一覧
+	};
+
+	std::array<float, 3> playerStart = {};	///< プレイヤーの足元の開始位置（Game::Start で 1 回だけ使う）
+	std::vector<Section> sections;			///< 区間の一覧
+};
+
 /** デバッグ画面の値（debug.json） */
 struct DebugParam
 {
@@ -284,6 +357,7 @@ struct GameParam
 	CharacterParam enemyFirewall;	///< 固定砲台 FIREWALL（chara/enemy_firewall.json）
 	CharacterParam enemyCrawler;	///< 飛行型 CRAWLER（chara/enemy_crawler.json）
 	SpawnParam spawn;
+	StageParam stage;
 	EffectParam effect;
 	CameraParam camera;
 	GravityParam gravity;
@@ -303,6 +377,8 @@ namespace nsGameParam
 	void Reload();
 	/** 読んだ値を返す。読み直しても同じ場所の中身が書き換わるので、参照を持っておいてよい */
 	const GameParam& Get();
+	/** 読み直しに成功した回数を返す。値を読み直したことを知りたいクラス（Stage）が見る */
+	int GetReloadCount();
 	/** spawn.json の chara の名前から敵の設定を返す。読み直しても同じ場所を返す。知らない名前なら nullptr */
 	const CharacterParam* FindEnemy(const std::string& name);
 }

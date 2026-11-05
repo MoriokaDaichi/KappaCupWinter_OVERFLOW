@@ -40,6 +40,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpeedParam, baseMin, baseMax, bonusMax, groun
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EffectParam, hitScale, defeatScale, bulletScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpawnParam::Point, chara, position, respawnTime, respawnRadius)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpawnParam, points)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Block, position, size)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Prop, model, position, scale, yaw)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Section, name, blocks, anchors, towers, hazards, props)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam, playerStart, sections)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam::WarpPoint, name, position)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam, warpPoints)
 
@@ -139,6 +143,7 @@ void from_json(const nlohmann::json& j, CharacterParam& param)
 namespace
 {
 	GameParam s_param;		///< 読んだ値。Get で返す
+	int s_reloadCount = 0;	///< 読み直しに成功した回数。GetReloadCount で返す
 
 	/** 能力の名前が知っているものかを調べる。知らない名前なら、ファイル名つきで例外を投げる */
 	void CheckAbilities(const char* path, const CharacterParam& param)
@@ -339,6 +344,53 @@ namespace
 		}
 	}
 
+	/** ステージの値が正しいか調べる（箱の数が多すぎる・大きさが 0 以下）。だめなら例外を投げる */
+	void CheckStage(const StageParam& stage)
+	{
+		int blockCount = 0;
+		int towerCount = 0;
+		int hazardCount = 0;
+		std::array<int, StageParam::PROP_TYPE_COUNT> propCounts = {};
+		for (const StageParam::Section& section : stage.sections)
+		{
+			towerCount += static_cast<int>(section.towers.size());
+			hazardCount += static_cast<int>(section.hazards.size());
+
+			for (const StageParam::Prop& prop : section.props)
+			{
+				const int type = StageParam::FindPropType(prop.model);
+				if (type < 0)
+				{
+					throw std::runtime_error("Assets/param/stage.json\nunknown prop model: " + prop.model);
+				}
+				propCounts[type]++;
+				if (propCounts[type] > StageParam::MAX_PROP)
+				{
+					throw std::runtime_error("Assets/param/stage.json\ntoo many props: " + prop.model);
+				}
+			}
+
+			for (const StageParam::Block& block : section.blocks)
+			{
+				if (block.size[0] <= 0.0f || block.size[1] <= 0.0f || block.size[2] <= 0.0f)
+				{
+					throw std::runtime_error("Assets/param/stage.json\nsize must be positive: " + section.name);
+				}
+				blockCount++;
+			}
+		}
+
+		if (blockCount > StageParam::MAX_BLOCK)
+		{
+			throw std::runtime_error("Assets/param/stage.json\ntoo many blocks");
+		}
+
+		if (towerCount > StageParam::MAX_TOWER || hazardCount > StageParam::MAX_HAZARD)
+		{
+			throw std::runtime_error("Assets/param/stage.json\ntoo many towers or hazards");
+		}
+	}
+
 	/** path の JSON を読んで out に入れる。失敗したら、ファイル名を付けた例外を投げる */
 	template <class T>
 	void ReadFile(const char* path, T& out)
@@ -372,6 +424,7 @@ namespace
 		ReadFile("Assets/param/chara/enemy_firewall.json", out.enemyFirewall);
 		ReadFile("Assets/param/chara/enemy_crawler.json", out.enemyCrawler);
 		ReadFile("Assets/param/spawn.json", out.spawn);
+		ReadFile("Assets/param/stage.json", out.stage);
 		ReadFile("Assets/param/effect.json", out.effect);
 		ReadFile("Assets/param/camera.json", out.camera);
 		ReadFile("Assets/param/gravity.json", out.gravity);
@@ -387,6 +440,7 @@ namespace
 		CheckCharacter("Assets/param/chara/enemy_firewall.json", out.enemyFirewall);
 		CheckCharacter("Assets/param/chara/enemy_crawler.json", out.enemyCrawler);
 		CheckSpawn(out);
+		CheckStage(out.stage);
 
 		const size_t speedLevelCount = out.speed.levelUpSpeeds.size() + 1;
 		const size_t gunLevelCount = out.gun.levels.size();
@@ -427,11 +481,17 @@ namespace nsGameParam
 			return;
 		}
 		s_param = param;
+		s_reloadCount++;
 	}
 
 	const GameParam& Get()
 	{
 		return s_param;
+	}
+
+	int GetReloadCount()
+	{
+		return s_reloadCount;
 	}
 
 	const CharacterParam* FindEnemy(const std::string& name)

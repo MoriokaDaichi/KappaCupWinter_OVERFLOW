@@ -11,7 +11,7 @@
   "maxSpeedForFov": 1500.0,
   "collisionRadius": 10.0,
   "nearClip": 1.0,
-  "farClip": 10000.0,
+  "farClip": 45000.0,
   "shoulderOffset": 50.0,
   "aimDistance": 150.0,
   "aimShoulderOffset": 70.0,

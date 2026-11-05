@@ -42,7 +42,8 @@ private:
 	void Shoot(const BattleCharacter& enemy);
 
 private:
-	static constexpr float TEMP_SHOOT_INTERVAL = 1.0f;	///< 仮: 弾を撃つ間隔（秒。11/6 で置き換える）
+	static constexpr float TEMP_SHOOT_INTERVAL = 1.0f;	///< 仮: 弾を撃つ間隔（秒。予測射撃のタスクで置き換える）
+	static constexpr float TEMP_SHOOT_RANGE = 5000.0f;	///< 仮: プレイヤーがこの距離より遠いと撃たない（プレイヤー検知のタスクで置き換える）
 
 	std::vector<Spawn> m_spawns;					///< 敵を出す場所の一覧
 	const BattleCharacter* m_player = nullptr;		///< プレイヤー（借りているだけ）

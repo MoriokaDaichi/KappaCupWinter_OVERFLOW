@@ -36,7 +36,9 @@ void EnemySpawner::Update()
 		if (spawn.canShoot && enemy != nullptr && enemy->CanBeTargeted())
 		{
 			spawn.shootTimer -= dt;
-			if (spawn.shootTimer <= 0.0f)
+			// 遠くからは撃たない（前の区間にいるプレイヤーに当たらないように）
+			const Vector3 toPlayer = m_player->GetPosition() - enemy->GetPosition();
+			if (spawn.shootTimer <= 0.0f && toPlayer.LengthSq() < TEMP_SHOOT_RANGE * TEMP_SHOOT_RANGE)
 			{
 				Shoot(*enemy);
 				spawn.shootTimer = TEMP_SHOOT_INTERVAL;
