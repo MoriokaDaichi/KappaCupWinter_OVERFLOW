@@ -76,7 +76,7 @@
     "faceMinSpeed": 50.0,
     "maxSpeed": 2000.0,
     "releaseBoost": 300.0,
-    "releaseLift": 200.0,
+    "releaseLift": 0.0,
     "releaseMinSpeed": 300.0
   },
   "animation": {
