@@ -326,6 +326,7 @@ struct StageParam
 	{
 		std::string name;							///< 区間の名前（エラーの表示に使う）
 		std::vector<Block> blocks;					///< 箱の一覧
+		std::vector<Block> panels;					///< 壁走りの板の一覧（当たり判定あり。箱と見た目を変える）
 		std::vector<std::array<float, 3>> anchors;	///< アンカーの位置の一覧
 		std::vector<Block> towers;					///< 遠景のビルの一覧（当たり判定なし）
 		std::vector<Block> hazards;					///< 穴の底の一覧（当たり判定なし）

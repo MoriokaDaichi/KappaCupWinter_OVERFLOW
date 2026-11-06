@@ -12,6 +12,7 @@ static const float BACKGROUND_DEPTH = 0.9999999f;	// 背景の深度（遠景の
 static const uint KIND_BLOCK = 0;
 static const uint KIND_TOWER = 1;
 static const uint KIND_HAZARD = 2;
+static const uint KIND_PANEL = 3;
 
 static const float3 FLOOR_COLOR = float3(0.012f, 0.018f, 0.070f);		// 床の面
 static const float3 WALL_COLOR = float3(0.020f, 0.008f, 0.060f);		// 壁の面（少し紫）
@@ -36,6 +37,12 @@ static const float TOWER_BRIGHTNESS = 0.3f;		// ビルの模様の明るさ（�
 static const float TOWER_EDGE_BRIGHTNESS = 0.8f;// ビルのふちの明るさ
 static const float TOWER_EDGE_WIDTH = 60.0f;	// ビルのふちの太さ
 static const float TOWER_FOG_DISTANCE = 40000.0f;	// ビルが空に溶けきる距離
+
+static const float3 PANEL_COLOR = float3(0.020f, 0.008f, 0.060f);		// 壁走りの板の面（壁と同じ）
+static const float PANEL_EDGE_BRIGHTNESS = 6.0f;	// 板のふちの明るさ
+static const float PANEL_LINE_OFFSET = 300.0f;		// 横に走る光のラインの、中心からの高さ
+static const float PANEL_LINE_WIDTH = 10.0f;		// 光のラインの太さ
+static const float PANEL_LINE_BRIGHTNESS = 1.5f;	// 光のラインの明るさ
 
 static const float HAZARD_STRIPE = 300.0f;		// 穴の底のしま模様の間隔
 static const float HAZARD_SPEED = 300.0f;		// しま模様の流れる速さ
@@ -170,6 +177,19 @@ float3 CalcTower(const float2 facePos, const float edgeDistance, const float edg
 	return color;
 }
 
+/** 壁走りの板（壁と同じマゼンタのふちと、横に走る光のライン。矢印とシアンはダッシュ板のために使わない）。isSide は横を向いた面か */
+float3 CalcPanel(const float3 worldPos, const float3 center, const bool isSide, const float edgeDistance, const float edgePixelSize)
+{
+	float3 color = PANEL_COLOR;
+	if (isSide)
+	{
+		const float toLine = abs(abs(worldPos.y - center.y) - PANEL_LINE_OFFSET);
+		const float pulse = CalcPulse(worldPos.z, g_time);
+		color += MAGENTA * CalcLine(toLine, PANEL_LINE_WIDTH, max(fwidth(toLine), 0.001f)) * PANEL_LINE_BRIGHTNESS * (1.0f + pulse * PULSE_BRIGHTNESS);
+	}
+	return lerp(color, MAGENTA * PANEL_EDGE_BRIGHTNESS, CalcLine(edgeDistance, EDGE_WIDTH, edgePixelSize));
+}
+
 /** 穴の底（赤いしま模様が流れて、明滅する） */
 float3 CalcHazard(const float3 worldPos)
 {
@@ -239,6 +259,12 @@ float4 PSMain(PSInput In) : SV_Target0
 	{
 		const float towerFog = saturate(length(toPixel) / TOWER_FOG_DISTANCE);
 		return float4(lerp(CalcTower(facePos, edgeDistance, edgePixelSize), CalcSkyColor(toPixel), towerFog), 1.0f);
+	}
+
+	if (In.kind == KIND_PANEL)
+	{
+		const bool isSide = normal.x > normal.y && normal.x > normal.z;
+		return float4(ApplyFog(CalcPanel(In.worldPos, In.center, isSide, edgeDistance, edgePixelSize), toPixel), 1.0f);
 	}
 
 	const float pulse = CalcPulse(In.worldPos.z, g_time);

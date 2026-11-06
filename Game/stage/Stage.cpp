@@ -56,12 +56,8 @@ void Stage::Build()
 	int anchorCount = 0;
 	for (const StageParam::Section& section : nsGameParam::Get().stage.sections)
 	{
-		for (const StageParam::Block& block : section.blocks)
-		{
-			AddBlock(
-				Vector3(block.position[0], block.position[1], block.position[2]),
-				Vector3(block.size[0], block.size[1], block.size[2]));
-		}
+		AddBlocks(section.blocks, StageRenderer::Kind::Block);
+		AddBlocks(section.panels, StageRenderer::Kind::Panel);
 
 		for (const std::array<float, 3>& position : section.anchors)
 		{
@@ -84,10 +80,15 @@ void Stage::Build()
 	}
 }
 
-void Stage::AddBlock(const Vector3& position, const Vector3& size)
+void Stage::AddBlocks(const std::vector<StageParam::Block>& blocks, const StageRenderer::Kind kind)
 {
-	AddCollider(position, size);
-	m_renderer.AddBlock(position, size);
+	for (const StageParam::Block& block : blocks)
+	{
+		const Vector3 position(block.position[0], block.position[1], block.position[2]);
+		const Vector3 size(block.size[0], block.size[1], block.size[2]);
+		AddCollider(position, size);
+		m_renderer.AddBlock(position, size, kind);
+	}
 }
 
 void Stage::AddCollider(const Vector3& position, const Vector3& size)

@@ -34,8 +34,8 @@ private:
 
 	/** 今の stage.json の値で、箱とアンカーを置き直す */
 	void Build();
-	/** 箱を 1 つ作る */
-	void AddBlock(const Vector3& position, const Vector3& size);
+	/** 当たり判定のある箱を、一覧の数だけ作る */
+	void AddBlocks(const std::vector<StageParam::Block>& blocks, const StageRenderer::Kind kind);
 	/** index 番のアンカーを position に置く。足りなければ作る */
 	void PlaceAnchor(const int index, const Vector3& position);
 	/** 当たり判定だけを作る */

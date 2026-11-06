@@ -15,6 +15,7 @@ public:
 		Block,		///< 当たり判定のある箱
 		Tower,		///< 遠景のビル
 		Hazard,		///< 穴の底
+		Panel,		///< 壁走りの板（当たり判定あり）
 	};
 
 	void Init();
