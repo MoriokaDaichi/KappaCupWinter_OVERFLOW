@@ -43,7 +43,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpawnParam, points)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Block, position, size)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Prop, model, position, scale, yaw)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Section, name, blocks, panels, anchors, towers, hazards, props, checkpoint)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam, playerStart, sections)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam, playerStart, giantFirewall, sections)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam::WarpPoint, name, position)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam, warpPoints)
 

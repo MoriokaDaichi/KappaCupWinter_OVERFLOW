@@ -335,6 +335,7 @@ struct StageParam
 	};
 
 	std::array<float, 3> playerStart = {};	///< プレイヤーの足元の開始位置（Game::Start で 1 回だけ使う）
+	Block giantFirewall;					///< 巨大ファイアウォールの位置と大きさ（壊せる壁。箱の一覧とは別に持つ）
 	std::vector<Section> sections;			///< 区間の一覧
 };
 

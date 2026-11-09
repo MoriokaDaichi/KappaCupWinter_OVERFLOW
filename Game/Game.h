@@ -7,6 +7,7 @@
 #include "hud/LockOnHud.h"
 #include "stage/Stage.h"
 #include "stage/Checkpoint.h"
+#include "gimmick/GiantFirewall.h"
 
 class BattleCharacter;
 class GameCamera;
@@ -36,5 +37,6 @@ private:
 	PlayerController m_playerController;	///< 入力からプレイヤーのコマンドを作る
 	EnemySpawner m_enemySpawner;			///< spawn.json の場所に敵を出す
 	Checkpoint m_checkpoint;			///< 落下時の復帰地点用
+	GiantFirewall m_giantFirewall;		///< ゴール地点の巨大FW用
 };
 

@@ -177,6 +177,9 @@
     <ClCompile Include="stage\Checkpoint.cpp">
       <Filter>stage</Filter>
     </ClCompile>
+    <ClCompile Include="gimmick\GiantFirewall.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -324,6 +327,9 @@
     </ClInclude>
     <ClInclude Include="stage\Checkpoint.h">
       <Filter>stage</Filter>
+    </ClInclude>
+    <ClInclude Include="gimmick\GiantFirewall.h">
+      <Filter>gimmick</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
