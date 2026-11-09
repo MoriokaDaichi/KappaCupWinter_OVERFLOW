@@ -25,8 +25,6 @@ bool Game::Start()
 
 	m_stage.Init();
 
-	m_crosshairRender.Init("Assets/sprite/debug/debug_crosshair.DDS", CROSSHAIR_SIZE, CROSSHAIR_SIZE);
-
 	m_bulletSystem = NewGO<BulletSystem>(0, "bulletSystem");
 	m_bulletSystem->Init("enemy");
 
@@ -51,12 +49,13 @@ bool Game::Start()
 	m_lockOnHud.Init(m_player);
 	m_checkpoint.Init(m_player);
 	m_giantFirewall.Init(m_player);
+	m_hud.Init(m_player, &m_checkpoint, &m_giantFirewall);
 
-	m_goalFont.SetText(L"GOAL");
-	m_goalFont.SetPosition(0.0f, GOAL_FONT_Y, 0.0f);
-	m_goalFont.SetPivot(0.5f, 0.5f);
-	m_goalFont.SetScale(GOAL_FONT_SCALE);
-	m_goalFont.SetColor(0.0f, 0.9f, 1.0f, 1.0f);
+	const char* goalText = "GOAL";
+	m_goalText.Init(static_cast<int>(strlen(goalText)), GOAL_TEXT_HEIGHT, HudText::Align::Center);
+	m_goalText.SetText(goalText);
+	m_goalText.SetPosition(Vector2(0.0f, GOAL_FONT_Y));
+	m_goalText.SetColor(Vector4(0.0f, 0.9f, 1.0f, 1.0f));
 
 	return true;
 }
@@ -70,17 +69,18 @@ void Game::Update()
 	m_enemySpawner.Update();
 	m_checkpoint.Update();
 	m_giantFirewall.Update();
+	m_hud.Update();
 }
 
 void Game::Render(RenderContext& rc)
 {
 	m_stage.Draw();
-	m_crosshairRender.Draw(rc);
+	m_hud.Draw();
 	m_lockOnHud.Draw(rc);
 	m_giantFirewall.Draw(rc);
 
 	if (m_giantFirewall.IsBroken())
 	{
-		m_goalFont.Draw(rc);
+		m_goalText.Draw();
 	}
 }

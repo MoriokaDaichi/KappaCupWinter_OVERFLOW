@@ -269,6 +269,10 @@
     <ClCompile Include="stage\StageParticle.cpp" />
     <ClCompile Include="stage\StageProp.cpp" />
     <ClCompile Include="hud\LockOnHud.cpp" />
+    <ClCompile Include="hud\HudShape.cpp" />
+    <ClCompile Include="hud\SpeedMeter.cpp" />
+    <ClCompile Include="hud\Hud.cpp" />
+    <ClCompile Include="hud\HudText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="actor\BattleCharacter.h" />
@@ -322,6 +326,10 @@
     <ClInclude Include="stage\StageParticle.h" />
     <ClInclude Include="stage\StageProp.h" />
     <ClInclude Include="hud\LockOnHud.h" />
+    <ClInclude Include="hud\HudShape.h" />
+    <ClInclude Include="hud\SpeedMeter.h" />
+    <ClInclude Include="hud\Hud.h" />
+    <ClInclude Include="hud\HudText.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

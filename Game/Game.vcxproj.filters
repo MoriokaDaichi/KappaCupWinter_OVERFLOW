@@ -174,6 +174,18 @@
     <ClCompile Include="hud\LockOnHud.cpp">
       <Filter>hud</Filter>
     </ClCompile>
+    <ClCompile Include="hud\HudShape.cpp">
+      <Filter>hud</Filter>
+    </ClCompile>
+    <ClCompile Include="hud\SpeedMeter.cpp">
+      <Filter>hud</Filter>
+    </ClCompile>
+    <ClCompile Include="hud\Hud.cpp">
+      <Filter>hud</Filter>
+    </ClCompile>
+    <ClCompile Include="hud\HudText.cpp">
+      <Filter>hud</Filter>
+    </ClCompile>
     <ClCompile Include="stage\Checkpoint.cpp">
       <Filter>stage</Filter>
     </ClCompile>
@@ -323,6 +335,18 @@
       <Filter>stage</Filter>
     </ClInclude>
     <ClInclude Include="hud\LockOnHud.h">
+      <Filter>hud</Filter>
+    </ClInclude>
+    <ClInclude Include="hud\HudShape.h">
+      <Filter>hud</Filter>
+    </ClInclude>
+    <ClInclude Include="hud\SpeedMeter.h">
+      <Filter>hud</Filter>
+    </ClInclude>
+    <ClInclude Include="hud\Hud.h">
+      <Filter>hud</Filter>
+    </ClInclude>
+    <ClInclude Include="hud\HudText.h">
       <Filter>hud</Filter>
     </ClInclude>
     <ClInclude Include="stage\Checkpoint.h">
