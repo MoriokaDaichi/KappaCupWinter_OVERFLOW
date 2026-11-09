@@ -5,6 +5,7 @@
 #include "controller/PlayerController.h"
 #include "actor/EnemySpawner.h"
 #include "hud/Hud.h"
+#include "hud/LevelUpFlash.h"
 #include "hud/LockOnHud.h"
 #include "stage/Stage.h"
 #include "stage/Checkpoint.h"
@@ -36,6 +37,7 @@ private:
 	static constexpr float GOAL_FONT_Y = 100.0f;		///< 画面の真ん中からの高さ。真ん中ぴったりだと照準と重なるので、少し上にする
 
 	Stage m_stage;						///< stage.json の箱とアンカー
+	LevelUpFlash m_levelUpFlash;		///< 速度 Lv が上がった瞬間に画面を光らせる
 	Hud m_hud;							///< タイム・チェックポイント・照準・スピードメーター・グラップルの角カッコ
 	LockOnHud m_lockOnHud;				///< マルチロックオンのドーナツ
 	DebugManager m_debugManager;		///< デバッグ画面（ImGui のパネル。F1 で隠せる）

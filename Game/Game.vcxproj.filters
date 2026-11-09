@@ -186,6 +186,9 @@
     <ClCompile Include="hud\Hud.cpp">
       <Filter>hud</Filter>
     </ClCompile>
+    <ClCompile Include="hud\LevelUpFlash.cpp">
+      <Filter>hud</Filter>
+    </ClCompile>
     <ClCompile Include="hud\HudText.cpp">
       <Filter>hud</Filter>
     </ClCompile>
@@ -350,6 +353,9 @@
       <Filter>hud</Filter>
     </ClInclude>
     <ClInclude Include="hud\Hud.h">
+      <Filter>hud</Filter>
+    </ClInclude>
+    <ClInclude Include="hud\LevelUpFlash.h">
       <Filter>hud</Filter>
     </ClInclude>
     <ClInclude Include="hud\HudText.h">

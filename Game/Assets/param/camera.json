@@ -17,5 +17,7 @@
   "aimShoulderOffset": 70.0,
   "aimViewAngleDown": 15.0,
   "aimRotateScale": 0.6,
-  "aimTransitionTime": 0.12
+  "aimTransitionTime": 0.12,
+  "levelUpViewAngleKick": 8.0,
+  "levelUpKickTime": 0.5
 }

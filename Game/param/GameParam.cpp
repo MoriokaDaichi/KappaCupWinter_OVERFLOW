@@ -28,7 +28,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Health, maxHp, killBoost)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Turret, model, height, pivotHeight, muzzleHeight, muzzleForward, maxPitch)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraParam, distance, targetHeight, rotateSpeedX, rotateSpeedY, pitchMin, pitchMax,
 	viewAngleNormal, viewAngleMax, viewAngleLerpRate, maxSpeedForFov, collisionRadius, nearClip, farClip, shoulderOffset,
-	aimDistance, aimShoulderOffset, aimViewAngleDown, aimRotateScale, aimTransitionTime)
+	aimDistance, aimShoulderOffset, aimViewAngleDown, aimRotateScale, aimTransitionTime, levelUpViewAngleKick, levelUpKickTime)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GravityParam, gravity, fallMultiplier, maxFallSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnchorParam, normalScale, lockedScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GrappleWireParam, thicknessScale)

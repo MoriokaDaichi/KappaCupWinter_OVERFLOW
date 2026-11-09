@@ -21,7 +21,7 @@ public:
 private:
 	/** スティックでカメラの向きを回す */
 	void Rotate();
-	/** 速さに合わせて視野角を変える */
+	/** 速さに合わせて視野角を変える。速度 Lv が上がった瞬間は、一瞬広げて戻す */
 	void UpdateViewAngle();
 	/** 注視点と位置を計算してカメラに渡す */
 	void UpdatePosition();
@@ -43,4 +43,6 @@ private:
 	float m_pitch = 0.0f;					///< 上下の角度（度）。プラスで見上げる。pitchMin〜pitchMax に収める
 	float m_yaw = 0.0f;						///< 左右の角度（度）。0 でプレイヤーの後ろ（-Z 側）から見る
 	float m_aimRate = 0.0f;					///< 構えの割合（0 でふだん、1 で構えきった）
+	float m_kickTimer = 0.0f;				///< Lv アップで広げた視野角が戻るまでの残り時間（秒）
+	int m_lastLevel = 0;					///< 前のフレームの速度 Lv（上がった瞬間を知るため）
 };

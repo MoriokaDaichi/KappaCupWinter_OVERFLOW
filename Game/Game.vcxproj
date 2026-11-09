@@ -273,6 +273,7 @@
     <ClCompile Include="hud\HudShape.cpp" />
     <ClCompile Include="hud\SpeedMeter.cpp" />
     <ClCompile Include="hud\Hud.cpp" />
+    <ClCompile Include="hud\LevelUpFlash.cpp" />
     <ClCompile Include="hud\HudText.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -331,6 +332,7 @@
     <ClInclude Include="hud\HudShape.h" />
     <ClInclude Include="hud\SpeedMeter.h" />
     <ClInclude Include="hud\Hud.h" />
+    <ClInclude Include="hud\LevelUpFlash.h" />
     <ClInclude Include="hud\HudText.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

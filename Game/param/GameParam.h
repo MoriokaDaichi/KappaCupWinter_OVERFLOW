@@ -165,6 +165,8 @@ struct CameraParam
 	float aimViewAngleDown = 0.0f;		///< 構えたときに視野角を狭める量（度）
 	float aimRotateScale = 0.0f;		///< 構えたときの感度の倍率
 	float aimTransitionTime = 0.0f;		///< 構える／戻すのにかかる時間（秒）
+	float levelUpViewAngleKick = 0.0f;	///< 速度 Lv が上がった瞬間に、視野角を広げる量（度）
+	float levelUpKickTime = 0.0f;		///< 広げた視野角が戻るまでの時間（秒）
 };
 
 /** 重力の値（gravity.json） */

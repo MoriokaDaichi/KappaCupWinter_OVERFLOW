@@ -10,6 +10,10 @@ bool GameCamera::Start()
 	g_camera3D->SetFar(m_param.farClip);
 
 	m_viewAngle = m_param.viewAngleNormal;
+	if (m_player != nullptr)
+	{
+		m_lastLevel = m_player->GetSpeedSystem().GetLevel();
+	}
 
 	return true;
 }
@@ -62,7 +66,18 @@ void GameCamera::UpdateViewAngle()
 
 	m_viewAngle = Math::Lerp(min(m_param.viewAngleLerpRate * g_gameTime->GetFrameDeltaTime(), 1.0f), m_viewAngle, angle);
 
-	const float viewAngle = m_viewAngle - m_aimRate * m_param.aimViewAngleDown;
+	// Lv が上がった瞬間に一気に広げ、はじめ速く後でゆっくり戻す（下がったときも覚え直す）
+	const int level = m_player->GetSpeedSystem().GetLevel();
+	if (level > m_lastLevel)
+	{
+		m_kickTimer = m_param.levelUpKickTime;
+	}
+	m_lastLevel = level;
+	m_kickTimer = max(m_kickTimer - g_gameTime->GetFrameDeltaTime(), 0.0f);
+	const float kickRate = (m_param.levelUpKickTime > 0.0f) ? m_kickTimer / m_param.levelUpKickTime : 0.0f;
+	const float kick = m_param.levelUpViewAngleKick * kickRate * kickRate;
+
+	const float viewAngle = m_viewAngle - m_aimRate * m_param.aimViewAngleDown + kick;
 
 	g_camera3D->SetViewAngle(Math::DegToRad(viewAngle));
 }
