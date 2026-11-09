@@ -3,6 +3,7 @@
 
 #include "actor/BattleCharacter.h"
 #include "collision/RayCast.h"
+#include "sound/GameSound.h"
 
 WallRunState::WallRunState(BattleCharacter* owner)
 	: BattleCharacterState(owner)
@@ -127,4 +128,5 @@ void WallRunState::WallJump()
 	m_owner->AddMoveSpeed(m_wallNormal * m_param.jumpSpeedOut);
 	m_owner->SetVerticalSpeed(m_param.jumpSpeedUp);
 	m_owner->AddJumpCount();
+	nsSound::Play(EnSound::Jump);
 }

@@ -4,6 +4,7 @@
 #include "weapon/BulletSystem.h"
 #include "collision/RayCast.h"
 #include "actor/BattleCharacter.h"
+#include "sound/GameSound.h"
 
 void Gun::Update(const bool isShootPress, const bool isAimPress, const int level, const Vector3& chest, const Quaternion& rotation,
 	const Vector3& aimOrigin, const Vector3& aimDirection)
@@ -63,6 +64,7 @@ void Gun::Shoot(const Vector3& muzzle, const GunParam::Level& levelParam)
 
 	dir.Normalize();
 	m_bulletSystem->Fire(muzzle, dir * levelParam.bulletSpeed, MakeShot(levelParam), m_owner);
+	nsSound::Play(EnSound::Shoot);
 }
 
 Vector3 Gun::CalcAimPoint() const
@@ -113,6 +115,7 @@ void Gun::FireAtLocked(const Vector3& muzzle, const GunParam::Level& levelParam)
 
 	dir.Normalize();
 	m_bulletSystem->FireSplit(muzzle, dir * m_param.homingSpeed, MakeShot(levelParam), m_owner, m_multiLocker.GetTargets());
+	nsSound::Play(EnSound::Shoot);
 }
 
 BulletShot Gun::MakeShot(const GunParam::Level& levelParam) const

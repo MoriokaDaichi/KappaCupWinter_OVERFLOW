@@ -3,7 +3,13 @@
 #include "collision/RayCast.h"
 #include "actor/BattleCharacter.h"
 #include "effect/EffectManager.h"
+#include "sound/GameSound.h"
 #include <algorithm>
+
+namespace
+{
+	constexpr const char* ENEMY_TARGET_NAME = "enemy";		///< プレイヤーの弾の当てる相手の名前（Game が Init で渡す）
+}
 
 bool BulletSystem::Start()
 {
@@ -171,6 +177,12 @@ bool BulletSystem::HitTargets(Bullet& bullet, const Vector3& end)
 	while (hitTarget != nullptr)
 	{
 		DamageTarget(bullet, *hitTarget);
+		// 着弾音は敵に当たったときだけ（壁や床では鳴らさない）。爆発弾は爆発の音を鳴らすので、ここでは鳴らさない
+		// プレイヤーの弾（敵に当てる弾）だけにするのは、撃たれたときは被弾の音が鳴るため
+		if (bullet.explosionRadius <= 0.0f && strcmp(m_targetName, ENEMY_TARGET_NAME) == 0)
+		{
+			nsSound::Play(EnSound::Hit);
+		}
 		OnBulletImpact(bullet, hitPoint);
 		if (!bullet.pierce)
 		{
@@ -239,6 +251,7 @@ void BulletSystem::DamageTarget(Bullet& bullet, BattleCharacter& hitTarget)
 	}
 
 	nsEffect::Play(EnEffect::Defeat, chest, m_effectParam.defeatScale);
+	nsSound::Play(EnSound::Defeat);
 
 	BattleCharacter* shooter = bullet.shooter.Get();
 	if (shooter != nullptr)
@@ -260,6 +273,7 @@ void BulletSystem::OnBulletImpact(Bullet& bullet, const Vector3& position)
 
 void BulletSystem::Explode(Bullet& bullet, const Vector3& center)
 {
+	bool isHitAny = false;
 	for (BattleCharacter* hitTarget : m_hitTargets)
 	{
 		if (!hitTarget->CanBeTargeted() || HasHit(bullet, *hitTarget))
@@ -271,11 +285,17 @@ void BulletSystem::Explode(Bullet& bullet, const Vector3& center)
 		if (hitTarget->IsHitBySegment(center, center, bullet.explosionRadius, point))
 		{
 			DamageTarget(bullet, *hitTarget);
+			isHitAny = true;
 		}
 	}
 
 	// エフェクトは半径 1 に広がるように作ってあるので、半径をそのまま拡大率にする
 	nsEffect::Play(EnEffect::Explosion, center, bullet.explosionRadius);
+	// 音は敵を巻き込んだときだけ（壁や床で爆発しても鳴らさない。Lv5 の連射でうるさくならないように）
+	if (isHitAny)
+	{
+		nsSound::Play(EnSound::Explosion);
+	}
 }
 
 void BulletSystem::UpdateBulletView(const int index)

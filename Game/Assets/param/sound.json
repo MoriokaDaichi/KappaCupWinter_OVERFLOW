@@ -1,0 +1,14 @@
+{
+  "bgm": 0.4,
+  "run": 0.5,
+  "jump": 0.6,
+  "shoot": 0.35,
+  "hit": 0.5,
+  "defeat": 0.9,
+  "explosion": 0.8,
+  "damage": 0.9,
+  "firewallBreak": 1.0,
+  "grappleShoot": 0.7,
+  "grappleHook": 0.8,
+  "swing": 0.6
+}

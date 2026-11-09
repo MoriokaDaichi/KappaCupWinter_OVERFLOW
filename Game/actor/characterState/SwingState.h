@@ -42,6 +42,7 @@ private:
 private:
 	static constexpr float SWING_MIN_DISTANCE = 0.001f;		///< アンカーとの距離がこれより近いと、ロープの向きを出せない
 	static constexpr float WIRE_HOOKED_LENGTH = (std::numeric_limits<float>::max)();	///< つかんだ後にワイヤーへ渡す先の長さ（必ずアンカーまで届く）
+	static constexpr float HOOK_SOUND_LEAD = 0.1f;			///< 刺さる音を、ワイヤーが届くこの秒数だけ前に鳴らす（音の立ち上がりの遅れを先取りする）
 	static constexpr float PUMP_MIN_INPUT = 0.001f;			///< ロープの向きを除いたスティックの残りがこれより短い（長さの2乗）と、こがない
 
 	const Anchor* m_swingAnchor = nullptr;		///< スイングに使うアンカー（借りているだけ）
@@ -50,4 +51,5 @@ private:
 	float m_ropeLength = 0.0f;					///< ロープの長さ。つかんだときの距離を入れ、巻き上げで縮める
 	float m_wireTipLength = 0.0f;				///< 手元から飛んでいるワイヤーの先までの長さ
 	bool m_isHooked = false;					///< ワイヤーの先がアンカーに届いたか
+	bool m_isHookSoundPlayed = false;			///< 刺さる音をもう鳴らしたか（届く前に鳴らすので、2 回鳴らさないように）
 };

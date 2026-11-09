@@ -38,6 +38,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam, range, bulletLifeTime, aimHoldTime,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EnemyBulletParam, speed, lifeTime, scale, damage)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpeedParam, baseMin, baseMax, bonusMax, groundDecay, idleDecay, wallRunGain, levelUpSpeeds, maxSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EffectParam, hitScale, defeatScale, bulletScale)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SoundParam, bgm, run, jump, shoot, hit, defeat, explosion, damage, firewallBreak, grappleShoot, grappleHook, swing)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpawnParam::Point, chara, position, respawnTime, respawnRadius)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpawnParam, points)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Block, position, size)
@@ -427,6 +428,7 @@ namespace
 		ReadFile("Assets/param/spawn.json", out.spawn);
 		ReadFile("Assets/param/stage.json", out.stage);
 		ReadFile("Assets/param/effect.json", out.effect);
+		ReadFile("Assets/param/sound.json", out.sound);
 		ReadFile("Assets/param/camera.json", out.camera);
 		ReadFile("Assets/param/gravity.json", out.gravity);
 		ReadFile("Assets/param/anchor.json", out.anchor);

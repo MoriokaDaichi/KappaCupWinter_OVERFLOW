@@ -6,6 +6,7 @@
 #include "weapon/BulletSystem.h"
 #include "input/InputManager.h"
 #include "effect/EffectManager.h"
+#include "sound/GameSound.h"
 
 Game::~Game()
 {
@@ -15,6 +16,7 @@ Game::~Game()
 	DeleteGO(m_bulletSystem);
 	DeleteGO(m_enemyBulletSystem);
 	m_stage.DeleteAll();
+	nsSound::StopAllLoops();
 }
 
 bool Game::Start()
@@ -22,6 +24,7 @@ bool Game::Start()
 	// 調整用の値を読む。ほかのオブジェクトが値を使う前に読んでおく
 	nsGameParam::Load();
 	nsEffect::Load();
+	nsSound::Load();
 
 	m_stage.Init();
 
@@ -50,6 +53,7 @@ bool Game::Start()
 	m_checkpoint.Init(m_player);
 	m_giantFirewall.Init(m_player);
 	m_hud.Init(m_player, &m_checkpoint, &m_giantFirewall);
+	nsSound::SetLoop(EnSound::Bgm, true);
 
 	const char* goalText = "GOAL";
 	m_goalText.Init(static_cast<int>(strlen(goalText)), GOAL_TEXT_HEIGHT, HudText::Align::Center);
@@ -70,6 +74,14 @@ void Game::Update()
 	m_checkpoint.Update();
 	m_giantFirewall.Update();
 	m_hud.Update();
+	// 足音は、プレイヤーが地上か壁を走っているときだけ（歩く敵も Run になるので、キャラの中では鳴らさない）
+	const EnCharacterState playerState = m_player->GetCurrentState();
+	nsSound::SetLoop(EnSound::Run, playerState == EnCharacterState::Run || playerState == EnCharacterState::WallRun);
+	// スイングの「シュィーン」は、速いほど大きく高くする（スイングの速さの上限で最大）
+	const float swingSpeedRate = min(m_player->GetMoveSpeed().Length() / m_player->GetParam().swing.maxSpeed, 1.0f);
+	const float swingVolumeRate = SWING_MIN_VOLUME_RATE + (1.0f - SWING_MIN_VOLUME_RATE) * swingSpeedRate;
+	const float swingPitch = SWING_MIN_PITCH + (SWING_MAX_PITCH - SWING_MIN_PITCH) * swingSpeedRate;
+	nsSound::SetLoop(EnSound::Swing, playerState == EnCharacterState::Swing, swingVolumeRate, swingPitch);
 }
 
 void Game::Render(RenderContext& rc)

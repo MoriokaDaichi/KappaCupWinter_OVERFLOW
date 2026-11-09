@@ -4,6 +4,7 @@
 #include "actor/BattleCharacter.h"
 #include "param/GameParam.h"
 #include "effect/EffectManager.h"
+#include "sound/GameSound.h"
 
 void GiantFirewall::Init(BattleCharacter* player)
 {
@@ -113,6 +114,7 @@ void GiantFirewall::Break()
 	const Vector3 position(chest.x, chest.y, wall.position[2] - wall.size[2] * 0.5f);
 
 	nsEffect::Play(EnEffect::Defeat, position, BREAK_EFFECT_SCALE);
+	nsSound::Play(EnSound::FirewallBreak);
 }
 
 void GiantFirewall::Bounce()

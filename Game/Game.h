@@ -29,6 +29,9 @@ private:
 	BulletSystem* m_bulletSystem = nullptr;
 	BulletSystem* m_enemyBulletSystem = nullptr;
 
+	static constexpr float SWING_MIN_VOLUME_RATE = 0.3f;	///< スイングの音の、止まりかけのときの音量の割合（速さが 0 でも少し鳴らす）
+	static constexpr float SWING_MIN_PITCH = 0.85f;			///< スイングの音の、止まりかけのときの高さの割合
+	static constexpr float SWING_MAX_PITCH = 1.3f;			///< スイングの音の、いちばん速いときの高さの割合
 	static constexpr float GOAL_TEXT_HEIGHT = 110.0f;	///< 「GOAL」の文字の高さ（ピクセル）
 	static constexpr float GOAL_FONT_Y = 100.0f;		///< 画面の真ん中からの高さ。真ん中ぴったりだと照準と重なるので、少し上にする
 

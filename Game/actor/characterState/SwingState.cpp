@@ -4,6 +4,7 @@
 #include "actor/BattleCharacter.h"
 #include "gimmick/Anchor.h"
 #include "grapple/GrappleWire.h"
+#include "sound/GameSound.h"
 
 SwingState::SwingState(BattleCharacter* owner)
 	: BattleCharacterState(owner)
@@ -21,7 +22,9 @@ void SwingState::Enter()
 	//まだつかまない。ワイヤーの先を手元から飛ばし、届いたら HookAnchor でつかむ
 	m_wireTipLength = 0.0f;
 	m_isHooked = false;
+	m_isHookSoundPlayed = false;
 	m_owner->ResetJumpCount();
+	nsSound::Play(EnSound::GrappleShoot);
 }
 
 void SwingState::Update()
@@ -140,6 +143,13 @@ void SwingState::ShootWire()
 	const float distance = toAnchor.Length();
 
 	m_wireTipLength += m_param.wireShootSpeed * g_gameTime->GetFrameDeltaTime();
+
+	// 刺さる音は、届く少し前に鳴らす（近いアンカーなら撃った直後に鳴る）
+	if (!m_isHookSoundPlayed && distance - m_wireTipLength <= m_param.wireShootSpeed * HOOK_SOUND_LEAD)
+	{
+		nsSound::Play(EnSound::GrappleHook);
+		m_isHookSoundPlayed = true;
+	}
 
 	//届いた
 	if (m_wireTipLength >= distance)

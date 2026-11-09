@@ -250,6 +250,7 @@
     <ClCompile Include="physics\Gravity.cpp" />
     <ClCompile Include="debug\DebugManager.cpp" />
     <ClCompile Include="effect\EffectManager.cpp" />
+    <ClCompile Include="sound\GameSound.cpp" />
     <ClCompile Include="speed\SpeedSystem.cpp" />
     <ClCompile Include="stage\Checkpoint.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -308,6 +309,7 @@
     <ClInclude Include="physics\Gravity.h" />
     <ClInclude Include="debug\DebugManager.h" />
     <ClInclude Include="effect\EffectManager.h" />
+    <ClInclude Include="sound\GameSound.h" />
     <ClInclude Include="speed\SpeedSystem.h" />
     <ClInclude Include="stage\Checkpoint.h" />
     <ClInclude Include="thirdParty\nlohmann\json.hpp" />

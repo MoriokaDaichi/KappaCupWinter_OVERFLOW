@@ -4,6 +4,7 @@
 #include "controller/IController.h"
 #include "collision/RayCast.h"
 #include "weapon/BulletSystem.h"
+#include "sound/GameSound.h"
 #include "actor/characterState/IdleState.h"
 #include "actor/characterState/RunState.h"
 #include "actor/characterState/AirState.h"
@@ -86,6 +87,7 @@ bool BattleCharacter::TakeDamage(const float damage)
 	if (!m_param->hasHealth)
 	{
 		m_speed.AddBase(-damage);
+		nsSound::Play(EnSound::Damage);
 		return false;
 	}
 
@@ -229,6 +231,8 @@ void BattleCharacter::Jump()
 	// = で入れるので、落ちている途中に跳んでも同じ高さだけ上がる
 	SetVerticalSpeed(m_param->jump.speed);
 	m_jumpCount += 1;
+	// 跳ぶのはプレイヤーだけ（敵の AIController はジャンプのコマンドを出さない）
+	nsSound::Play(EnSound::Jump);
 	// 2段目のジャンプでも、踏み切りのアニメーションから流し直す
 	if (m_animation)
 	{

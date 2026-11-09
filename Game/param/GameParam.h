@@ -248,6 +248,23 @@ struct EffectParam
 	float bulletScale = 0.0f;			///< 弾の光の筋の拡大率。gun.json の Lv ごとの bulletScale に掛ける
 };
 
+/** 音量（sound.json）。0 で無音、1 でそのまま */
+struct SoundParam
+{
+	float bgm = 0.0f;					///< BGM
+	float run = 0.0f;					///< 走っている間の音
+	float jump = 0.0f;					///< ジャンプ
+	float shoot = 0.0f;					///< 射撃
+	float hit = 0.0f;					///< 着弾（プレイヤーの弾）
+	float defeat = 0.0f;				///< 撃破
+	float explosion = 0.0f;				///< 爆発弾
+	float damage = 0.0f;				///< 被弾（プレイヤー）
+	float firewallBreak = 0.0f;			///< 巨大ファイアウォールを突き破る
+	float grappleShoot = 0.0f;			///< グラップルのワイヤーを撃つ
+	float grappleHook = 0.0f;			///< グラップルがアンカーに刺さる
+	float swing = 0.0f;					///< スイング中の「シュィーン」（いちばん速いときの音量。遅いほど小さくなる）
+};
+
 /** 敵を出す場所の値（spawn.json） */
 struct SpawnParam
 {
@@ -362,6 +379,7 @@ struct GameParam
 	SpawnParam spawn;
 	StageParam stage;
 	EffectParam effect;
+	SoundParam sound;
 	CameraParam camera;
 	GravityParam gravity;
 	AnchorParam anchor;
