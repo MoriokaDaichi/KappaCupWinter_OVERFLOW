@@ -27,6 +27,8 @@ public:
 	void AddBonusPerSecond(const float perSecond);
 	/** 基礎速度と上乗せを直接決める（デバッグ画面用）。範囲には収める */
 	void SetForDebug(const float base, const float bonus);
+	/** 上乗せを0にする（落下したとき） */
+	void ClearBonus() { m_bonusSpeed = 0.0f; }
 
 private:
 	static constexpr int MAX_LEVEL = 5;							///< スピードレベルの最大

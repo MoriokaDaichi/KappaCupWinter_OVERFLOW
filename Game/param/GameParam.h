@@ -331,6 +331,7 @@ struct StageParam
 		std::vector<Block> towers;					///< 遠景のビルの一覧（当たり判定なし）
 		std::vector<Block> hazards;					///< 穴の底の一覧（当たり判定なし）
 		std::vector<Prop> props;					///< 小物の一覧
+		std::array<float, 3> checkpoint = {};			///< 落ちたときに戻る足元の位置
 	};
 
 	std::array<float, 3> playerStart = {};	///< プレイヤーの足元の開始位置（Game::Start で 1 回だけ使う）

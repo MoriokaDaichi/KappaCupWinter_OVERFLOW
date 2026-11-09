@@ -250,6 +250,7 @@
     <ClCompile Include="debug\DebugManager.cpp" />
     <ClCompile Include="effect\EffectManager.cpp" />
     <ClCompile Include="speed\SpeedSystem.cpp" />
+    <ClCompile Include="stage\Checkpoint.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -302,6 +303,7 @@
     <ClInclude Include="debug\DebugManager.h" />
     <ClInclude Include="effect\EffectManager.h" />
     <ClInclude Include="speed\SpeedSystem.h" />
+    <ClInclude Include="stage\Checkpoint.h" />
     <ClInclude Include="thirdParty\nlohmann\json.hpp" />
     <ClInclude Include="state\IState.h" />
     <ClInclude Include="state\StateMachine.h" />

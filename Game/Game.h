@@ -6,6 +6,7 @@
 #include "actor/EnemySpawner.h"
 #include "hud/LockOnHud.h"
 #include "stage/Stage.h"
+#include "stage/Checkpoint.h"
 
 class BattleCharacter;
 class GameCamera;
@@ -34,5 +35,6 @@ private:
 	DebugManager m_debugManager;		///< デバッグ画面（ImGui のパネル。F1 で隠せる）
 	PlayerController m_playerController;	///< 入力からプレイヤーのコマンドを作る
 	EnemySpawner m_enemySpawner;			///< spawn.json の場所に敵を出す
+	Checkpoint m_checkpoint;			///< 落下時の復帰地点用
 };
 

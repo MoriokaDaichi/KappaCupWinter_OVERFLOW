@@ -49,6 +49,7 @@ bool Game::Start()
 
 	m_debugManager.Init(m_player);
 	m_lockOnHud.Init(m_player);
+	m_checkpoint.Init(m_player);
 
 	return true;
 }
@@ -60,6 +61,7 @@ void Game::Update()
 	m_debugManager.Update();
 	m_stage.Update();
 	m_enemySpawner.Update();
+	m_checkpoint.Update();
 }
 
 void Game::Render(RenderContext& rc)
