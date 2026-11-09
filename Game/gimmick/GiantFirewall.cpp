@@ -3,6 +3,7 @@
 
 #include "actor/BattleCharacter.h"
 #include "param/GameParam.h"
+#include "effect/EffectManager.h"
 
 void GiantFirewall::Init(BattleCharacter* player)
 {
@@ -36,12 +37,23 @@ void GiantFirewall::Init(BattleCharacter* player)
 	m_model.SetPosition(position);
 	m_model.SetScale(size.x / MODEL_SIZE, size.y / MODEL_SIZE, size.z / MODEL_SIZE);
 	m_model.Update();
+
+	m_flash.Init("Assets/modelData/debug/debug_white.DDS",
+		static_cast<float>(g_graphicsEngine->GetFrameBufferWidth()),
+		static_cast<float>(g_graphicsEngine->GetFrameBufferHeight()));
 }
 
 void GiantFirewall::Update()
 {
 	m_constant.cameraPos = g_camera3D->GetPosition();
 	m_constant.time += g_gameTime->GetFrameDeltaTime();
+
+	if (m_flashTimer > 0.0f)
+	{
+		m_flashTimer = max(m_flashTimer - g_gameTime->GetFrameDeltaTime(), 0.0f);
+		m_flash.SetMulColor(Vector4(1.0f, 1.0f, 1.0f, m_flashTimer / FLASH_TIME));
+		m_flash.Update();
+	}
 
 	if (m_isBroken)
 	{
@@ -82,12 +94,25 @@ void GiantFirewall::Draw(RenderContext& rc)
 	{
 		m_model.Draw(rc);
 	}
+
+	if (m_flashTimer > 0.0f)
+	{
+		m_flash.Draw(rc);
+	}
 }
 
 void GiantFirewall::Break()
 {
+	m_flashTimer = FLASH_TIME;
+
 	m_body.Release();
 	m_isBroken = true;
+
+	const StageParam::Block& wall = nsGameParam::Get().stage.giantFirewall;
+	const Vector3 chest = m_player->GetChestPosition();
+	const Vector3 position(chest.x, chest.y, wall.position[2] - wall.size[2] * 0.5f);
+
+	nsEffect::Play(EnEffect::Defeat, position, BREAK_EFFECT_SCALE);
 }
 
 void GiantFirewall::Bounce()

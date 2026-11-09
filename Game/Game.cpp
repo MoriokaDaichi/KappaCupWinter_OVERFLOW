@@ -52,6 +52,12 @@ bool Game::Start()
 	m_checkpoint.Init(m_player);
 	m_giantFirewall.Init(m_player);
 
+	m_goalFont.SetText(L"GOAL");
+	m_goalFont.SetPosition(0.0f, GOAL_FONT_Y, 0.0f);
+	m_goalFont.SetPivot(0.5f, 0.5f);
+	m_goalFont.SetScale(GOAL_FONT_SCALE);
+	m_goalFont.SetColor(0.0f, 0.9f, 1.0f, 1.0f);
+
 	return true;
 }
 
@@ -72,4 +78,9 @@ void Game::Render(RenderContext& rc)
 	m_crosshairRender.Draw(rc);
 	m_lockOnHud.Draw(rc);
 	m_giantFirewall.Draw(rc);
+
+	if (m_giantFirewall.IsBroken())
+	{
+		m_goalFont.Draw(rc);
+	}
 }
