@@ -28,7 +28,13 @@ public:
 	/** 基礎速度と上乗せを直接決める（デバッグ画面用）。範囲には収める */
 	void SetForDebug(const float base, const float bonus);
 	/** 上乗せを0にする（落下したとき） */
-	void ClearBonus() { m_bonusSpeed = 0.0f; }
+	void ClearBonus();
+	/** 今OVERDRIVE中かを返す（HUDや巨大FWが使う） */
+	bool IsOverdrive() const { return m_isOverdrive; }
+
+private:
+	/** 速さが振り切ったらOVERDRIVEに入る */
+	void UpdateOverdrive();
 
 private:
 	static constexpr int MAX_LEVEL = 5;							///< スピードレベルの最大
@@ -36,4 +42,5 @@ private:
 	const SpeedParam& m_param = nsGameParam::Get().speed;		///< 調整用の値（Assets/param/speed.json）
 	float m_baseSpeed = 0.0f;									///< 基礎速度
 	float m_bonusSpeed = 0.0f;									///< 上乗せの速度
+	bool m_isOverdrive = false;									///< OVERDRIVE中か
 };

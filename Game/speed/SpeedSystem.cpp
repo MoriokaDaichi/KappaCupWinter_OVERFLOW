@@ -5,24 +5,38 @@ void SpeedSystem::Reset()
 {
 	m_baseSpeed = m_param.baseMin;
 	m_bonusSpeed = 0.0f;
+	m_isOverdrive = false;
 }
 
 void SpeedSystem::AddBase(const float amount)
 {
+	if (amount < 0.0f)
+	{
+		m_isOverdrive = false;
+	}
+
 	m_baseSpeed += amount;
 	m_baseSpeed = min(max(m_baseSpeed, m_param.baseMin), m_param.baseMax);
+	UpdateOverdrive();
 }
 
 void SpeedSystem::AddBonus(const float amount)
 {
+	if (m_isOverdrive && amount < 0.0f)
+	{
+		return;
+	}
+
 	m_bonusSpeed += amount;
 	m_bonusSpeed = min(max(m_bonusSpeed, 0.0f), m_param.bonusMax);
+	UpdateOverdrive();
 }
 
 void SpeedSystem::RaiseBonusTo(const float bonus)
 {
 	m_bonusSpeed = max(m_bonusSpeed, bonus);
 	m_bonusSpeed = min(m_bonusSpeed, m_param.bonusMax);
+	UpdateOverdrive();
 }
 
 int SpeedSystem::GetLevel() const
@@ -65,6 +79,22 @@ void SpeedSystem::AddBonusPerSecond(const float perSecond)
 
 void SpeedSystem::SetForDebug(const float base, const float bonus)
 {
+	m_isOverdrive = false;
 	m_baseSpeed = min(max(base, m_param.baseMin), m_param.baseMax);
 	m_bonusSpeed = min(max(bonus, 0.0f), m_param.bonusMax);
+	UpdateOverdrive();
+}
+
+void SpeedSystem::ClearBonus()
+{
+	m_bonusSpeed = 0.0f; 
+	m_isOverdrive = false; 
+}
+
+void SpeedSystem::UpdateOverdrive()
+{
+	if (GetSpeed() >= m_param.maxSpeed)
+	{
+		m_isOverdrive = true;
+	}
 }
