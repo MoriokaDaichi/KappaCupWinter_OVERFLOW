@@ -54,6 +54,10 @@ void InitWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, 
 	//ウィンドウクラスの登録。
 	RegisterClassEx(&wc);
 
+	// 画面の拡大率（150% など）に対応する。対応していないと、Windows がウィンドウだけを広げ、
+	// ゲームの絵は左上にしか出ず、ImGui のクリックの位置もずれる
+	SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+
 	// ウィンドウの作成。
 	g_hWnd = CreateWindow(
 		appName,				//使用するウィンドウクラスの名前。

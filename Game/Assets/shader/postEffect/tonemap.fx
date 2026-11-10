@@ -49,6 +49,10 @@ PSInput VSMain(VSInput In)
 }
 
 
+// OVERFLOW: 自動露出を弱める。背景が暗いので、明るい壁が画面に入る角度だけ平均輝度が上がり、画面全体が暗くなっていた
+static const float REFERENCE_LUMINANCE = 0.074f;	// スタート地点の平均輝度（測った値）。この明るさのとき、元の自動露出と同じ明るさになる
+static const float ADAPT_STRENGTH = 0.2f;			// 平均輝度にどれだけ合わせるか（0 で露出を固定、1 で元の自動露出）
+
 Texture2D<float4> sceneTexture : register(t0);	            // シーンテクスチャ。
 Texture2D<float4> lumAvgInTonemapTexture : register(t1);    // 輝度テクスチャ。
 sampler Sampler : register(s0);
@@ -79,7 +83,9 @@ float4 PSFinal( PSInput In) : SV_Target0
 	float avgLum = lumAvgInTonemapTexture.Sample(Sampler, float2( 0.5f, 0.5f)).r;
     
     // 平均輝度をmiddleGrayの値にするためのスケール値を求める。
-    float k = ( middleGray / ( max(avgLum, 0.001f )));
+    // OVERFLOW: 基準の明るさと今の平均輝度の間を、対数で ADAPT_STRENGTH の割合だけ今の平均輝度に寄せる
+    float adaptedLum = exp(lerp(log(REFERENCE_LUMINANCE), log(max(avgLum, 0.001f)), ADAPT_STRENGTH));
+    float k = middleGray / adaptedLum;
     // スケール値を使って、輝度をスケールダウン。
     hsv.z *= k;
     
