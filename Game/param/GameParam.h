@@ -265,6 +265,9 @@ struct SoundParam
 	float grappleShoot = 0.0f;			///< グラップルのワイヤーを撃つ
 	float grappleHook = 0.0f;			///< グラップルがアンカーに刺さる
 	float swing = 0.0f;					///< スイング中の「シュィーン」（いちばん速いときの音量。遅いほど小さくなる）
+	float dashPad = 0.0f;				///< ダッシュ板に乗った
+	float fenceShock = 0.0f;			///< 電気柵で感電した
+	float laserHit = 0.0f;				///< レーザーに当たった
 };
 
 /** 敵を出す場所の値（spawn.json） */

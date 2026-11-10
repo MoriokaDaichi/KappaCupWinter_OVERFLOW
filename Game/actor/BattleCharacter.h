@@ -60,6 +60,11 @@ public:
 	void SetStartPosition(const Vector3& position) { m_startPosition = position; }
 	/** 設定を返す（State も読む） */
 	const CharacterParam& GetParam() const { return *m_param; }
+	/**
+	 * しびれさせる。knockback の速さではじき、しばらく動けなくする（電気柵・レーザー用）
+	 * Stun の State を持たないキャラは何もしない
+	 */
+	void Stun(const Vector3& knockback);
 	/** position へ瞬間移動する。速さを 0 にして空中の状態から始める（デバッグ画面・チェックポイント用） */
 	void Warp(const Vector3& position);
 

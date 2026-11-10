@@ -30,8 +30,13 @@ protected:
 	virtual bool IsActive() const { return true; }
 	/** 箱の範囲の中にいる間、毎フレームすること（なければ書かなくてよい） */
 	virtual void OnStay(BattleCharacter& player) {}
+	/** 罠（電気柵・レーザー）に当たったとき: 基礎速度を damage 減らし、来た方へはじいてしびれさせ、上乗せを 0 にする */
+	void HitTrap(BattleCharacter& player, const float damage);
 
 protected:
+	static constexpr float KNOCKBACK_BACK_SPEED = 900.0f;	///< 罠がはじくときの、来た方へ戻す速さ
+	static constexpr float KNOCKBACK_UP_SPEED = 450.0f;		///< 罠がはじくときの、上向きの速さ（少し浮かせて、はじかれたのを見せる）
+
 	Vector3 m_position;					///< 箱の中心
 	Vector3 m_size;						///< 箱の大きさ（幅・高さ・奥行き）
 

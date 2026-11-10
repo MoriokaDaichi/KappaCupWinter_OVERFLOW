@@ -2,6 +2,7 @@
 #include "gimmick/ElectricFence.h"
 
 #include "actor/BattleCharacter.h"
+#include "sound/GameSound.h"
 
 void ElectricFence::Draw(RenderContext& rc)
 {
@@ -29,6 +30,6 @@ void ElectricFence::InitView()
 
 void ElectricFence::OnEnter(BattleCharacter& player)
 {
-	player.TakeDamage(DAMAGE);
-	player.GetSpeedSystem().ClearBonus();
+	nsSound::Play(EnSound::FenceShock);
+	HitTrap(player, DAMAGE);
 }

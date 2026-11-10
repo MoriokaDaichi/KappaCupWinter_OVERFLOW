@@ -1,7 +1,7 @@
 {
   "model": "Assets/modelData/player/medea.tkm",
   "abilities": [ "Grapple", "Gun" ],
-  "states": [ "Idle", "Run", "Air", "WallRun", "Swing" ],
+  "states": [ "Idle", "Run", "Air", "WallRun", "Swing", "Stun" ],
   "transitions": [
     { "from": "Any",     "when": [ "GrappleStart" ],                    "to": "Swing" },
 
@@ -24,7 +24,10 @@
     { "from": "Swing",   "when": [ "GrappleRelease" ],                  "to": "Air",  "do": [ "ReleaseBoost" ] },
     { "from": "Swing",   "when": [ "JumpTrigger" ],                     "to": "Air",  "do": [ "ReleaseBoost", "Jump" ] },
     { "from": "Swing",   "when": [ "Hooked", "Landed", "MoveInput" ],   "to": "Run" },
-    { "from": "Swing",   "when": [ "Hooked", "Landed" ],                "to": "Idle" }
+    { "from": "Swing",   "when": [ "Hooked", "Landed" ],                "to": "Idle" },
+
+    { "from": "Stun",    "when": [ "StunOver", "OnGround" ],            "to": "Idle" },
+    { "from": "Stun",    "when": [ "StunOver" ],                        "to": "Air" }
   ],
 
   "body": {
@@ -87,7 +90,8 @@
       { "anim": "Fall",     "file": "Assets/animData/player/fall_idle.tka", "loop": true },
       { "anim": "FallFast", "file": "Assets/animData/player/fall_long.tka", "loop": true },
       { "anim": "Land",     "file": "Assets/animData/player/land.tka",      "loop": false },
-      { "anim": "Swing",    "file": "Assets/animData/player/swing.tka",     "loop": true }
+      { "anim": "Swing",    "file": "Assets/animData/player/swing.tka",     "loop": true },
+      { "anim": "Stun",     "file": "Assets/animData/player/stun.tka",      "loop": true }
     ],
     "fastFallSpeed": 900.0,
     "landMinSpeed": 500.0

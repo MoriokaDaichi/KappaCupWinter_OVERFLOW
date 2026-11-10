@@ -22,7 +22,10 @@ namespace
 		"Assets/sound/firewall_break.wav",
 		"Assets/sound/grapple_shoot.wav",
 		"Assets/sound/grapple_hook.wav",
-		"Assets/sound/swing.wav"
+		"Assets/sound/swing.wav",
+		"Assets/sound/dash_pad.wav",
+		"Assets/sound/fence_shock.wav",
+		"Assets/sound/laser_hit.wav"
 	};
 	static_assert(ARRAYSIZE(SOUND_FILES) == SOUND_NUM, "SOUND_FILES の数が EnSound と合っていません");
 
@@ -40,7 +43,10 @@ namespace
 		&SoundParam::firewallBreak,
 		&SoundParam::grappleShoot,
 		&SoundParam::grappleHook,
-		&SoundParam::swing
+		&SoundParam::swing,
+		&SoundParam::dashPad,
+		&SoundParam::fenceShock,
+		&SoundParam::laserHit
 	};
 	static_assert(ARRAYSIZE(SOUND_VOLUMES) == SOUND_NUM, "SOUND_VOLUMES の数が EnSound と合っていません");
 

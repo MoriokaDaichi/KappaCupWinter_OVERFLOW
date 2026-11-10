@@ -14,13 +14,14 @@ enum class EnCharacterAnim : int {
     FallFast, ///< 速く落ちている間（繰り返す。手足をばたつかせる Falling）
     Land,     ///< 止まって着地したとき（1回だけ流し、終わったら Idle。Falling To Landing の足がついてから後ろ）
     Swing,    ///< スイング
+    Stun,     ///< しびれる（腕を広げて反り返り、小刻みに震える。繰り返す）
     Num       ///< 個数（配列の大きさに使う）
 };
 
 /** EnCharacterAnim の名前（JSON の animation.clips の anim に書く名前）。enum と同じ順番に並べる */
 constexpr const char* ANIM_NAMES[] =
 {
-    "Idle", "Run", "JumpUp", "Fall", "FallFast", "Land", "Swing"
+    "Idle", "Run", "JumpUp", "Fall", "FallFast", "Land", "Swing", "Stun"
 };
 
 static_assert(ARRAYSIZE(ANIM_NAMES) == static_cast<int>(EnCharacterAnim::Num),

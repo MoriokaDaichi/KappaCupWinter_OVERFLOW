@@ -38,7 +38,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam, range, bulletLifeTime, aimHoldTime,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EnemyBulletParam, speed, lifeTime, scale, damage)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpeedParam, baseMin, baseMax, bonusMax, groundDecay, idleDecay, wallRunGain, levelUpSpeeds, maxSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EffectParam, hitScale, defeatScale, bulletScale)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SoundParam, bgm, run, jump, shoot, hit, defeat, explosion, damage, firewallBreak, grappleShoot, grappleHook, swing)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SoundParam, bgm, run, jump, shoot, hit, defeat, explosion, damage, firewallBreak, grappleShoot, grappleHook, swing, dashPad, fenceShock, laserHit)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpawnParam::Point, chara, position, respawnTime, respawnRadius)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpawnParam, points)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Block, position, size)

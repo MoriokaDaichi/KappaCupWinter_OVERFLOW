@@ -2,6 +2,7 @@
 #include "gimmick/DashPad.h"
 
 #include "actor/BattleCharacter.h"
+#include "sound/GameSound.h"
 
 void DashPad::InitView()
 {
@@ -14,6 +15,7 @@ void DashPad::InitView()
 
 void DashPad::OnEnter(BattleCharacter& player)
 {
+	nsSound::Play(EnSound::DashPad);
 	player.GetSpeedSystem().AddBonus(BOOST);
 	player.AddMoveSpeed(Vector3(0.0f, 0.0f, PUSH_SPEED));
 }

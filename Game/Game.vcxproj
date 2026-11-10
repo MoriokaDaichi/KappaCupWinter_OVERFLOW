@@ -231,6 +231,7 @@
     <ClCompile Include="actor\Character.cpp" />
     <ClCompile Include="actor\characterState\AirState.cpp" />
     <ClCompile Include="actor\characterState\IdleState.cpp" />
+    <ClCompile Include="actor\characterState\StunState.cpp" />
     <ClCompile Include="actor\characterState\RunState.cpp" />
     <ClCompile Include="actor\characterState\SwingState.cpp" />
     <ClCompile Include="actor\characterState\WallRunState.cpp" />
@@ -301,6 +302,7 @@
     <ClInclude Include="actor\CharacterCommand.h" />
     <ClInclude Include="actor\characterState\AirState.h" />
     <ClInclude Include="actor\characterState\IdleState.h" />
+    <ClInclude Include="actor\characterState\StunState.h" />
     <ClInclude Include="actor\characterState\RunState.h" />
     <ClInclude Include="actor\characterState\SwingState.h" />
     <ClInclude Include="actor\characterState\WallRunState.h" />

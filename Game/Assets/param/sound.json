@@ -10,5 +10,8 @@
   "firewallBreak": 1.0,
   "grappleShoot": 0.7,
   "grappleHook": 0.8,
-  "swing": 0.6
+  "swing": 0.6,
+  "dashPad": 0.7,
+  "fenceShock": 0.9,
+  "laserHit": 0.9
 }

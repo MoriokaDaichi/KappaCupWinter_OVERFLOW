@@ -10,6 +10,7 @@
 #include "actor/characterState/AirState.h"
 #include "actor/characterState/WallRunState.h"
 #include "actor/characterState/SwingState.h"
+#include "actor/characterState/StunState.h"
 #include <algorithm>
 
 BattleCharacter::BattleCharacter() : m_stateMachine(this)
@@ -132,6 +133,18 @@ bool BattleCharacter::IsHitBySegment(const Vector3& start, const Vector3& end, c
 	top.y += body.hitHeight;
 
 	return nsCollision::SegmentHitsCapsule(start, end, bottom, top, body.hitRadius + extraRadius, hitPoint);
+}
+
+void BattleCharacter::Stun(const Vector3& knockback)
+{
+	if (!HasState(EnCharacterState::Stun))
+	{
+		return;
+	}
+
+	// 先に状態を変える（スイング中なら、スイングの State の Exit が今の速さを見るので、はじく速さを入れる前に抜ける）
+	ChangeState(EnCharacterState::Stun);
+	SetMoveSpeed(knockback);
 }
 
 void BattleCharacter::Warp(const Vector3& position)
@@ -353,6 +366,16 @@ void BattleCharacter::UpdateCommand()
 		m_controller->MakeCommand(m_command);
 	}
 
+	// しびれている間は、ボタンもスティックも効かない（狙いの向きはカメラなので残す）
+	if (GetCurrentState() == EnCharacterState::Stun)
+	{
+		const Vector3 aimOrigin = m_command.aimOrigin;
+		const Vector3 aimDirection = m_command.aimDirection;
+		m_command = CharacterCommand();
+		m_command.aimOrigin = aimOrigin;
+		m_command.aimDirection = aimDirection;
+	}
+
 	UpdateCooldown();
 }
 
@@ -477,6 +500,9 @@ void BattleCharacter::AddStateById(const EnCharacterState id)
 		break;
 	case EnCharacterState::Swing:
 		m_stateMachine.AddState<SwingState>(id);
+		break;
+	case EnCharacterState::Stun:
+		m_stateMachine.AddState<StunState>(id);
 		break;
 	case EnCharacterState::Num:		// State ではない（個数）ので作らない
 		break;

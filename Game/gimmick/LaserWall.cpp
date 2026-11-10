@@ -2,6 +2,7 @@
 #include "gimmick/LaserWall.h"
 
 #include "actor/BattleCharacter.h"
+#include "sound/GameSound.h"
 
 void LaserWall::Draw(RenderContext& rc)
 {
@@ -38,8 +39,8 @@ void LaserWall::InitView()
 
 void LaserWall::OnEnter(BattleCharacter& player)
 {
-	player.TakeDamage(DAMAGE);
-	player.GetSpeedSystem().ClearBonus();
+	nsSound::Play(EnSound::LaserHit);
+	HitTrap(player, DAMAGE);
 }
 
 void LaserWall::UpdateGimmick()

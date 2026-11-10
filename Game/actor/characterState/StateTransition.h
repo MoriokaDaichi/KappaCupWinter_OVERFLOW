@@ -23,6 +23,7 @@ enum class EnCondition : int {
     WallFound,      ///< 壁走りを始められる速さで、横に壁がある
     WallLost,       ///< 横に壁がなくなった
     Hooked,         ///< ワイヤーの先がアンカーに届いている（Swing だけが知っている）
+    StunOver,       ///< しびれている時間が過ぎた（Stun だけが知っている）
     Num             ///< 個数
 };
 
@@ -30,7 +31,7 @@ enum class EnCondition : int {
 constexpr const char* CONDITION_NAMES[] =
 {
     "NotOnGround", "OnGround", "Landed", "MoveInput", "NoMoveInput", "JumpTrigger", "JumpStart",
-    "GrappleStart", "GrappleRelease", "WallFound", "WallLost", "Hooked"
+    "GrappleStart", "GrappleRelease", "WallFound", "WallLost", "Hooked", "StunOver"
 };
 
 static_assert(ARRAYSIZE(CONDITION_NAMES) == static_cast<int>(EnCondition::Num),
@@ -44,7 +45,7 @@ constexpr EnCharacterState CONDITION_ONLY_FROM[] =
 {
     EnCharacterState::Num, EnCharacterState::Num, EnCharacterState::Num, EnCharacterState::Num, EnCharacterState::Num,
     EnCharacterState::Num, EnCharacterState::Num, EnCharacterState::Num, EnCharacterState::Num, EnCharacterState::Num,
-    EnCharacterState::Num, EnCharacterState::Swing
+    EnCharacterState::Num, EnCharacterState::Swing, EnCharacterState::Stun
 };
 
 static_assert(ARRAYSIZE(CONDITION_ONLY_FROM) == static_cast<int>(EnCondition::Num),

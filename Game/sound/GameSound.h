@@ -15,6 +15,9 @@ enum class EnSound : int
 	GrappleShoot,	///< グラップルのワイヤーを撃つ
 	GrappleHook,	///< グラップルがアンカーに刺さる
 	Swing,			///< スイング中の「シュィーン」（くり返す）
+	DashPad,		///< ダッシュ板に乗った
+	FenceShock,		///< 電気柵で感電した
+	LaserHit,		///< レーザーに当たった
 	Num				///< 種類の数（いちばん最後に置く）
 };
 

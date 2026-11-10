@@ -2,7 +2,7 @@
 #include "gimmick/Gimmick.h"
 #include "gimmick/GimmickView.h"
 
-/** 当たった瞬間に、基礎速度が減り、上乗せが 0 になる電気柵（罠）。Stage が持つ */
+/** 当たった瞬間に、基礎速度が減り、上乗せが 0 になり、はじかれてしびれる電気柵（罠）。Stage が持つ */
 class ElectricFence : public Gimmick
 {
 public:

@@ -81,6 +81,9 @@
     <ClCompile Include="actor\characterState\IdleState.cpp">
       <Filter>actor\characterState</Filter>
     </ClCompile>
+    <ClCompile Include="actor\characterState\StunState.cpp">
+      <Filter>actor\characterState</Filter>
+    </ClCompile>
     <ClCompile Include="actor\characterState\RunState.cpp">
       <Filter>actor\characterState</Filter>
     </ClCompile>
@@ -245,6 +248,9 @@
       <Filter>thirdParty</Filter>
     </ClInclude>
     <ClInclude Include="actor\characterState\IdleState.h">
+      <Filter>actor\characterState</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\characterState\StunState.h">
       <Filter>actor\characterState</Filter>
     </ClInclude>
     <ClInclude Include="actor\characterState\RunState.h">

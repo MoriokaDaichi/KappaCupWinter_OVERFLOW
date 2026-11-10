@@ -10,6 +10,7 @@ namespace
 		EnCharacterAnim::Fall,		// Air（実際は SelectAirAnimation で選ぶ）
 		EnCharacterAnim::Run,		// WallRun（体を傾けて、壁を走って見せる）
 		EnCharacterAnim::Swing,		// Swing
+		EnCharacterAnim::Stun,		// Stun
 	};
 	static_assert(ARRAYSIZE(STATE_TO_ANIM) == static_cast<int>(EnCharacterState::Num),
 		"STATE_TO_ANIM を EnCharacterState に合わせてください");

@@ -34,3 +34,15 @@ void Gimmick::Update(BattleCharacter& player)
 
 	m_isPlayerInside = isInside;
 }
+
+void Gimmick::HitTrap(BattleCharacter& player, const float damage)
+{
+	player.TakeDamage(damage);
+
+	// 罠の手前から来たら手前へ、奥から来たら奥へはじく
+	const float back = player.GetPosition().z < m_position.z ? -KNOCKBACK_BACK_SPEED : KNOCKBACK_BACK_SPEED;
+	player.Stun(Vector3(0.0f, KNOCKBACK_UP_SPEED, back));
+
+	// しびれさせた後に消す（スイング中に当たると、スイングを抜けるときに上乗せが入るため）
+	player.GetSpeedSystem().ClearBonus();
+}
