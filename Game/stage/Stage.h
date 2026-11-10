@@ -2,11 +2,13 @@
 #include "stage/StageParticle.h"
 #include "stage/StageProp.h"
 #include "stage/StageRenderer.h"
+#include "gimmick/Gimmick.h"
 #include <array>
 #include <memory>
 #include <vector>
 
 class Anchor;
+class BattleCharacter;
 
 /**
  * stage.json に書いた箱・アンカー・飾り（遠景のビル、穴の底、小物）を置く。Game が持つ
@@ -22,7 +24,9 @@ public:
 	/** アンカーを全部消す（Game が消えるときに呼ぶ） */
 	void DeleteAll();
 	/** 全部の箱を描く */
-	void Draw();
+	void Draw(RenderContext& rc);
+	/** ギミックが見るプレイヤーを受け取る（借りているだけ） */
+	void SetPlayer(BattleCharacter* player) { m_player = player; }
 
 private:
 	/** 箱 1 つの当たり判定。物理エンジンが collider の場所を覚えるので、unique_ptr で持って場所を変えない */
@@ -50,8 +54,10 @@ private:
 
 	std::vector<std::unique_ptr<Block>> m_blocks;			///< 全部の箱の当たり判定
 	std::vector<Anchor*> m_anchors;							///< 全部のアンカー。読み直しても消さずに使い回す（スイング中のキャラが借りているため）
+	std::vector<std::unique_ptr<Gimmick>> m_gimmicks;		///< 全部のギミック（ダッシュ板・電気柵・レーザー）。作り直すときは空にして作り直す
 	StageRenderer m_renderer;								///< 全部の箱と背景の見た目
 	std::array<StageProp, StageParam::PROP_TYPE_COUNT> m_props;	///< 小物の見た目（種類ごと。並びは StageParam::PROP_TYPES と同じ）
 	StageParticle m_particle;								///< 舞うデータの粒
 	int m_reloadCount = 0;									///< 最後に作ったときの、JSON を読み直した回数
+	BattleCharacter* m_player = nullptr;					///< ギミックが見るプレイヤー
 };

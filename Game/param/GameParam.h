@@ -350,6 +350,9 @@ struct StageParam
 		std::vector<Block> towers;					///< 遠景のビルの一覧（当たり判定なし）
 		std::vector<Block> hazards;					///< 穴の底の一覧（当たり判定なし）
 		std::vector<Prop> props;					///< 小物の一覧
+		std::vector<Block> dashPads;				///< ダッシュ板の一覧（入った瞬間に上乗せが増える範囲）
+		std::vector<Block> fences;					///< 電気柵の一覧（入った瞬間に基礎速度が減る範囲）
+		std::vector<Block> lasers;					///< レーザーの壁の一覧（点いている間に入ると基礎速度が減る範囲）
 		std::array<float, 3> checkpoint = {};			///< 落ちたときに戻る足元の位置
 	};
 

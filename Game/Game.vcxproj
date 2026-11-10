@@ -240,7 +240,12 @@
     <ClCompile Include="controller\PlayerController.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="gimmick\Anchor.cpp" />
+    <ClCompile Include="gimmick\DashPad.cpp" />
+    <ClCompile Include="gimmick\ElectricFence.cpp" />
+    <ClCompile Include="gimmick\LaserWall.cpp" />
+    <ClCompile Include="gimmick\GimmickView.cpp" />
     <ClCompile Include="gimmick\GiantFirewall.cpp" />
+    <ClCompile Include="gimmick\Gimmick.cpp" />
     <ClCompile Include="grapple\AnchorLocker.cpp" />
     <ClCompile Include="grapple\Grapple.cpp" />
     <ClCompile Include="grapple\GrappleWire.cpp" />
@@ -285,7 +290,12 @@
     <ClInclude Include="actor\characterState\CharacterStateId.h" />
     <ClInclude Include="actor\characterState\StateTransition.h" />
     <ClInclude Include="actor\characterState\TransitionTable.h" />
+    <ClInclude Include="gimmick\DashPad.h" />
+    <ClInclude Include="gimmick\ElectricFence.h" />
+    <ClInclude Include="gimmick\LaserWall.h" />
+    <ClInclude Include="gimmick\GimmickView.h" />
     <ClInclude Include="gimmick\GiantFirewall.h" />
+    <ClInclude Include="gimmick\Gimmick.h" />
     <ClInclude Include="param\NameToEnum.h" />
     <ClInclude Include="actor\Character.h" />
     <ClInclude Include="actor\CharacterCommand.h" />

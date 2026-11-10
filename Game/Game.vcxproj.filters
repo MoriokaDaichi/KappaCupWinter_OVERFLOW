@@ -201,6 +201,21 @@
     <ClCompile Include="sound\GameSound.cpp">
       <Filter>sound</Filter>
     </ClCompile>
+    <ClCompile Include="gimmick\Gimmick.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="gimmick\DashPad.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="gimmick\ElectricFence.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="gimmick\LaserWall.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="gimmick\GimmickView.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -369,6 +384,21 @@
     </ClInclude>
     <ClInclude Include="sound\GameSound.h">
       <Filter>sound</Filter>
+    </ClInclude>
+    <ClInclude Include="gimmick\Gimmick.h">
+      <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="gimmick\DashPad.h">
+      <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="gimmick\ElectricFence.h">
+      <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="gimmick\LaserWall.h">
+      <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="gimmick\GimmickView.h">
+      <Filter>gimmick</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

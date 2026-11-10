@@ -74,6 +74,11 @@ float SpeedSystem::GetLevelRate() const
 
 void SpeedSystem::AddBonusPerSecond(const float perSecond)
 {
+	if (perSecond < 0.0f && m_isBonusKept)
+	{
+		return;
+	}
+
 	AddBonus(perSecond * g_gameTime->GetFrameDeltaTime());
 }
 

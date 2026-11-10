@@ -3,6 +3,9 @@
 
 #include "gimmick/Anchor.h"
 #include "param/GameParam.h"
+#include "gimmick/DashPad.h"
+#include "gimmick/ElectricFence.h"
+#include "gimmick/LaserWall.h"
 
 void Stage::Init()
 {
@@ -22,6 +25,17 @@ void Stage::Update()
 	{
 		Build();
 	}
+
+	if (m_player == nullptr)
+	{
+		return;
+	}
+
+	for (std::unique_ptr<Gimmick>& gimmick : m_gimmicks)
+	{
+		gimmick->Update(*m_player);
+	}
+
 }
 
 void Stage::DeleteAll()
@@ -32,19 +46,26 @@ void Stage::DeleteAll()
 	}
 }
 
-void Stage::Draw()
+void Stage::Draw(RenderContext& rc)
 {
 	m_renderer.Draw();
 	for (StageProp& prop : m_props)
 	{
 		prop.Draw();
 	}
+
+	for (std::unique_ptr<Gimmick>& gimmick : m_gimmicks)
+	{
+		gimmick->Draw(rc);
+	}
+
 	// 粒は半透明の加算なので、不透明な物のあとに描く
 	m_particle.Draw();
 }
 
 void Stage::Build()
 {
+	m_gimmicks.clear();
 	m_reloadCount = nsGameParam::GetReloadCount();
 	m_blocks.clear();
 	m_renderer.ClearBlocks();
@@ -71,6 +92,27 @@ void Stage::Build()
 		for (const StageParam::Prop& prop : section.props)
 		{
 			AddProp(prop);
+		}
+
+		for (const StageParam::Block& block : section.dashPads)
+		{
+			std::unique_ptr<Gimmick> gimmick = std::make_unique<DashPad>();
+			gimmick->Init(block);
+			m_gimmicks.push_back(std::move(gimmick));
+		}
+
+		for (const StageParam::Block& block : section.fences)
+		{
+			std::unique_ptr<Gimmick> gimmick = std::make_unique<ElectricFence>();
+			gimmick->Init(block);
+			m_gimmicks.push_back(std::move(gimmick));
+		}
+
+		for (const StageParam::Block& block : section.lasers)
+		{
+			std::unique_ptr<Gimmick> gimmick = std::make_unique<LaserWall>();
+			gimmick->Init(block);
+			m_gimmicks.push_back(std::move(gimmick));
 		}
 	}
 

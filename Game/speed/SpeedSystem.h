@@ -31,6 +31,10 @@ public:
 	void ClearBonus();
 	/** 今OVERDRIVE中かを返す（HUDや巨大FWが使う） */
 	bool IsOverdrive() const { return m_isOverdrive; }
+	/** このフレーム中上乗せ速度を減らさない */
+	void KeepBonus() { m_isBonusKept = true; }
+	/** しるしを消す */
+	void EndFrame() { m_isBonusKept = false; }
 
 private:
 	/** 速さが振り切ったらOVERDRIVEに入る */
@@ -43,4 +47,5 @@ private:
 	float m_baseSpeed = 0.0f;									///< 基礎速度
 	float m_bonusSpeed = 0.0f;									///< 上乗せの速度
 	bool m_isOverdrive = false;									///< OVERDRIVE中か
+	bool m_isBonusKept = false;									///< このフレームに上乗せを減らさないか
 };

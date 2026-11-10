@@ -448,6 +448,9 @@ void BattleCharacter::UpdateSpeedBonus()
 	default:
 		break;
 	}
+
+	// ダッシュ板などが付けた「このフレームは減らさない」の印を消す（次のフレームはまた付け直してもらう）
+	GetSpeedSystem().EndFrame();
 }
 
 bool BattleCharacter::HasAbility(const char* name) const

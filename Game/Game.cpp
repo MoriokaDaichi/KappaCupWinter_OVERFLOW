@@ -54,6 +54,7 @@ bool Game::Start()
 	m_giantFirewall.Init(m_player);
 	m_hud.Init(m_player, &m_checkpoint, &m_giantFirewall);
 	m_levelUpFlash.Init(m_player);
+	m_stage.SetPlayer(m_player);
 	nsSound::SetLoop(EnSound::Bgm, true);
 
 	const char* goalText = "GOAL";
@@ -88,7 +89,7 @@ void Game::Update()
 
 void Game::Render(RenderContext& rc)
 {
-	m_stage.Draw();
+	m_stage.Draw(rc);
 	m_levelUpFlash.Draw(rc);
 	m_hud.Draw();
 	m_lockOnHud.Draw(rc);
