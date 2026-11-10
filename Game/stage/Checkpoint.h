@@ -14,6 +14,8 @@ public:
 	void Update();
 	/** 今のチェックポイントの番号を返す */
 	int GetIndex() const { return m_index; }
+	/** 最初の区間に戻す（最初からやり直すとき） */
+	void Reset() { m_index = 0; }
 
 private:
 	/** 今のチェックポイントへ戻し、上乗せを0にする */

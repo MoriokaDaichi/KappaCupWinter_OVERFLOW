@@ -454,6 +454,18 @@ namespace nsK2EngineLow {
 		}
 		ImGui_ImplDX12_NewFrame();
 		ImGui_ImplWin32_NewFrame();
+		// ウィンドウの枠の分だけ、クライアント領域はフレームバッファより小さい（縮めて表示されている）。
+		// ImGui はマウスと同じクライアント領域の座標で動かし、描くときだけフレームバッファの大きさに広げる。
+		// （広げないと、ImGui の絵だけが縮まずに描かれ、クリックの位置が右下ほどずれる）
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			if (io.DisplaySize.x > 0.0f && io.DisplaySize.y > 0.0f) {
+				io.DisplayFramebufferScale = ImVec2(
+					static_cast<float>(g_graphicsEngine->GetFrameBufferWidth()) / io.DisplaySize.x,
+					static_cast<float>(g_graphicsEngine->GetFrameBufferHeight()) / io.DisplaySize.y
+				);
+			}
+		}
 		ImGui::NewFrame();
 
 		// F1キーで表示/非表示を切り替える。

@@ -14,6 +14,8 @@ public:
 	void Init(BattleCharacter* player);
 	/** 毎フレーム Game の Update から呼ぶ（F5 の読み直しと、速度の固定） */
 	void Update();
+	/** 「最初からやり直す」が押されたか。押されていたら true を返し、押された印を消す（Game が見る） */
+	bool ConsumeResetRequest();
 
 private:
 	/** パネルの中身を描く。ボタンやスライダーを動かしたときの処理もここで行う */
@@ -40,4 +42,5 @@ private:
 	bool m_isSpeedLocked = false;		///< 速度を固定しているか（地上で上乗せが減らないようにする）
 	float m_lockedBase = 0.0f;			///< 固定している基礎速度
 	float m_lockedBonus = 0.0f;			///< 固定している上乗せ
+	bool m_isResetRequested = false;	///< 「最初からやり直す」が押されたか（パネルは描画中に動くので、やり直しは Game の Update でする）
 };

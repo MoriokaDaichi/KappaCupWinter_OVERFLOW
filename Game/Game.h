@@ -25,6 +25,10 @@ public:
 	void Render(RenderContext& rc);
 
 private:
+	/** 最初からやり直す（プレイヤー・チェックポイント・タイム・敵・巨大ファイアウォールを最初に戻す。デバッグ画面から） */
+	void Reset();
+
+private:
 	BattleCharacter* m_player = nullptr;	///< プレイヤー（PlayerController で動かす BattleCharacter）
 	GameCamera* m_gameCamera = nullptr;
 	BulletSystem* m_bulletSystem = nullptr;

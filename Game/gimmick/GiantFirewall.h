@@ -14,8 +14,12 @@ public:
 	void Draw(RenderContext& rc);
 	/** 壊れたか */
 	bool IsBroken() const { return m_isBroken; }
+	/** 壊れる前に戻す（最初からやり直すとき） */
+	void Reset();
 
 private:
+	/** 当たり判定を物理の世界に置く */
+	void InitBody();
 	/** 壊す */
 	void Break();
 	/** 弾き返す */

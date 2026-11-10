@@ -17,10 +17,7 @@ void GiantFirewall::Init(BattleCharacter* player)
 
 	m_collider.Create(size);
 	
-	RigidBodyInitData data;
-	data.pos = position;
-	data.collider = &m_collider;
-	m_body.Init(data);
+	InitBody();
 
 	// ライトに関係なく光らせるので、専用のシェーダーでフォワード描画する
 	m_constant.center.Set(position.x, position.y, position.z, 0.0f);
@@ -42,6 +39,29 @@ void GiantFirewall::Init(BattleCharacter* player)
 	m_flash.Init("Assets/modelData/debug/debug_white.DDS",
 		static_cast<float>(g_graphicsEngine->GetFrameBufferWidth()),
 		static_cast<float>(g_graphicsEngine->GetFrameBufferHeight()));
+}
+
+void GiantFirewall::Reset()
+{
+	m_flashTimer = 0.0f;
+	if (!m_isBroken)
+	{
+		return;
+	}
+
+	// 壊したときに物理の世界から外したので、置き直す
+	InitBody();
+	m_isBroken = false;
+}
+
+void GiantFirewall::InitBody()
+{
+	const StageParam::Block& wall = nsGameParam::Get().stage.giantFirewall;
+
+	RigidBodyInitData data;
+	data.pos = Vector3(wall.position[0], wall.position[1], wall.position[2]);
+	data.collider = &m_collider;
+	m_body.Init(data);
 }
 
 void GiantFirewall::Update()

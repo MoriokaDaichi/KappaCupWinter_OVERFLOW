@@ -36,11 +36,23 @@ void DebugManager::Update()
 	}
 }
 
+bool DebugManager::ConsumeResetRequest()
+{
+	const bool isRequested = m_isResetRequested;
+	m_isResetRequested = false;
+	return isRequested;
+}
+
 void DebugManager::DrawPanel()
 {
 	if (m_player == nullptr)
 	{
 		return;
+	}
+
+	if (ImGui::Button(U8("最初からやり直す")))
+	{
+		m_isResetRequested = true;
 	}
 
 	DrawSpeed();

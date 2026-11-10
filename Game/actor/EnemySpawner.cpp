@@ -78,6 +78,23 @@ void EnemySpawner::DeleteAll()
 	}
 }
 
+void EnemySpawner::Reset()
+{
+	for (Spawn& spawn : m_spawns)
+	{
+		BattleCharacter* enemy = spawn.enemy.Get();
+		if (enemy == nullptr)
+		{
+			SpawnEnemy(spawn);
+			continue;
+		}
+
+		enemy->Respawn(spawn.position);
+		spawn.respawnTimer = spawn.respawnTime;
+		spawn.shootTimer = 0.0f;
+	}
+}
+
 void EnemySpawner::SpawnEnemy(Spawn& spawn)
 {
 	BattleCharacter* enemy = NewGO<BattleCharacter>(0, "enemy");

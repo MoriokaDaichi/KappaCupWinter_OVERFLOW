@@ -18,6 +18,8 @@ public:
 	void Init(const BattleCharacter* player, const Checkpoint* checkpoint, const GiantFirewall* giantFirewall);
 	/** タイムを進める。巨大ファイアウォールを突破したら止める（毎フレーム Game の Update から呼ぶ） */
 	void Update();
+	/** タイムを 0 に戻す（最初からやり直すとき） */
+	void Reset() { m_time = 0.0f; }
 	/** 全部を描く（毎フレーム Game の Render から呼ぶ。全員が動いた後の位置に出すため） */
 	void Draw();
 

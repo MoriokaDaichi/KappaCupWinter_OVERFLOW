@@ -71,6 +71,10 @@ void Game::Update()
 	InputManager::GetInstance().Update();
 
 	m_debugManager.Update();
+	if (m_debugManager.ConsumeResetRequest())
+	{
+		Reset();
+	}
 	m_stage.Update();
 	m_enemySpawner.Update();
 	m_checkpoint.Update();
@@ -85,6 +89,16 @@ void Game::Update()
 	const float swingVolumeRate = SWING_MIN_VOLUME_RATE + (1.0f - SWING_MIN_VOLUME_RATE) * swingSpeedRate;
 	const float swingPitch = SWING_MIN_PITCH + (SWING_MAX_PITCH - SWING_MIN_PITCH) * swingSpeedRate;
 	nsSound::SetLoop(EnSound::Swing, playerState == EnCharacterState::Swing, swingVolumeRate, swingPitch);
+}
+
+void Game::Reset()
+{
+	const std::array<float, 3>& playerStart = nsGameParam::Get().stage.playerStart;
+	m_player->Respawn(Vector3(playerStart[0], playerStart[1], playerStart[2]));
+	m_checkpoint.Reset();
+	m_giantFirewall.Reset();
+	m_hud.Reset();
+	m_enemySpawner.Reset();
 }
 
 void Game::Render(RenderContext& rc)
