@@ -39,9 +39,9 @@ public:
 private:
 	/** 弾の見た目を今の位置と向きに合わせる */
 	void UpdateBulletView(const int index);
-	/** 弾を消して空きに戻す（描かれないように大きさ 0 にする） */
+	/** 弾を消して空きに戻す（描く一覧から外し、尾のエフェクトを止める） */
 	void Deactivate(const int index);
-	/** 時間が来た弾を分裂させて消す。消したら true */
+	/** 分裂する弾の時間を進め、時間が来たら消して、ロックした相手の数だけホーミング弾を出す（分裂しない弾では何もしない） */
 	void UpdateSplit(const int index, const float dt);
 
 private:

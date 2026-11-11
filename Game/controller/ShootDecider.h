@@ -4,7 +4,7 @@
 class BattleCharacter;
 
 /** 撃つ係の段階 */
-enum class EnShootPhase {
+enum class EnShootPhase : int {
 	Wait,			///< 待機
 	Aim,			///< 狙う
 	Cooldown		///< 休む

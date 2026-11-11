@@ -9,7 +9,7 @@
  * 「どの State のとき・何が成り立ったら・どこへ・切り替える前に何をするか」を 1 行で表す
  */
 
-/** 切り替えの条件。判定の中身は C++（BattleCharacter::IsConditionMet）に書き、JSON には名前だけを書く */
+/** 切り替えの条件。判定の中身は C++（TransitionTable::IsConditionMet。State だけが知っている条件は、その State の IsConditionMet）に書き、JSON には名前だけを書く */
 enum class EnCondition : int {
     NotOnGround,    ///< 地面にいない（足場から落ちた）
     OnGround,       ///< 地面にいる

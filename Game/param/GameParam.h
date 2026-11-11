@@ -314,6 +314,7 @@ struct StageParam
 	static constexpr int MAX_HAZARD = 32;			///< 穴の底の数の上限
 	static constexpr int MAX_PROP = 512;			///< 小物の数の上限（種類ごと）
 	static constexpr int PROP_TYPE_COUNT = 5;		///< 小物の種類の数
+	static constexpr int INVALID_PROP_TYPE = -1;	///< FindPropType が、知らない名前のときに返す番号
 
 	/** 小物の種類 1 つ */
 	struct PropType
@@ -335,7 +336,7 @@ struct StageParam
 		{ "machine", 1.0f, 700.0f, 500.0f, 700.0f, -250.0f },	// 下へ細くなる形なので、幅は中段に合わせる
 	};
 
-	/** 小物の種類の番号を返す。知らない名前なら -1 */
+	/** 小物の種類の番号を返す。知らない名前なら INVALID_PROP_TYPE */
 	static int FindPropType(const std::string& name)
 	{
 		for (int i = 0; i < PROP_TYPE_COUNT; i++)
@@ -345,7 +346,7 @@ struct StageParam
 				return i;
 			}
 		}
-		return -1;
+		return INVALID_PROP_TYPE;
 	}
 
 	/** 箱 1 つ */

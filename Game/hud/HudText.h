@@ -8,7 +8,7 @@ class HudText : public IRenderer
 {
 public:
 	/** そろえ方。位置を、文字列のどこに合わせるか */
-	enum class Align
+	enum class Align : int
 	{
 		Left,		///< 左端
 		Center,		///< 真ん中

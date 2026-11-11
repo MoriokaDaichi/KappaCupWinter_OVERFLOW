@@ -370,7 +370,7 @@ namespace
 			for (const StageParam::Prop& prop : section.props)
 			{
 				const int type = StageParam::FindPropType(prop.model);
-				if (type < 0)
+				if (type == StageParam::INVALID_PROP_TYPE)
 				{
 					throw std::runtime_error("Assets/param/stage.json\nunknown prop model: " + prop.model);
 				}

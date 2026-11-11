@@ -10,7 +10,7 @@ class StageRenderer : public IRenderer
 {
 public:
 	/** 描く物の種類（stageBlock.fx の KIND_ と同じ番号） */
-	enum class Kind
+	enum class Kind : int
 	{
 		Block,		///< 当たり判定のある箱
 		Tower,		///< 遠景のビル

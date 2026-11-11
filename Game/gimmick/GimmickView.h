@@ -9,7 +9,7 @@ class GimmickView : public IRenderer
 {
 public:
 	/** 光り方（gimmick.fx の KIND_ と同じ値） */
-	enum class Kind
+	enum class Kind : int
 	{
 		DashPad = 0,	///< シアン。板の上を矢印が前へ流れる
 		Fence = 1,		///< 黄色。電気がちらつき、火花が走る

@@ -21,7 +21,7 @@
 class IController;
 
 /** 待ち時間の種類 */
-enum class EnCooldown
+enum class EnCooldown : int
 {
 	WallRun,		///< 壁走り：離れてから、もう一度張り付けるまで
 	Num				///< 種類の数（いちばん最後に置く）
