@@ -142,13 +142,12 @@ void GameCamera::UpdateAimRate()
 	const float step = g_gameTime->GetFrameDeltaTime() / m_param.aimTransitionTime;
 	const float target = m_input->IsPress(EnInputAction::Aim) ? 1.0f : 0.0f;
 
-	m_aimRate += (target > m_aimRate ? step : -step);
-
 	if (m_aimRate < target)
 	{
 		m_aimRate = min(m_aimRate + step, target);
-		return;
 	}
-
-	m_aimRate = min(max(m_aimRate, 0.0f), 1.0f);
+	else
+	{
+		m_aimRate = max(m_aimRate - step, target);
+	}
 }
