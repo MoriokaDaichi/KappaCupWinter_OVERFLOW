@@ -36,5 +36,11 @@
     "muzzleHeight": 81.0,
     "muzzleForward": 146.0,
     "maxPitch": 20.0
+  },
+  "shooter": {
+    "detectRange": 5000.0,
+    "aimTime": 1.0,
+    "cooldownTime": 1.5,
+    "leadRate": 1.0
   }
 }

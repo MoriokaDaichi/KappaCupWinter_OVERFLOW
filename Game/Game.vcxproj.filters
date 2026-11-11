@@ -219,6 +219,9 @@
     <ClCompile Include="gimmick\GimmickView.cpp">
       <Filter>gimmick</Filter>
     </ClCompile>
+    <ClCompile Include="controller\ShootDecider.cpp">
+      <Filter>controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -405,6 +408,9 @@
     </ClInclude>
     <ClInclude Include="gimmick\GimmickView.h">
       <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="controller\ShootDecider.h">
+      <Filter>controller</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

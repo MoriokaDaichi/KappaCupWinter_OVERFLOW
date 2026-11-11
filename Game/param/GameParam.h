@@ -123,6 +123,15 @@ struct CharacterParam
 		float maxPitch = 0.0f;			///< 上下に向ける角度の上限（度）
 	};
 
+	/** 敵が撃つための値（書いたキャラだけ持つ） */
+	struct Shooter
+	{
+		float detectRange = 0.0f;		///< 砲口からプレイヤーの胸まで、この距離より近いと見つける
+		float aimTime = 0.0f;			///< 狙う（予告線を出す）秒数
+		float cooldownTime = 0.0f;		///< 撃った後に休む秒数
+		float leadRate = 0.0f;			///< 先読みの割合（0 で今の位置、1 で完全に先読み）
+	};
+
 	std::string model;		///< モデルのファイル名（.tkm）
 	std::vector<std::string> abilities;		///< 持つ能力の名前（"Grapple"・"Gun"）。書いていない能力は作らない
 	std::vector<std::string> states;		///< 使う State の名前（"Idle"・"Run"・"Air"・"WallRun"・"Swing"）
@@ -141,6 +150,8 @@ struct CharacterParam
 	bool hasHealth = false;			///< JSON に health を書いたか
 	Turret turret;
 	bool hasTurret = false;			///< JSON に turret を書いたか
+	Shooter shooter;
+	bool hasShooter = false;		///< JSON に shooter を書いたか
 };
 
 /** カメラの値（camera.json） */

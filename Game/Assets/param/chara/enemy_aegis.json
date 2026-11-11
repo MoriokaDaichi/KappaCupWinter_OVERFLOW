@@ -36,5 +36,11 @@
   "health": {
     "maxHp": 30.0,
     "killBoost": 50.0
+  },
+  "shooter": {
+    "detectRange": 3000.0,
+    "aimTime": 0.6,
+    "cooldownTime": 1.0,
+    "leadRate": 0.3
   }
 }
