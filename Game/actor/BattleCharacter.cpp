@@ -432,6 +432,12 @@ void BattleCharacter::OnBodyUpdated()
 	{
 		m_turretModel->Update(GetPosition(), GetCommand().aimDirection);
 	}
+
+	// 予告線は砲身の向きが決まった後に動かす（線が砲口から出るように）
+	if (HasEnemyGun())
+	{
+		m_enemyGun->UpdateWarningLine(IsAimPress(), GetMuzzlePosition(), GetCommand().aimDirection, GetCommand().aimDistance);
+	}
 }
 
 void BattleCharacter::Render(RenderContext& rc)
@@ -444,6 +450,10 @@ void BattleCharacter::Render(RenderContext& rc)
 	if (m_turretModel)
 	{
 		m_turretModel->Draw(rc);
+	}
+	if (HasEnemyGun())
+	{
+		m_enemyGun->Draw(rc);
 	}
 }
 

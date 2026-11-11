@@ -22,6 +22,8 @@ public:
 	void Reset();
 	/** どこを狙うか。shooter がない敵は今の胸を返す（予測射撃） */
 	Vector3 CalcAimPoint(const BattleCharacter& owner, const BattleCharacter& target) const;
+	/** 狙っている段階か（この間、予告線を出す） */
+	bool IsAiming() const { return m_phase == EnShootPhase::Aim; }
 
 private:
 	/** 距離が detectRange より近く、間に壁がなければ見つけた */

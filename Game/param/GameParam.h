@@ -234,6 +234,16 @@ struct EnemyBulletParam
 	float damage = 0.0f;			///< 当たったときに相手の基礎速度を減らす量
 };
 
+/** 敵が狙っている間に出す予告線の値（warning_line.json） */
+struct WarningLineParam
+{
+	float thickness = 0.0f;			///< 太さ（直径）
+	float startThickness = 0.0f;	///< 出始めの太さ（直径）。growTime かけて thickness まで太くなる
+	float growTime = 0.0f;			///< 出始めから thickness になるまでの秒数
+	float brightness = 0.0f;		///< 光の強さ（1 より大きいと Bloom で光る）
+	float pastTargetLength = 0.0f;	///< 狙う点からさらに伸ばす長さ（狙う点で切れると、相手を貫いているように見えないため）
+};
+
 /** グラップルのワイヤーの値（grappleWire.json） */
 struct GrappleWireParam
 {
@@ -405,6 +415,7 @@ struct GameParam
 	GrappleWireParam grappleWire;
 	GunParam gun;
 	EnemyBulletParam enemyBullet;
+	WarningLineParam warningLine;
 	SpeedParam speed;
 	DebugParam debug;
 };

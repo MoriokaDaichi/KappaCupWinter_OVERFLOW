@@ -27,11 +27,15 @@ void AIController::MakeCommand(CharacterCommand& command)
 	const Vector3 muzzle = m_owner->GetMuzzlePosition();
 	const Vector3 aimPoint = m_shootDecider.CalcAimPoint(*m_owner, *m_target);
 
-	Vector3 aimDirection = aimPoint - muzzle;
+	const Vector3 toAimPoint = aimPoint - muzzle;
+	Vector3 aimDirection = toAimPoint;
 	aimDirection.Normalize();
 
 	command.aimOrigin = muzzle;
 	command.aimDirection = aimDirection;
+	command.aimDistance = toAimPoint.Length();
 
 	command.shootPress = m_shootDecider.Update(*m_owner, *m_target);
+	// 敵の「構える」は狙っている間。段階を進めた後に聞くので、撃つフレームには線が消え、弾に入れ替わる
+	command.aimPress = m_shootDecider.IsAiming();
 }
