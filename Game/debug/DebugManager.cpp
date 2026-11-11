@@ -4,6 +4,7 @@
 #include <iterator>
 #include "actor/BattleCharacter.h"
 #include "speed/SpeedSystem.h"
+#include "system/system.h"
 
 // ImGui に渡す日本語は U8() で包む（ソースの文字列は CP932 になるので、UTF-8 に直して渡す）
 
@@ -22,7 +23,9 @@ void DebugManager::Init(BattleCharacter* player)
 void DebugManager::Update()
 {
 	// F5 で JSON を読み直す（ゲームを止めずに値を調整するため）
-	const bool isReloadKeyDown = (GetAsyncKeyState(VK_F5) & 0x8000) != 0;
+	// GetAsyncKeyState はどのウィンドウが手前でも反応するので、ゲームが手前のときだけ見る（VS やブラウザの F5 で読み直さないように）
+	const bool isGameForeground = GetForegroundWindow() == g_hWnd;
+	const bool isReloadKeyDown = isGameForeground && (GetAsyncKeyState(VK_F5) & 0x8000) != 0;
 	if (isReloadKeyDown && !m_isReloadKeyDown)
 	{
 		nsGameParam::Reload();
