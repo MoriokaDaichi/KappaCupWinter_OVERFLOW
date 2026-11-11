@@ -17,7 +17,10 @@ void StunState::Update()
 	{
 		m_owner->Decelerate();
 	}
-	m_owner->ApplyGravity();
+	else
+	{
+		m_owner->ApplyGravity();
+	}
 }
 
 bool StunState::IsConditionMet(const EnCondition when) const
