@@ -3,7 +3,7 @@
 
 #include "actor/BattleCharacter.h"
 
-void AIController::MakeCommand(CharacterCommand& command) const
+void AIController::MakeCommand(CharacterCommand& command)
 {
 	// 何もしないコマンドから始めて、必要なところだけ入れる
 	command = CharacterCommand();

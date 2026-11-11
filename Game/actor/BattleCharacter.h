@@ -40,7 +40,7 @@ public:
 
 public:
 	/** コマンドを作る係を設定する */
-	void SetController(const IController* controller) { m_controller = controller; }
+	void SetController(IController* controller) { m_controller = controller; }
 	/** 設定を渡す（NewGO の直後、Start より前に呼ぶ） */
 	void SetParam(const CharacterParam& param) { m_param = &param; }
 	/** 狙えるか（Start が済んでいて、まだ倒されていない）。Start の前は位置が決まっていないので狙わない */
@@ -177,7 +177,7 @@ private:
 	static constexpr float HIDDEN_HEIGHT = -100000.0f;							///< 隠している間の、当たり判定の体の高さ（床のずっと下）
 	static constexpr int COOLDOWN_NUM = static_cast<int>(EnCooldown::Num);		///< 待ち時間の種類の数
 
-	const IController* m_controller = nullptr;									///< コマンドを作る係（Game が持っている）
+	IController* m_controller = nullptr;										///< コマンドを作る係（借りているだけ。プレイヤーのものは Game、敵のものは EnemySpawner が持つ）
 	CharacterCommand m_command;													///< このフレームのコマンド
 	std::array<float, COOLDOWN_NUM> m_cooldownTimers = {};						///< 待ち時間の残り（秒）
 	SpeedSystem m_speed;														///< スピードシステム（基礎速度と上乗せ速度をもつ）

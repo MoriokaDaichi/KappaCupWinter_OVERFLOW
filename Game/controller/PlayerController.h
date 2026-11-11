@@ -8,7 +8,7 @@ class PlayerController : public IController
 {
 public:
 	/** 入力とカメラから、このフレームのコマンドを作る */
-	void MakeCommand(CharacterCommand& command) const override;
+	void MakeCommand(CharacterCommand& command) override;
 	/** 入力を受け取る先を設定する。Game が持っている InputManager を渡す */
 	void SetInput(const InputManager* input)
 	{

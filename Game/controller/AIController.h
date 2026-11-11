@@ -8,7 +8,7 @@ class AIController : public IController
 {
 public:
 	/** 自分と、追いかける相手から、このフレームのコマンドを作る */
-	void MakeCommand(CharacterCommand& command) const override;
+	void MakeCommand(CharacterCommand& command) override;
 	/** コマンドを作る本人を設定する（位置を見るだけ） */
 	void SetOwner(const BattleCharacter* owner) { m_owner = owner; }
 	/** 追いかける相手を設定する（位置を見るだけ） */

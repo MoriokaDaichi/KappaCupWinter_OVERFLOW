@@ -7,5 +7,5 @@ class IController
 public:
 	virtual ~IController() = default;
 	/** コマンドを作る。中身は子のクラスが書く */
-	virtual void MakeCommand(CharacterCommand& command) const = 0;
+	virtual void MakeCommand(CharacterCommand& command) = 0;
 };

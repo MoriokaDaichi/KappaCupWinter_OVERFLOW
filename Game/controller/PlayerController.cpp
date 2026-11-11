@@ -3,7 +3,7 @@
 
 #include "input/InputManager.h"
 
-void PlayerController::MakeCommand(CharacterCommand& command) const
+void PlayerController::MakeCommand(CharacterCommand& command)
 {
 	if (m_input == nullptr)
 	{
