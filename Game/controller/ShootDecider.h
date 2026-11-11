@@ -20,7 +20,7 @@ public:
 	bool Update(const BattleCharacter& owner, const BattleCharacter& target);
 	/** 待機に戻す（湧き直したとき・最初からやり直すとき） */
 	void Reset();
-	/** どこを狙うか（予測射撃） */
+	/** どこを狙うか。shooter がない敵は今の胸を返す（予測射撃） */
 	Vector3 CalcAimPoint(const BattleCharacter& owner, const BattleCharacter& target) const;
 
 private:

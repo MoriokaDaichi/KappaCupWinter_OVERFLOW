@@ -82,7 +82,21 @@ bool ShootDecider::CanSeeTarget(const BattleCharacter& owner, const BattleCharac
 
 Vector3 ShootDecider::CalcAimPoint(const BattleCharacter& owner, const BattleCharacter& target) const
 {
-	return target.GetChestPosition();
+	if (m_param == nullptr)
+	{
+		return target.GetChestPosition();
+	}
+
+	const Vector3 muzzle = owner.GetMuzzlePosition();
+	const Vector3 chest = target.GetChestPosition();
+	const Vector3 toTarget = chest - muzzle;
+	const float distance = toTarget.Length();
+
+	// 今の胸までの距離で時間を出しているので、少しずれる。重力は考えていない
+	const float flightTime = distance / nsGameParam::Get().enemyBullet.speed;
+	// 弾が着くまでに相手が進む分を、leadRate の割合だけ先を狙う
+	const Vector3 aimPoint = chest + target.GetMoveSpeed() * flightTime * m_param->leadRate;
+	return aimPoint;
 }
 
 void ShootDecider::ChangePhase(const EnShootPhase phase, const float time)
