@@ -133,7 +133,7 @@ struct CharacterParam
 	};
 
 	std::string model;		///< モデルのファイル名（.tkm）
-	std::vector<std::string> abilities;		///< 持つ能力の名前（"Grapple"・"Gun"）。書いていない能力は作らない
+	std::vector<std::string> abilities;		///< 持つ能力の名前（"Grapple"・"Gun"・"EnemyGun"）。書いていない能力は作らない
 	std::vector<std::string> states;		///< 使う State の名前（"Idle"・"Run"・"Air"・"WallRun"・"Swing"）
 	std::vector<Transition> transitions;	///< 切り替え表。上から順に調べ、最初に成り立った行で切り替える
 	Body body;
