@@ -276,7 +276,7 @@ struct SpawnParam
 	/** 敵を出す場所 1 つ */
 	struct Point
 	{
-		std::string chara;					///< どの敵か（"Walker"・"Firewall"・"Crawler"）
+		std::string chara;					///< どの敵か（"Aegis"・"Firewall"・"Crawler"）
 		std::array<float, 3> position = {};	///< 足元の位置（x, y, z）
 		float respawnTime = 0.0f;			///< 倒されてから湧き直すまでの時間（秒）。0 なら湧き直さない
 		float respawnRadius = 0.0f;			///< プレイヤーがここからこの距離以内にいる間だけ、湧き直しの時間が進む（敵が湧き直す区間）
@@ -381,7 +381,7 @@ struct DebugParam
 struct GameParam
 {
 	CharacterParam player;			///< プレイヤー（chara/player.json）
-	CharacterParam enemyWalker;		///< 歩く敵（chara/enemy_walker.json）
+	CharacterParam enemyAegis;		///< 盾持ち AEGIS（chara/enemy_aegis.json）
 	CharacterParam enemyFirewall;	///< 固定砲台 FIREWALL（chara/enemy_firewall.json）
 	CharacterParam enemyCrawler;	///< 飛行型 CRAWLER（chara/enemy_crawler.json）
 	SpawnParam spawn;

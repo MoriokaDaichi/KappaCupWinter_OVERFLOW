@@ -313,9 +313,9 @@ namespace
 	/** chara の名前から、param の中の敵の設定を返す。知らない名前なら nullptr */
 	const CharacterParam* FindEnemyIn(const GameParam& param, const std::string& name)
 	{
-		if (name == "Walker")
+		if (name == "Aegis")
 		{
-			return &param.enemyWalker;
+			return &param.enemyAegis;
 		}
 		if (name == "Firewall")
 		{
@@ -422,7 +422,7 @@ namespace
 	void ReadAll(GameParam& out)
 	{
 		ReadFile("Assets/param/chara/player.json", out.player);
-		ReadFile("Assets/param/chara/enemy_walker.json", out.enemyWalker);
+		ReadFile("Assets/param/chara/enemy_aegis.json", out.enemyAegis);
 		ReadFile("Assets/param/chara/enemy_firewall.json", out.enemyFirewall);
 		ReadFile("Assets/param/chara/enemy_crawler.json", out.enemyCrawler);
 		ReadFile("Assets/param/spawn.json", out.spawn);
@@ -439,7 +439,7 @@ namespace
 		ReadFile("Assets/param/debug.json", out.debug);
 
 		CheckCharacter("Assets/param/chara/player.json", out.player);
-		CheckCharacter("Assets/param/chara/enemy_walker.json", out.enemyWalker);
+		CheckCharacter("Assets/param/chara/enemy_aegis.json", out.enemyAegis);
 		CheckCharacter("Assets/param/chara/enemy_firewall.json", out.enemyFirewall);
 		CheckCharacter("Assets/param/chara/enemy_crawler.json", out.enemyCrawler);
 		CheckSpawn(out);

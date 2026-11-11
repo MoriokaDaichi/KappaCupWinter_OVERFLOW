@@ -16,11 +16,11 @@
     { "chara": "Crawler", "position": [ 850.0, 1050.0, 74500.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 },
     { "chara": "Crawler", "position": [ -850.0, 1050.0, 78800.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 },
     { "chara": "Crawler", "position": [ 0.0, 1050.0, 65000.0 ], "respawnTime": 8.0, "respawnRadius": 4000.0 },
-    { "chara": "Walker", "position": [ -1050.0, 1050.0, 84000.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 },
-    { "chara": "Walker", "position": [ 1050.0, 1050.0, 84000.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 },
-    { "chara": "Walker", "position": [ -1050.0, 1050.0, 89500.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 },
-    { "chara": "Walker", "position": [ 1050.0, 1050.0, 89500.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 },
-    { "chara": "Walker", "position": [ 1050.0, 1050.0, 95000.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 },
-    { "chara": "Walker", "position": [ -1050.0, 1050.0, 99000.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 }
+    { "chara": "Aegis", "position": [ -1050.0, 1050.0, 84000.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 },
+    { "chara": "Aegis", "position": [ 1050.0, 1050.0, 84000.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 },
+    { "chara": "Aegis", "position": [ -1050.0, 1050.0, 89500.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 },
+    { "chara": "Aegis", "position": [ 1050.0, 1050.0, 89500.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 },
+    { "chara": "Aegis", "position": [ 1050.0, 1050.0, 95000.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 },
+    { "chara": "Aegis", "position": [ -1050.0, 1050.0, 99000.0 ], "respawnTime": 0.0, "respawnRadius": 0.0 }
   ]
 }
