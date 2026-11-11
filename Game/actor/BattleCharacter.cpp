@@ -357,6 +357,10 @@ void BattleCharacter::UpdateAction()
 	{
 		GetGun().Update(IsShootPress(), IsAimPress(), GetSpeedSystem().GetLevel(), GetChestPosition(), m_rotation, GetCommand().aimOrigin, GetCommand().aimDirection);
 	}
+	if (HasEnemyGun())
+	{
+		m_enemyGun->Update(IsShootPress(), GetMuzzlePosition(), GetCommand().aimDirection);
+	}
 }
 
 void BattleCharacter::UpdateCommand()
@@ -521,5 +525,10 @@ void BattleCharacter::InitAbilities()
 	{
 		m_gun = std::make_unique<Gun>();
 		m_gun->Init(FindGO<BulletSystem>("bulletSystem"), this);
+	}
+	if (HasAbility("EnemyGun"))
+	{
+		m_enemyGun = std::make_unique<EnemyGun>();
+		m_enemyGun->Init(FindGO<BulletSystem>("enemyBulletSystem"));
 	}
 }

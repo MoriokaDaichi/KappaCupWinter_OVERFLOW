@@ -1,6 +1,6 @@
 {
   "model": "Assets/modelData/enemy/firewall_base.tkm",
-  "abilities": [],
+  "abilities": [ "EnemyGun" ],
   "states": [ "Idle", "Air" ],
   "transitions": [
     { "from": "Idle", "when": [ "NotOnGround" ], "to": "Air" },

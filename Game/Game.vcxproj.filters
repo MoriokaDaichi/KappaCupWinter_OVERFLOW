@@ -222,6 +222,9 @@
     <ClCompile Include="controller\ShootDecider.cpp">
       <Filter>controller</Filter>
     </ClCompile>
+    <ClCompile Include="weapon\EnemyGun.cpp">
+      <Filter>weapon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -411,6 +414,9 @@
     </ClInclude>
     <ClInclude Include="controller\ShootDecider.h">
       <Filter>controller</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon\EnemyGun.h">
+      <Filter>weapon</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

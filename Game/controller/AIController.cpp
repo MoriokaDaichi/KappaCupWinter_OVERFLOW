@@ -23,10 +23,15 @@ void AIController::MakeCommand(CharacterCommand& command)
 		command.moveDir = toTarget;
 	}
 
-	// 狙いは相手の方（胸から胸）。砲身もこの向きを見る
-	Vector3 toTargetAim = m_target->GetChestPosition() - m_owner->GetChestPosition();
-	toTargetAim.Normalize();
+	// 狙いは相手の方（砲口から狙う点へ）。砲身もこの向きを見る
+	const Vector3 muzzle = m_owner->GetMuzzlePosition();
+	const Vector3 aimPoint = m_shootDecider.CalcAimPoint(*m_owner, *m_target);
 
-	command.aimOrigin = m_owner->GetChestPosition();
-	command.aimDirection = toTargetAim;
+	Vector3 aimDirection = aimPoint - muzzle;
+	aimDirection.Normalize();
+
+	command.aimOrigin = muzzle;
+	command.aimDirection = aimDirection;
+
+	command.shootPress = m_shootDecider.Update(*m_owner, *m_target);
 }

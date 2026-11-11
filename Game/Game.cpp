@@ -42,7 +42,7 @@ bool Game::Start()
 	m_player->SetController(&m_playerController);
 	m_player->SetParam(nsGameParam::Get().player);
 
-	m_enemySpawner.Init(m_player, m_enemyBulletSystem);
+	m_enemySpawner.Init(m_player);
 
 	m_gameCamera = NewGO<GameCamera>(1, "gameCamera");
 	m_gameCamera->SetTarget(m_player);

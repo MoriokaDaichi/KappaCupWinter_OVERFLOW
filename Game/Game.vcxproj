@@ -266,6 +266,7 @@
     </ClCompile>
     <ClCompile Include="system\system.cpp" />
     <ClCompile Include="weapon\BulletSystem.cpp" />
+    <ClCompile Include="weapon\EnemyGun.cpp" />
     <ClCompile Include="controller\ShootDecider.cpp" />
     <ClCompile Include="weapon\Gun.cpp" />
     <ClCompile Include="weapon\GunModel.cpp" />
@@ -332,6 +333,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system\system.h" />
     <ClInclude Include="weapon\BulletSystem.h" />
+    <ClInclude Include="weapon\EnemyGun.h" />
     <ClInclude Include="controller\ShootDecider.h" />
     <ClInclude Include="weapon\Gun.h" />
     <ClInclude Include="weapon\GunModel.h" />

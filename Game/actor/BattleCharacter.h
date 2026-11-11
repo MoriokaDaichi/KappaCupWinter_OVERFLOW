@@ -9,6 +9,7 @@
 #include "grapple/Grapple.h"
 #include "weapon/Gun.h"
 #include "weapon/GunModel.h"
+#include "weapon/EnemyGun.h"
 #include "weapon/TurretModel.h"
 #include "speed/SpeedSystem.h"
 #include "param/GameParam.h"
@@ -106,6 +107,8 @@ public:
 	/** 銃を返す（持っているときだけ呼ぶ） */
 	Gun& GetGun() { return *m_gun; }
 	const Gun& GetGun() const { return *m_gun; }
+	/** 敵用の銃を持っているか */
+	bool HasEnemyGun() const { return m_enemyGun != nullptr; }
 
 //stateが呼ぶ関数
 public:
@@ -191,6 +194,7 @@ private:
 	TransitionTable m_transitionTable;											///< 切り替え表（設定の transitions から作る）
 	std::unique_ptr<Grapple> m_grapple;											///< グラップルの能力（abilities に "Grapple" があるときだけ作る）
 	std::unique_ptr<Gun> m_gun;													///< 銃（abilities に "Gun" があるときだけ作る）
+	std::unique_ptr<EnemyGun> m_enemyGun;										///< 敵の銃（abilities に "EnemyGun" があるときだけ作る）
 	std::unique_ptr<CharacterAnimation> m_animation;							///< アニメーション（設定に animation があるときだけ作る）
 	std::unique_ptr<HandBones> m_handBones;										///< 手の骨（設定に hands があるときだけ作る）
 	std::unique_ptr<GunModel> m_gunModel;										///< 手に持つ銃の見た目（銃と手の骨の両方があるときだけ作る）

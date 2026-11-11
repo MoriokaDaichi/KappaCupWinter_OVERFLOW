@@ -3,12 +3,10 @@
 
 #include "actor/BattleCharacter.h"
 #include "param/GameParam.h"
-#include "weapon/BulletSystem.h"
 
-void EnemySpawner::Init(const BattleCharacter* player, BulletSystem* bulletSystem)
+void EnemySpawner::Init(const BattleCharacter* player)
 {
 	m_player = player;
-	m_bulletSystem = bulletSystem;
 
 	const std::vector<SpawnParam::Point>& points = nsGameParam::Get().spawn.points;
 	m_spawns.resize(points.size());
@@ -21,7 +19,6 @@ void EnemySpawner::Init(const BattleCharacter* player, BulletSystem* bulletSyste
 		spawn.position = Vector3(point.position[0], point.position[1], point.position[2]);
 		spawn.respawnTime = point.respawnTime;
 		spawn.respawnRadius = point.respawnRadius;
-		spawn.canShoot = point.chara == "Firewall";
 		SpawnEnemy(spawn);
 	}
 }
@@ -33,17 +30,6 @@ void EnemySpawner::Update()
 	for (Spawn& spawn : m_spawns)
 	{
 		BattleCharacter* enemy = spawn.enemy.Get();
-		if (spawn.canShoot && enemy != nullptr && enemy->CanBeTargeted())
-		{
-			spawn.shootTimer -= dt;
-			// 遠くからは撃たない（前の区間にいるプレイヤーに当たらないように）
-			const Vector3 toPlayer = m_player->GetPosition() - enemy->GetPosition();
-			if (spawn.shootTimer <= 0.0f && toPlayer.LengthSq() < TEMP_SHOOT_RANGE * TEMP_SHOOT_RANGE)
-			{
-				Shoot(*enemy);
-				spawn.shootTimer = TEMP_SHOOT_INTERVAL;
-			}
-		}
 
 		if (spawn.respawnTime <= 0.0f || enemy == nullptr || enemy->IsActive())
 		{
@@ -62,6 +48,7 @@ void EnemySpawner::Update()
 		{
 			enemy->Respawn(spawn.position);
 			spawn.respawnTimer = spawn.respawnTime;
+			spawn.controller.Reset();
 		}
 	}
 }
@@ -86,12 +73,13 @@ void EnemySpawner::Reset()
 		if (enemy == nullptr)
 		{
 			SpawnEnemy(spawn);
+			spawn.controller.Reset();
 			continue;
 		}
 
 		enemy->Respawn(spawn.position);
+		spawn.controller.Reset();
 		spawn.respawnTimer = spawn.respawnTime;
-		spawn.shootTimer = 0.0f;
 	}
 }
 
@@ -101,27 +89,16 @@ void EnemySpawner::SpawnEnemy(Spawn& spawn)
 	enemy->SetStartPosition(spawn.position);
 	spawn.controller.SetOwner(enemy);
 	spawn.controller.SetTarget(m_player);
+
+	if (spawn.param->hasShooter)
+	{
+		spawn.controller.InitShooter(spawn.param->shooter);
+	}
+
 	enemy->SetController(&spawn.controller);
 	enemy->SetParam(*spawn.param);
 	enemy->SetReuseOnDefeat(spawn.respawnTime > 0.0f);
 
 	spawn.enemy.Reset(enemy);
 	spawn.respawnTimer = spawn.respawnTime;
-}
-
-void EnemySpawner::Shoot(const BattleCharacter& enemy)
-{
-	const EnemyBulletParam& param = nsGameParam::Get().enemyBullet;
-
-	const Vector3 muzzle = enemy.GetMuzzlePosition();
-	Vector3 direction = m_player->GetChestPosition() - muzzle;
-	direction.Normalize();
-
-	BulletShot shot;
-	shot.tracer = EnEffect::EnemyBullet;
-	shot.lifeTime = param.lifeTime;
-	shot.scale = param.scale;
-	shot.damage = param.damage;
-
-	m_bulletSystem->Fire(muzzle, direction * param.speed, shot, nullptr);
 }

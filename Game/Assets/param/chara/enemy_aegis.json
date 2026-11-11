@@ -1,6 +1,6 @@
 {
   "model": "Assets/modelData/enemy/aegis.tkm",
-  "abilities": [],
+  "abilities": [ "EnemyGun" ],
   "states": [ "Idle", "Run", "Air" ],
   "transitions": [
     { "from": "Idle", "when": [ "NotOnGround" ],         "to": "Air" },
