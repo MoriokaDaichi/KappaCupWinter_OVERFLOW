@@ -19,6 +19,10 @@ void EnemySpawner::Init(const BattleCharacter* player)
 		spawn.position = Vector3(point.position[0], point.position[1], point.position[2]);
 		spawn.respawnTime = point.respawnTime;
 		spawn.respawnRadius = point.respawnRadius;
+		if (point.hasPatrol)
+		{
+			spawn.controller.SetPatrol(spawn.position, Vector3(point.patrolTo[0], point.patrolTo[1], point.patrolTo[2]));
+		}
 		SpawnEnemy(spawn);
 	}
 }
