@@ -76,62 +76,35 @@ void BulletSystem::Update()
 
 void BulletSystem::Fire(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter)
 {
-	for (int i = 0; i < MAX_BULLET; i++)
-	{
-		Bullet& bullet = m_bullets[i];
-
-		if (!bullet.isActive)
-		{
-			bullet.isActive = true;
-			bullet.position = position;
-			bullet.velocity = velocity;
-			bullet.lifeTimer = shot.lifeTime;
-			bullet.scale = shot.scale;
-			bullet.pierce = shot.pierce;
-			bullet.explosionRadius = shot.explosionRadius;
-			bullet.damage = shot.damage;
-			bullet.shooter.Reset(shooter);
-			bullet.target.Clear();
-			bullet.hitTargetIds.clear();
-			bullet.tracer.Reset(nsEffect::Play(shot.tracer, position, shot.scale * m_effectParam.bulletScale));
-			bullet.splitTargets.clear();
-			UpdateBulletView(i);
-
-			return;
-		}
-	}
+	Spawn(position, velocity, shot, shooter);
 }
 
 void BulletSystem::FireHoming(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter,
 	const GOHandle<BattleCharacter>& target)
 {
-	for (int i = 0; i < MAX_BULLET; i++)
+	const int index = Spawn(position, velocity, shot, shooter);
+	// 空きがなければ撃たない
+	if (index == INVALID_BULLET_INDEX)
 	{
-		if (!m_bullets[i].isActive)
-		{
-			// Fire は最初に見つけた空きを使うので、同じ枠に入る
-			Fire(position, velocity, shot, shooter);
-			m_bullets[i].target = target;
-			return;
-		}
+		return;
 	}
+
+	m_bullets[index].target = target;
 }
 
 void BulletSystem::FireSplit(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter,
 	const std::vector<GOHandle<BattleCharacter>>& targets)
 {
-	for (int i = 0; i < MAX_BULLET; i++)
+	const int index = Spawn(position, velocity, shot, shooter);
+	// 空きがなければ撃たない
+	if (index == INVALID_BULLET_INDEX)
 	{
-		if (!m_bullets[i].isActive)
-		{
-			// Fire は最初に見つけた空きを使うので、同じ枠に入る
-			Fire(position, velocity, shot, shooter);
-			m_bullets[i].splitShot = shot;
-			m_bullets[i].splitTimer = m_param.splitDelay;
-			m_bullets[i].splitTargets = targets;
-			return;
-		}
+		return;
 	}
+
+	m_bullets[index].splitShot = shot;
+	m_bullets[index].splitTimer = m_param.splitDelay;
+	m_bullets[index].splitTargets = targets;
 }
 
 void BulletSystem::UpdateHoming(Bullet& bullet, const float dt) const
@@ -359,6 +332,35 @@ void BulletSystem::UpdateSplit(const int index, const float dt)
 	{
 		FireHoming(position, velocity, shot, shooter, target);
 	}
+}
+
+int BulletSystem::Spawn(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter)
+{
+	for (int i = 0; i < MAX_BULLET; i++)
+	{
+		Bullet& bullet = m_bullets[i];
+
+		if (!bullet.isActive)
+		{
+			bullet.isActive = true;
+			bullet.position = position;
+			bullet.velocity = velocity;
+			bullet.lifeTimer = shot.lifeTime;
+			bullet.scale = shot.scale;
+			bullet.pierce = shot.pierce;
+			bullet.explosionRadius = shot.explosionRadius;
+			bullet.damage = shot.damage;
+			bullet.shooter.Reset(shooter);
+			bullet.target.Clear();
+			bullet.hitTargetIds.clear();
+			bullet.tracer.Reset(nsEffect::Play(shot.tracer, position, shot.scale * m_effectParam.bulletScale));
+			bullet.splitTargets.clear();
+			UpdateBulletView(i);
+
+			return i;
+		}
+	}
+	return INVALID_BULLET_INDEX;
 }
 
 void BulletSystem::Render(RenderContext& rc)

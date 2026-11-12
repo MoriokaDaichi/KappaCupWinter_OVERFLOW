@@ -29,10 +29,10 @@ public:
 	void Init(const char* targetName) { m_targetName = targetName; }
 	/** 空いている枠を探して弾を出す。空きがなければ撃たない。shooter は撃った本人（相手を倒すと基礎速度が上がる） */
 	void Fire(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter);
-	/** target の方へ曲がっていく弾を出す */
+	/** target の方へ曲がっていく弾を出す（空きがなければ撃たない） */
 	void FireHoming(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter,
 		const GOHandle<BattleCharacter>& target);
-	/** 少し飛んだ後に、targets の数に分裂してホーミングする弾を出す */
+	/** 少し飛んだ後に、targets の数に分裂してホーミングする弾を出す（空きがなければ撃たない） */
 	void FireSplit(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter,
 		const std::vector<GOHandle<BattleCharacter>>& targets);
 
@@ -43,6 +43,8 @@ private:
 	void Deactivate(const int index);
 	/** 分裂する弾の時間を進め、時間が来たら消して、ロックした相手の数だけホーミング弾を出す（分裂しない弾では何もしない） */
 	void UpdateSplit(const int index, const float dt);
+	/** 空いている枠に弾を入れ、その枠の番号を返す。空きがなければ INVALID_BULLET_INDEX */
+	int Spawn(const Vector3& position, const Vector3& velocity, const BulletShot& shot, BattleCharacter* shooter);
 
 private:
 	/** 弾1発分 */
@@ -84,6 +86,8 @@ private:
 
 	static constexpr int MAX_BULLET = 128;					///< 同時に飛べる弾の数（連射 0.08 秒 × 寿命 2 秒 ≒ 25 発に余裕を持たせる）
 	static constexpr float MODEL_RADIUS = 50.0f;			///< 弾のモデル（debug_anchor.tkm）の大きさ 1 のときの半径
+	static constexpr int INVALID_BULLET_INDEX = -1;			///< Spawn が、空きがないときに返す番号
+
 	std::array<Bullet, MAX_BULLET> m_bullets;				///< 全部の弾。isActive が false の枠は空き
 	std::vector<BattleCharacter*> m_hitTargets;				///< このフレームの相手（Update の中でだけ使う）
 	ModelRender m_modelRender;								///< エフェクトのファイルがないときの弾の見た目（全部の弾でこれ1つ）
