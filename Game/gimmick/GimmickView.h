@@ -29,7 +29,7 @@ public:
 
 private:
 	/** フォワードの描画のときに呼ばれる */
-	void OnForwardRender(RenderContext& rc) override { m_model.Draw(rc, static_cast<int>(m_instances.size())); }
+	void OnForwardRender(RenderContext& rc) override { m_model.Draw(rc, m_count); }
 
 private:
 	/** シェーダーに渡す値（gimmick.fx の Instance と同じ並び） */
@@ -51,7 +51,8 @@ private:
 
 	Model m_model;							///< モデル
 	StructuredBuffer m_instanceBuffer;		///< m_instances をシェーダーへ送る
-	std::vector<Instance> m_instances;		///< 置いた場所
+	std::vector<Instance> m_instances;		///< 置ける数の分の入れ物。使っているのは先頭の m_count 個
 	Constant m_constant;					///< シェーダーに渡す値
 	int m_maxCount = 0;						///< 置ける数
+	int m_count = 0;						///< 置いた数（m_instances の大きさではなく、こちらで数える）
 };

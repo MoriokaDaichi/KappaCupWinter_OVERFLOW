@@ -15,7 +15,7 @@ public:
 	 */
 	void Init(const char* tkmFilePath, const float tint);
 	/** 置いた小物を全部なくす（置き直す前に呼ぶ） */
-	void Clear() { m_instances.clear(); }
+	void Clear() { m_count = 0; }
 	/** 小物を 1 つ足す */
 	void Add(const StageParam::Prop& prop);
 	/** 描く予約をする（毎フレーム呼ぶ） */
@@ -23,7 +23,7 @@ public:
 
 private:
 	/** フォワードの描画のときに呼ばれる */
-	void OnForwardRender(RenderContext& rc) override { m_model.Draw(rc, static_cast<int>(m_instances.size())); }
+	void OnForwardRender(RenderContext& rc) override { m_model.Draw(rc, m_count); }
 
 private:
 	/** シェーダーに渡す値（stageProp.fx の Instance と同じ並び） */
@@ -42,7 +42,8 @@ private:
 
 	Model m_model;							///< 小物のモデル
 	StructuredBuffer m_instanceBuffer;		///< m_instances をシェーダーへ送る
-	std::vector<Instance> m_instances;		///< 置いた小物
+	std::vector<Instance> m_instances;		///< 置ける数の分の入れ物。使っているのは先頭の m_count 個
 	Constant m_constant;					///< シェーダーに渡す値
 	float m_tint = 0.0f;					///< 色
+	int m_count = 0;						///< 置いた数（m_instances の大きさではなく、こちらで数える）
 };

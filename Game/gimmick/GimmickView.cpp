@@ -5,8 +5,8 @@ void GimmickView::Init(const char* tkmFilePath, const Kind kind, const int maxCo
 {
 	m_maxCount = maxCount;
 	m_constant.kind = static_cast<float>(kind);
-	// StructuredBuffer は置ける数の分だけ読むので、先に場所を取っておく
-	m_instances.reserve(maxCount);
+	// StructuredBuffer は置ける数の分だけ読むので、中身ごと作っておく
+	m_instances.resize(maxCount);
 	m_instanceBuffer.Init(sizeof(Instance), maxCount, nullptr);
 
 	ModelInitData initData;
@@ -21,7 +21,7 @@ void GimmickView::Init(const char* tkmFilePath, const Kind kind, const int maxCo
 
 void GimmickView::Add(const Vector3& position, const Vector3& scale)
 {
-	if (static_cast<int>(m_instances.size()) >= m_maxCount)
+	if (m_count >= m_maxCount)
 	{
 		return;
 	}
@@ -29,12 +29,13 @@ void GimmickView::Add(const Vector3& position, const Vector3& scale)
 	Instance instance;
 	instance.position.Set(position.x, position.y, position.z, 0.0f);
 	instance.scale.Set(scale.x, scale.y, scale.z, 0.0f);
-	m_instances.push_back(instance);
+	m_instances[m_count] = instance;
+	m_count++;
 }
 
 void GimmickView::Draw(const float brightness)
 {
-	if (m_instances.empty())
+	if (m_count == 0)
 	{
 		return;
 	}

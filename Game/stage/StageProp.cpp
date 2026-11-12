@@ -4,7 +4,7 @@
 void StageProp::Init(const char* tkmFilePath, const float tint)
 {
 	m_tint = tint;
-	m_instances.reserve(StageParam::MAX_PROP);
+	m_instances.resize(StageParam::MAX_PROP);
 	m_instanceBuffer.Init(sizeof(Instance), StageParam::MAX_PROP, nullptr);
 
 	ModelInitData initData;
@@ -21,15 +21,21 @@ void StageProp::Init(const char* tkmFilePath, const float tint)
 
 void StageProp::Add(const StageParam::Prop& prop)
 {
+	if (m_count >= static_cast<int>(m_instances.size()))
+	{
+		return;
+	}
+
 	Instance instance;
 	instance.positionYaw.Set(prop.position[0], prop.position[1], prop.position[2], Math::DegToRad(prop.yaw));
 	instance.scaleTint.Set(prop.scale[0], prop.scale[1], prop.scale[2], m_tint);
-	m_instances.push_back(instance);
+	m_instances[m_count] = instance;
+	m_count++;
 }
 
 void StageProp::Draw()
 {
-	if (m_instances.empty())
+	if (m_count == 0)
 	{
 		return;
 	}
