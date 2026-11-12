@@ -150,9 +150,12 @@ void BattleCharacter::Stun(const Vector3& knockback)
 
 void BattleCharacter::Warp(const Vector3& position)
 {
+	// ワープ先では落ちて着地させる。Air を持たない（飛ぶ）キャラは Idle にする
+	const EnCharacterState next = HasState(EnCharacterState::Air) ? EnCharacterState::Air : EnCharacterState::Idle;
+
 	// 状態より先に速さを消す（スイング中だと、状態を変えたときにスイングの State の Exit が今の速さを上乗せに残してしまうため）
 	SetMoveSpeed(Vector3::Zero);
-	ChangeState(EnCharacterState::Air);
+	ChangeState(next);
 	m_charaCon.SetPosition(position);
 }
 
