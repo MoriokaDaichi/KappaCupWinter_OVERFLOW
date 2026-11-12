@@ -27,6 +27,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Hands, left, right, rightMidd
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Health, maxHp, killBoost)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Turret, model, height, pivotHeight, muzzleHeight, muzzleForward, maxPitch)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Shooter, detectRange, aimTime, cooldownTime, leadRate)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Fly, speed, accel)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraParam, distance, targetHeight, rotateSpeedX, rotateSpeedY, pitchMin, pitchMax,
 	viewAngleNormal, viewAngleMax, viewAngleLerpRate, maxSpeedForFov, collisionRadius, nearClip, farClip, shoulderOffset,
 	aimDistance, aimShoulderOffset, aimViewAngleDown, aimRotateScale, aimTransitionTime, levelUpViewAngleKick, levelUpKickTime)
@@ -41,8 +42,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(WarningLineParam, thickness, startThickness, 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpeedParam, baseMin, baseMax, bonusMax, groundDecay, idleDecay, wallRunGain, levelUpSpeeds, maxSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EffectParam, hitScale, defeatScale, bulletScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SoundParam, bgm, run, jump, shoot, hit, defeat, explosion, damage, firewallBreak, grappleShoot, grappleHook, swing, dashPad, fenceShock, laserHit)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpawnParam::Point, chara, position, respawnTime, respawnRadius)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpawnParam, points)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Block, position, size)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Prop, model, position, scale, yaw)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Section, name, blocks, panels, anchors, towers, hazards, props, checkpoint, dashPads, fences, lasers)
@@ -84,9 +83,9 @@ void from_json(const nlohmann::json& j, CharacterParam::Transition& transition)
  */
 void from_json(const nlohmann::json& j, CharacterParam& param)
 {
-	static const std::array<const char*, 15> KNOWN_KEYS = {
+	static const std::array<const char*, 16> KNOWN_KEYS = {
 		"model", "abilities", "states", "transitions", "body", "move", "jump",
-		"wallRun", "lock", "swing", "animation", "hands", "health", "turret", "shooter"
+		"wallRun", "lock", "swing", "animation", "hands", "health", "turret", "shooter", "fly"
 	};
 	for (auto it = j.begin(); it != j.end(); ++it)
 	{
@@ -148,6 +147,32 @@ void from_json(const nlohmann::json& j, CharacterParam& param)
 	{
 		j.at("swing").get_to(param.swing);
 	}
+
+	if (Contains(param.states, "Fly"))
+	{
+		j.at("fly").get_to(param.fly);
+	}
+}
+
+/** 敵を出す場所 1 つを読む。patrolTo は書いた場所だけが持つので、マクロ（全部のキーが要る）が使えず、手で書く */
+void from_json(const nlohmann::json& j, SpawnParam::Point& point)
+{
+	j.at("chara").get_to(point.chara);
+	j.at("position").get_to(point.position);
+	j.at("respawnTime").get_to(point.respawnTime);
+	j.at("respawnRadius").get_to(point.respawnRadius);
+
+	point.hasPatrol = j.contains("patrolTo");
+	if (point.hasPatrol)
+	{
+		j.at("patrolTo").get_to(point.patrolTo);
+	}
+}
+
+/** spawn.json を読む。Point を読む関数のすぐ後ろに並べて、読み方を 1 か所で見られるようにする */
+void from_json(const nlohmann::json& j, SpawnParam& param)
+{
+	j.at("points").get_to(param.points);
 }
 
 namespace

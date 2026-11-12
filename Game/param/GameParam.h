@@ -132,6 +132,13 @@ struct CharacterParam
 		float leadRate = 0.0f;			///< 先読みの割合（0 で今の位置、1 で完全に先読み）
 	};
 
+	/** 重力なしで飛ぶための値（states に "Fly" があるキャラだけ読む） */
+	struct Fly
+	{
+		float speed = 0.0f;				///< 飛ぶ速さ
+		float accel = 0.0f;				///< その速さに近づく加速（1 秒あたり）
+	};
+
 	std::string model;		///< モデルのファイル名（.tkm）
 	std::vector<std::string> abilities;		///< 持つ能力の名前（"Grapple"・"Gun"・"EnemyGun"）。書いていない能力は作らない
 	std::vector<std::string> states;		///< 使う State の名前（"Idle"・"Run"・"Air"・"WallRun"・"Swing"）
@@ -152,6 +159,7 @@ struct CharacterParam
 	bool hasTurret = false;			///< JSON に turret を書いたか
 	Shooter shooter;
 	bool hasShooter = false;		///< JSON に shooter を書いたか
+	Fly fly;
 };
 
 /** カメラの値（camera.json） */
@@ -301,6 +309,8 @@ struct SpawnParam
 		std::array<float, 3> position = {};	///< 足元の位置（x, y, z）
 		float respawnTime = 0.0f;			///< 倒されてから湧き直すまでの時間（秒）。0 なら湧き直さない
 		float respawnRadius = 0.0f;			///< プレイヤーがここからこの距離以内にいる間だけ、湧き直しの時間が進む（敵が湧き直す区間）
+		std::array<float, 3> patrolTo = {};	///< 往復するもう一方の端（x, y, z）。position との間を行き来する
+		bool hasPatrol = false;				///< JSON に patrolTo を書いたか（書かなければ巡回しない）
 	};
 
 	std::vector<Point> points;				///< 敵を出す場所の一覧
