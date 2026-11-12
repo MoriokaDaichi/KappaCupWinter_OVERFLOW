@@ -236,6 +236,7 @@
     <ClCompile Include="actor\characterState\SwingState.cpp" />
     <ClCompile Include="actor\characterState\WallRunState.cpp" />
     <ClCompile Include="camera\GameCamera.cpp" />
+    <ClCompile Include="actor\characterState\FlyState.cpp" />
     <ClCompile Include="collision\RayCast.cpp" />
     <ClCompile Include="controller\AIController.cpp" />
     <ClCompile Include="controller\PlayerController.cpp" />
@@ -294,6 +295,7 @@
     <ClInclude Include="actor\characterState\CharacterStateId.h" />
     <ClInclude Include="actor\characterState\StateTransition.h" />
     <ClInclude Include="actor\characterState\TransitionTable.h" />
+    <ClInclude Include="actor\characterState\FlyState.h" />
     <ClInclude Include="gimmick\DashPad.h" />
     <ClInclude Include="gimmick\ElectricFence.h" />
     <ClInclude Include="gimmick\LaserWall.h" />

@@ -11,6 +11,7 @@ namespace
 		EnCharacterAnim::Run,		// WallRun（体を傾けて、壁を走って見せる）
 		EnCharacterAnim::Swing,		// Swing
 		EnCharacterAnim::Stun,		// Stun
+		EnCharacterAnim::Idle,		// Fly（飛ぶキャラ CRAWLER はアニメーションを持たない。持たせるなら浮いている形の Idle を使う）
 	};
 	static_assert(ARRAYSIZE(STATE_TO_ANIM) == static_cast<int>(EnCharacterState::Num),
 		"STATE_TO_ANIM を EnCharacterState に合わせてください");

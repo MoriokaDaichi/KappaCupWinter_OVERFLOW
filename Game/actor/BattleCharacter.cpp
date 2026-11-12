@@ -11,6 +11,7 @@
 #include "actor/characterState/WallRunState.h"
 #include "actor/characterState/SwingState.h"
 #include "actor/characterState/StunState.h"
+#include "actor/characterState/FlyState.h"
 #include <algorithm>
 
 BattleCharacter::BattleCharacter() : m_stateMachine(this)
@@ -517,6 +518,9 @@ void BattleCharacter::AddStateById(const EnCharacterState id)
 		break;
 	case EnCharacterState::Stun:
 		m_stateMachine.AddState<StunState>(id);
+		break;
+	case EnCharacterState::Fly:
+		m_stateMachine.AddState<FlyState>(id);
 		break;
 	case EnCharacterState::Num:		// State ではない（個数）ので作らない
 		break;

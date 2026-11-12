@@ -228,6 +228,9 @@
     <ClCompile Include="weapon\WarningLine.cpp">
       <Filter>weapon</Filter>
     </ClCompile>
+    <ClCompile Include="actor\characterState\FlyState.cpp">
+      <Filter>actor\characterState</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -423,6 +426,9 @@
     </ClInclude>
     <ClInclude Include="weapon\WarningLine.h">
       <Filter>weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\characterState\FlyState.h">
+      <Filter>actor\characterState</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
