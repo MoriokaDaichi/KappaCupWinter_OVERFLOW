@@ -1,10 +1,9 @@
 {
   "model": "Assets/modelData/enemy/crawler.tkm",
   "abilities": [],
-  "states": [ "Idle", "Air" ],
+  "states": [ "Idle", "Fly" ],
   "transitions": [
-    { "from": "Idle", "when": [ "NotOnGround" ], "to": "Air" },
-    { "from": "Air",  "when": [ "Landed" ],      "to": "Idle" }
+    { "from": "Idle", "when": [ "MoveInput" ], "to": "Fly" }
   ],
 
   "body": {
@@ -24,6 +23,10 @@
   "jump": {
     "speed": 600.0,
     "maxCount": 1
+  },
+  "fly": {
+    "speed": 300.0,
+    "accel": 600.0
   },
   "health": {
     "maxHp": 20.0,
