@@ -8,6 +8,9 @@ struct BulletShot;
 /**
  * RT を押している間、一定の間隔で照準の先へ弾を撃つ。Lv3 からは LT で敵をロックし、ロック中に RT で撃つとホーミング弾になる。
  * BattleCharacter が持つ（abilities に "Gun" があるときだけ）
+ * プレイヤー専用。敵には EnemyGun を使う。理由:
+ * 狙いは、渡された aimDirection ではなく、カメラ（g_camera3D）を直接見ている
+ * InitAbilities は、必ずプレイヤーの弾用の "bulletSystem" を渡す（敵に当たる弾）
  */
 class Gun
 {
