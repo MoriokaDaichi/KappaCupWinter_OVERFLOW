@@ -24,6 +24,8 @@ private:
 		float thickness = 0.0f;			///< 輪の太さ（半径に対する割合）
 		float padding[2] = {};			///< 16 バイトにそろえるための空き
 	};
+	// cbuffer は 16 バイトずつ読むので、大きさを 16 の倍数にする（足りなければ padding を足す）
+	static_assert(sizeof(RingData) % 16 == 0, "cbuffer size must be a multiple of 16 (add padding)");
 
 	Sprite m_sprite;					///< 輪を描く板
 	RingData m_ringData;				///< m_sprite がここを毎回シェーダーへ送る（Init の後は動かさない）

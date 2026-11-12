@@ -42,7 +42,10 @@ private:
 	struct Constant
 	{
 		float time = 0.0f;	///< 経過時間（秒）
+		float padding[3] = {};	///< 16 バイトにそろえるための空き
 	};
+	// cbuffer は 16 バイトずつ読むので、大きさを 16 の倍数にする（足りなければ padding を足す）
+	static_assert(sizeof(Constant) % 16 == 0, "cbuffer size must be a multiple of 16 (add padding)");
 
 	static constexpr int FIRST_BLOCK = 1;										///< 0 番は背景なので、箱は 1 番から入れる
 	static constexpr int MAX_INSTANCE = StageParam::MAX_BLOCK + StageParam::MAX_TOWER + StageParam::MAX_HAZARD + FIRST_BLOCK;	///< 枠の数

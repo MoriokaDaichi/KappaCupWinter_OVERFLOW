@@ -48,6 +48,8 @@ private:
 		float align = 0.0f;					///< そろえ方（0 で左、0.5 で真ん中、1 で右）
 		float glowStrength = 0.0f;			///< にじみの強さ
 	};
+	// cbuffer は 16 バイトずつ読むので、大きさを 16 の倍数にする（足りなければ padding を足す）
+	static_assert(sizeof(TextData) % 16 == 0, "cbuffer size must be a multiple of 16 (add padding)");
 
 	static constexpr float CELL_ASPECT = 64.0f / 96.0f;	///< フォントの画像の 1 マスの、幅÷高さ
 	static constexpr float GLOW_STRENGTH = 0.8f;		///< にじみの強さ

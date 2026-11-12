@@ -32,6 +32,8 @@ private:
 		float flag = 0.0f;				///< 切り替え（スピードメーターなら OVERDRIVE 中で 1）
 		float padding = 0.0f;			///< 16 バイトにそろえるための空き
 	};
+	// cbuffer は 16 バイトずつ読むので、大きさを 16 の倍数にする（足りなければ padding を足す）
+	static_assert(sizeof(ShapeData) % 16 == 0, "cbuffer size must be a multiple of 16 (add padding)");
 
 	Sprite m_sprite;					///< 形を描く板
 	ShapeData m_shapeData;				///< m_sprite がここを毎回シェーダーへ送る（Init の後は動かさない）

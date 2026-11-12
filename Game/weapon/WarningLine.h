@@ -27,6 +27,8 @@ private:
 		float time = 0.0f;				///< 出始めからの秒数（ちらつきに使う）
 		float padding[3] = {};			///< 16 バイトにそろえるための空き
 	};
+	// cbuffer は 16 バイトずつ読むので、大きさを 16 の倍数にする（足りなければ padding を足す）
+	static_assert(sizeof(Constant) % 16 == 0, "cbuffer size must be a multiple of 16 (add padding)");
 
 	static constexpr float MODEL_LENGTH = 100.0f;		///< モデルの元の長さ（Z 方向。原点は片方の端）
 	static constexpr float MODEL_DIAMETER = 2.0f;		///< モデルの元の太さ（直径）

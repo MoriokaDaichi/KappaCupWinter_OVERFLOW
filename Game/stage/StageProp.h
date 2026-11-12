@@ -39,6 +39,8 @@ private:
 		Vector3 cameraPos;		///< カメラの位置
 		float time = 0.0f;		///< 経過時間（秒）
 	};
+	// cbuffer は 16 バイトずつ読むので、大きさを 16 の倍数にする（足りなければ padding を足す）
+	static_assert(sizeof(Constant) % 16 == 0, "cbuffer size must be a multiple of 16 (add padding)");
 
 	Model m_model;							///< 小物のモデル
 	StructuredBuffer m_instanceBuffer;		///< m_instances をシェーダーへ送る

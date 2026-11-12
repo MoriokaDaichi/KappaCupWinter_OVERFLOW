@@ -34,6 +34,8 @@ private:
 		Vector3 cameraPos;		///< カメラの位置
 		float time = 0.0f;		///< 経過時間（秒）
 	};
+	// cbuffer は 16 バイトずつ読むので、大きさを 16 の倍数にする（足りなければ padding を足す）
+	static_assert(sizeof(Constant) % 16 == 0, "cbuffer size must be a multiple of 16 (add padding)");
 
 	static constexpr float TOUCH_DISTANCE = 100.0f;			///< 壁の手前の面からこの距離まで近づいたら、触れたとみなす（当たり判定で手前に止まるため）
 	static constexpr float BOUNCE_BACK_SPEED = 1200.0f;		///< 弾き返すときの、後ろ向きの速さ
