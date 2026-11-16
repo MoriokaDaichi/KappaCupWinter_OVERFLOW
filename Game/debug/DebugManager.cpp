@@ -22,7 +22,8 @@ void DebugManager::Init(BattleCharacter* player)
 
 void DebugManager::Update()
 {
-	// F5 で JSON を読み直す（ゲームを止めずに値を調整するため）
+#ifdef K2_DEBUG
+	// F5 で JSON を読み直す（ゲームを止めずに値を調整するため）。提出用の Release では使えないようにする
 	// GetAsyncKeyState はどのウィンドウが手前でも反応するので、ゲームが手前のときだけ見る（VS やブラウザの F5 で読み直さないように）
 	const bool isGameForeground = GetForegroundWindow() == g_hWnd;
 	const bool isReloadKeyDown = isGameForeground && (GetAsyncKeyState(VK_F5) & 0x8000) != 0;
@@ -31,6 +32,7 @@ void DebugManager::Update()
 		nsGameParam::Reload();
 	}
 	m_isReloadKeyDown = isReloadKeyDown;
+#endif // K2_DEBUG
 
 	// Game はプレイヤーより先に Update されるので、ここで戻しておけば、このフレームの移動は固定した速度で行われる
 	if (m_isSpeedLocked && m_player != nullptr)
