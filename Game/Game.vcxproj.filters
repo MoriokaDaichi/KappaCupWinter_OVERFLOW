@@ -186,6 +186,9 @@
     <ClCompile Include="hud\SpeedMeter.cpp">
       <Filter>hud</Filter>
     </ClCompile>
+    <ClCompile Include="hud\TutorialHud.cpp">
+      <Filter>hud</Filter>
+    </ClCompile>
     <ClCompile Include="hud\Hud.cpp">
       <Filter>hud</Filter>
     </ClCompile>
@@ -383,6 +386,9 @@
       <Filter>hud</Filter>
     </ClInclude>
     <ClInclude Include="hud\SpeedMeter.h">
+      <Filter>hud</Filter>
+    </ClInclude>
+    <ClInclude Include="hud\TutorialHud.h">
       <Filter>hud</Filter>
     </ClInclude>
     <ClInclude Include="hud\Hud.h">
