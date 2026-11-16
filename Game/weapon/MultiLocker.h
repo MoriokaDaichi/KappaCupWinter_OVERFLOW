@@ -4,7 +4,8 @@
 class BattleCharacter;
 
 /**
- * LTを押している間、照準に入れ続けた敵を順にロックしていく（マルチロックオン）
+ * 画面の中央の四角に入れ続けた敵を、順にロックしていく（マルチロックオン。ボタンは使わず、いつも動く）
+ * 四角から出た敵はロックしかけに戻し、lockTime の間に戻らなければ外す（柱の陰に一瞬入っただけで外れないように）
  * 敵はロック中に倒されて消えることがあるので、ポインタではなく GOHandle で覚える
  */
 class MultiLocker
@@ -18,11 +19,12 @@ public:
 	};
 
 	/**
-	 * 照準に入っている敵の進み具合を増やし、外れた敵は減らす。満ちた敵をロックする（maxCountまで）
-	 * aimOrigin・aimDirection: 狙いの始点と向き（カメラの位置と前向き）
+	 * 四角に入っている敵の進み具合を増やし、外れた敵は減らす。満ちた敵をロックする（maxCountまで）
+	 * aimOrigin: 狙いの始点（カメラの位置。距離と壁の判定に使う）
+	 * boxHalfSize: 四角の幅と高さの半分（ピクセル。画面の中央が中心）
 	 */
-	void Update(const Vector3& aimOrigin, const Vector3& aimDirection, const int maxCount);
-	/** 倒された敵をロックから外す。毎フレーム呼ぶ（LT を押していないときも、ロックしかけの敵が倒されることがある） */
+	void Update(const Vector3& aimOrigin, const Vector2& boxHalfSize, const int maxCount);
+	/** 倒された敵をロックから外す。毎フレーム呼ぶ（Update を呼ばない Lv でも、ロックしかけの敵が倒されることがある） */
 	void RemoveDeadTargets();
 	/** ロックした敵を返す（ロックした順）。使う前に Get で生きているかを確かめる */
 	const std::vector<GOHandle<BattleCharacter>>& GetTargets() const { return m_targets; }
@@ -32,8 +34,10 @@ public:
 	void Clear();
 
 private:
-	/** target をロックできるか（距離・照準からの角度・壁にさえぎられていないか） */
-	bool CanLock(const BattleCharacter& target, const Vector3& aimOrigin, const Vector3& aimDirection) const;
+	/** target をロックできるか（距離・カメラの前にいるか・四角の中か・壁にさえぎられていないか。軽い判定から順に見る） */
+	bool CanLock(const BattleCharacter& target, const Vector3& aimOrigin, const Vector2& boxHalfSize) const;
+	/** ロックした敵のうち、四角から出た敵をロックしかけ（進み具合 1）に戻す */
+	void ReleaseOutOfBox(const Vector3& aimOrigin, const Vector2& boxHalfSize);
 	/** もうロックしているか */
 	bool IsLocked(const BattleCharacter* target) const;
 	/** ロックしかけている敵の中から target を探す。いなければ nullptr */

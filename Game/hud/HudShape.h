@@ -13,8 +13,8 @@ public:
 	 * @param height		画面の上での高さ（ピクセル）
 	 */
 	void Init(const char* fxFilePath, const float width, const float height);
-	/** screenPos は画面の中央を 0,0 とした中心の位置。value はシェーダーに渡す値 */
-	void Update(const Vector2& screenPos, const Vector4& color, const float value, const float flag = 0.0f);
+	/** screenPos は画面の中央を 0,0 とした中心の位置。value・value2 はシェーダーに渡す値（value2 はロックの四角なら高さの割合） */
+	void Update(const Vector2& screenPos, const Vector4& color, const float value, const float flag = 0.0f, const float value2 = 0.0f);
 	/** 描く予約をする（毎フレーム呼ぶ。呼ばなかったフレームは出ない） */
 	void Draw();
 
@@ -30,7 +30,7 @@ private:
 		float value = 0.0f;				///< 値（スピードメーターなら針の割合）
 		float time = 0.0f;				///< 経過時間（秒）。光の明滅に使う
 		float flag = 0.0f;				///< 切り替え（スピードメーターなら OVERDRIVE 中で 1）
-		float padding = 0.0f;			///< 16 バイトにそろえるための空き
+		float value2 = 0.0f;			///< 2 つ目の値（ロックの四角なら高さの割合。16 バイトにそろえるための空きを使っている）
 	};
 	// cbuffer は 16 バイトずつ読むので、大きさを 16 の倍数にする（足りなければ padding を足す）
 	static_assert(sizeof(ShapeData) % 16 == 0, "cbuffer size must be a multiple of 16 (add padding)");

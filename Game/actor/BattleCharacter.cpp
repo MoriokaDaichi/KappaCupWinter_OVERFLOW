@@ -359,7 +359,7 @@ void BattleCharacter::UpdateAction()
 	FaceAimDirection();
 	if (HasGun())
 	{
-		GetGun().Update(IsShootPress(), IsAimPress(), GetSpeedSystem().GetLevel(), GetChestPosition(), m_rotation, GetCommand().aimOrigin, GetCommand().aimDirection);
+		GetGun().Update(IsShootPress(), GetSpeedSystem().GetLevel(), GetChestPosition(), m_rotation, GetCommand().aimOrigin);
 	}
 	if (HasEnemyGun())
 	{

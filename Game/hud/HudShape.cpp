@@ -15,11 +15,12 @@ void HudShape::Init(const char* fxFilePath, const float width, const float heigh
 	m_sprite.Init(initData);
 }
 
-void HudShape::Update(const Vector2& screenPos, const Vector4& color, const float value, const float flag)
+void HudShape::Update(const Vector2& screenPos, const Vector4& color, const float value, const float flag, const float value2)
 {
 	m_shapeData.color = color;
 	m_shapeData.value = value;
 	m_shapeData.flag = flag;
+	m_shapeData.value2 = value2;
 	m_shapeData.time += g_gameTime->GetFrameDeltaTime();
 	m_sprite.Update(Vector3(screenPos.x, screenPos.y, 0.0f), Quaternion::Identity, Vector3::One);
 }

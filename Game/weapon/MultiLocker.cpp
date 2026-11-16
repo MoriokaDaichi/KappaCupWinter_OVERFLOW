@@ -2,6 +2,7 @@
 #include "weapon/MultiLocker.h"
 
 #include "actor/BattleCharacter.h"
+#include "camera/ScreenPosition.h"
 #include "collision/RayCast.h"
 #include <algorithm>
 
@@ -15,19 +16,22 @@ namespace
 	}
 }
 
-void MultiLocker::Update(const Vector3& aimOrigin, const Vector3& aimDirection, const int maxCount)
+void MultiLocker::Update(const Vector3& aimOrigin, const Vector2& boxHalfSize, const int maxCount)
 {
+	// 先に四角から出た敵を外す（空いた分だけ、このフレームに別の敵をロックできる）
+	ReleaseOutOfBox(aimOrigin, boxHalfSize);
+
 	// 1 秒で lockTime 分の 1 だけ満ちる
 	const float step = g_gameTime->GetFrameDeltaTime() / max(m_param.lockTime, MIN_LOCK_TIME);
 	const bool isFull = static_cast<int>(m_targets.size()) >= maxCount;
 
-	// 照準に入っている敵を集める（もう満杯なら集めないので、ロックしかけの敵は全部減っていく）
+	// 四角に入っている敵を集める（もう満杯なら集めないので、ロックしかけの敵は全部減っていく）
 	std::vector<BattleCharacter*> inAim;
 	if (!isFull)
 	{
 		QueryGOs<BattleCharacter>("enemy", [&](BattleCharacter* enemy)
 			{
-				if (enemy->CanBeTargeted() && !IsLocked(enemy) && CanLock(*enemy, aimOrigin, aimDirection))
+				if (enemy->CanBeTargeted() && !IsLocked(enemy) && CanLock(*enemy, aimOrigin, boxHalfSize))
 				{
 					inAim.push_back(enemy);
 				}
@@ -94,10 +98,28 @@ void MultiLocker::Clear()
 	m_candidates.clear();
 }
 
-bool MultiLocker::CanLock(const BattleCharacter& target, const Vector3& aimOrigin, const Vector3& aimDirection) const
+void MultiLocker::ReleaseOutOfBox(const Vector3& aimOrigin, const Vector2& boxHalfSize)
+{
+	for (auto it = m_targets.begin(); it != m_targets.end();)
+	{
+		const BattleCharacter* target = it->Get();
+		if (target != nullptr && !CanLock(*target, aimOrigin, boxHalfSize))
+		{
+			// 進み具合 1 のロックしかけに戻す。lockTime の間に四角へ戻れば、すぐロックし直す
+			m_candidates.push_back({ *it, 1.0f });
+			it = m_targets.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+bool MultiLocker::CanLock(const BattleCharacter& target, const Vector3& aimOrigin, const Vector2& boxHalfSize) const
 {
 	const Vector3 targetPos = target.GetChestPosition();
-	Vector3 toTarget = targetPos - aimOrigin;
+	const Vector3 toTarget = targetPos - aimOrigin;
 
 	// 遠すぎる
 	if (toTarget.LengthSq() > m_param.lockDistance * m_param.lockDistance)
@@ -105,15 +127,14 @@ bool MultiLocker::CanLock(const BattleCharacter& target, const Vector3& aimOrigi
 		return false;
 	}
 
-	// 照準からの角度が大きすぎる（toTarget を正規化して aimDirection と内積）
-	toTarget.Normalize();
-	const float dot = aimDirection.Dot(toTarget);
-	if (dot < cosf(Math::DegToRad(m_param.lockAngle)))
+	// カメラの後ろにいるか、画面の四角の外にいる
+	Vector2 screenPos;
+	if (!nsScreen::CalcScreenPosition(targetPos, screenPos) || !nsScreen::IsInCenterBox(screenPos, boxHalfSize))
 	{
 		return false;
 	}
 
-	// 壁にさえぎられている（aimOrigin から targetPos へレイ）
+	// 壁にさえぎられている（aimOrigin から targetPos へレイ。いちばん重いので最後に見る）
 	if (nsCollision::RayCast(aimOrigin, targetPos).isHit)
 	{
 		return false;

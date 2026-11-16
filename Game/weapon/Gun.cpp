@@ -6,21 +6,22 @@
 #include "actor/BattleCharacter.h"
 #include "sound/GameSound.h"
 
-void Gun::Update(const bool isShootPress, const bool isAimPress, const int level, const Vector3& chest, const Quaternion& rotation,
-	const Vector3& aimOrigin, const Vector3& aimDirection)
+void Gun::Update(const bool isShootPress, const int level, const Vector3& chest, const Quaternion& rotation, const Vector3& aimOrigin)
 {
 	const int index = max(0, min(level - 1, static_cast<int>(m_param.levels.size()) - 1));
 	const GunParam::Level& levelParam = m_param.levels[index];
 
+	m_lockBoxHalfSize = Vector2(levelParam.lockBoxWidth * 0.5f, levelParam.lockBoxHeight * 0.5f);
+
 	m_multiLocker.RemoveDeadTargets();
 
-	if (isAimPress && levelParam.lockCount > 0)
+	if (levelParam.lockCount > 0)
 	{
-		m_multiLocker.Update(aimOrigin, aimDirection, levelParam.lockCount);
+		m_multiLocker.Update(aimOrigin, m_lockBoxHalfSize, levelParam.lockCount);
 	}
 	else
 	{
-		// LT を離したときと、被弾してロックできない Lv に下がったときは外す
+		// ロックしない Lv（lockCount が 0）にしたときは外す
 		m_multiLocker.Clear();
 	}
 

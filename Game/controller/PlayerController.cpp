@@ -18,7 +18,7 @@ void PlayerController::MakeCommand(CharacterCommand& command)
 	command.grappleTrigger = m_input->IsTrigger(EnInputAction::Grapple);
 	command.grappleRelease = m_input->IsRelease(EnInputAction::Grapple);
 	command.shootPress = m_input->IsPress(EnInputAction::Shoot);
-	command.aimPress = m_input->IsPress(EnInputAction::Aim);
+	// aimPress は使わない（2026-11-16 に LT の構えをやめた。敵は予告線を出すのに使う）
 
 	command.aimOrigin = g_camera3D->GetPosition();
 	command.aimDirection = g_camera3D->GetForward();

@@ -4,9 +4,8 @@
   "aimHoldTime": 0.5,
   "muzzleRight": 20.0,
   "muzzleForward": 30.0,
-  "lockAngle": 15.0,
   "lockDistance": 5000.0,
-  "lockTime": 0.4,
+  "lockTime": 0.25,
   "homingSpeed": 6000.0,
   "homingTurnRate": 4.0,
   "lockShootInterval": 0.3,
@@ -19,7 +18,9 @@
       "bulletScale": 0.2,
       "pierce": false,
       "explosionRadius": 0.0,
-      "lockCount": 0
+      "lockCount": 1,
+      "lockBoxWidth": 400.0,
+      "lockBoxHeight": 260.0
     },
     {
       "shootInterval": 0.10,
@@ -28,7 +29,9 @@
       "bulletScale": 0.2,
       "pierce": false,
       "explosionRadius": 0.0,
-      "lockCount": 0
+      "lockCount": 2,
+      "lockBoxWidth": 480.0,
+      "lockBoxHeight": 310.0
     },
     {
       "shootInterval": 0.08,
@@ -37,7 +40,9 @@
       "bulletScale": 0.2,
       "pierce": false,
       "explosionRadius": 0.0,
-      "lockCount": 3
+      "lockCount": 3,
+      "lockBoxWidth": 560.0,
+      "lockBoxHeight": 360.0
     },
     {
       "shootInterval": 0.08,
@@ -46,7 +51,9 @@
       "bulletScale": 0.25,
       "pierce": true,
       "explosionRadius": 0.0,
-      "lockCount": 5
+      "lockCount": 5,
+      "lockBoxWidth": 660.0,
+      "lockBoxHeight": 420.0
     },
     {
       "shootInterval": 0.08,
@@ -55,7 +62,9 @@
       "bulletScale": 0.35,
       "pierce": true,
       "explosionRadius": 300.0,
-      "lockCount": 8
+      "lockCount": 8,
+      "lockBoxWidth": 760.0,
+      "lockBoxHeight": 480.0
     }
   ]
 }

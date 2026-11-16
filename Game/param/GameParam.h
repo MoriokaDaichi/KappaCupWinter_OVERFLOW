@@ -179,11 +179,6 @@ struct CameraParam
 	float nearClip = 0.0f;				///< 近くの描画の限界（Start でだけ使う）。near は Windows のマクロと重なるので使わない
 	float farClip = 0.0f;				///< 遠くの描画の限界（Start でだけ使う。ステージが広いので大きめ）
 	float shoulderOffset = 0.0f;		///< 注視点を右にずらす量
-	float aimDistance = 0.0f;			///< 構えたときの、注視点からカメラまでの距離
-	float aimShoulderOffset = 0.0f;		///< 構えたときの、肩のずらし量
-	float aimViewAngleDown = 0.0f;		///< 構えたときに視野角を狭める量（度）
-	float aimRotateScale = 0.0f;		///< 構えたときの感度の倍率
-	float aimTransitionTime = 0.0f;		///< 構える／戻すのにかかる時間（秒）
 	float levelUpViewAngleKick = 0.0f;	///< 速度 Lv が上がった瞬間に、視野角を広げる量（度）
 	float levelUpKickTime = 0.0f;		///< 広げた視野角が戻るまでの時間（秒）
 };
@@ -211,9 +206,8 @@ struct GunParam
 	float aimHoldTime = 0.0f;			///< 撃つのをやめてから、体を前に向けておく時間・秒
 	float muzzleRight = 0.0f;			///< 銃口の位置。胸から体の右へずらす量
 	float muzzleForward = 0.0f;			///< 銃口の位置。胸から体の前へずらす量
-	float lockAngle = 0.0f;				///< 画面の中央からこの角度（度）以内の敵をロックする
 	float lockDistance = 0.0f;			///< この距離より遠い敵はロックしない
-	float lockTime = 0.0f;				///< 照準に入れ続けてからロックするまでの時間（秒）
+	float lockTime = 0.0f;				///< 四角に入れ続けてからロックするまでの時間（秒）。ロックした敵が四角から出ても、同じ時間だけはロックを残す
 	float homingSpeed = 0.0f;			///< ホーミング弾の速さ
 	float homingTurnRate = 0.0f;		///< ホーミング弾が 1 秒に相手の方へ曲がる割合
 	float lockShootInterval = 0.0f;		///< ロック中に撃つ間隔（秒）
@@ -227,7 +221,9 @@ struct GunParam
 		float bulletScale = 0.0f;			///< 弾丸の大きさ
 		bool pierce = false;				///< 弾が貫通するかどうか
 		float explosionRadius = 0.0f;		///< 爆発の半径（0 なら爆発しない）
-		int lockCount = 0;					///< 一度にロックできる数（0 ならマルチロックオンを使わない）
+		int lockCount = 0;					///< 一度にロックできる数（0 ならロックしない）
+		float lockBoxWidth = 0.0f;			///< ロックする四角（画面の中央）の幅（ピクセル。画面は 1920×1080）
+		float lockBoxHeight = 0.0f;			///< ロックする四角の高さ（ピクセル）
 	};
 
 	std::vector<Level> levels;				///< レベルの一覧

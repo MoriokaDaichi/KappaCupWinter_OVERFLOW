@@ -1,20 +1,24 @@
 ﻿#pragma once
+#include "hud/HudShape.h"
 #include "hud/LockOnRing.h"
 
 class BattleCharacter;
 
-/** プレイヤーがロックしかけている敵・ロックした敵の胸の位置に、ドーナツを出す。Game が持つ */
+/**
+ * プレイヤーがロックしかけている敵・ロックした敵の胸の位置に、ドーナツを出す。Game が持つ
+ * 画面の中央には、ロックする範囲の四角を出す（大きさは Gun が判定に使うものと同じ）
+ */
 class LockOnHud
 {
 public:
-	/** 輪を作り、見るプレイヤーを受け取る（借りているだけ） */
+	/** 輪と四角を作り、見るプレイヤーを受け取る（借りているだけ） */
 	void Init(const BattleCharacter* player);
 	/** 毎フレーム Game の Render から呼ぶ（全員が動いた後の位置に出すため） */
 	void Draw(RenderContext& rc);
 
 private:
-	/** target の胸の画面の上の位置を出す。カメラの後ろにいるときは false */
-	bool CalcScreenPosition(const BattleCharacter& target, Vector2& screenPos) const;
+	/** 画面の中央に、今の Lv でロックする範囲の四角を出す */
+	void DrawLockBox();
 	/** 空いている輪を 1 つ使って描く。輪が足りないときは描かない */
 	void DrawRing(RenderContext& rc, const BattleCharacter& target, const float progress, const Vector4& color);
 
@@ -24,5 +28,7 @@ private:
 
 	std::array<LockOnRing, MAX_RING> m_rings;			///< 輪（1 つの Sprite は 1 フレームに 1 回しか描けないので、出す数だけ持つ）
 	int m_usedRingNum = 0;								///< このフレームに使った輪の数
+	HudShape m_lockBox;									///< ロックする範囲の四角（Assets/shader/hudLockBox.fx）
+	Vector2 m_lockBoxMaxSize = Vector2::Zero;			///< 四角の板の大きさ（全部の Lv の中でいちばん大きい四角。ピクセル）
 	const BattleCharacter* m_player = nullptr;			///< 見るプレイヤー（借りているだけ）
 };

@@ -30,12 +30,13 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Shooter, detectRange, aimTime
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Fly, speed, accel)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraParam, distance, targetHeight, rotateSpeedX, rotateSpeedY, pitchMin, pitchMax,
 	viewAngleNormal, viewAngleMax, viewAngleLerpRate, maxSpeedForFov, collisionRadius, nearClip, farClip, shoulderOffset,
-	aimDistance, aimShoulderOffset, aimViewAngleDown, aimRotateScale, aimTransitionTime, levelUpViewAngleKick, levelUpKickTime)
+	levelUpViewAngleKick, levelUpKickTime)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GravityParam, gravity, fallMultiplier, maxFallSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnchorParam, normalScale, lockedScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GrappleWireParam, thicknessScale)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam::Level, shootInterval, damage, bulletSpeed, bulletScale, pierce, explosionRadius, lockCount)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam, range, bulletLifeTime, aimHoldTime, muzzleRight, muzzleForward, levels, lockAngle,
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam::Level, shootInterval, damage, bulletSpeed, bulletScale, pierce, explosionRadius, lockCount,
+	lockBoxWidth, lockBoxHeight)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam, range, bulletLifeTime, aimHoldTime, muzzleRight, muzzleForward, levels,
 	lockDistance, lockTime, homingSpeed, homingTurnRate, lockShootInterval, splitDelay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EnemyBulletParam, speed, lifeTime, scale, damage)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(WarningLineParam, thickness, startThickness, growTime, brightness, pastTargetLength)

@@ -7,7 +7,6 @@ namespace
     const EnButton ACTION_TO_BUTTON[] = {
         enButtonA,    // Jump
         enButtonRB2,  // Shoot
-        enButtonLB2,  // Aim
         enButtonRB1,  // Grapple
         enButtonStart // Pause
     };

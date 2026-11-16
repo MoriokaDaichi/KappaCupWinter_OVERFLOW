@@ -96,6 +96,9 @@
     <ClCompile Include="camera\GameCamera.cpp">
       <Filter>camera</Filter>
     </ClCompile>
+    <ClCompile Include="camera\ScreenPosition.cpp">
+      <Filter>camera</Filter>
+    </ClCompile>
     <ClCompile Include="actor\characterState\WallRunState.cpp">
       <Filter>actor\characterState</Filter>
     </ClCompile>
@@ -278,6 +281,9 @@
       <Filter>actor</Filter>
     </ClInclude>
     <ClInclude Include="camera\GameCamera.h">
+      <Filter>camera</Filter>
+    </ClInclude>
+    <ClInclude Include="camera\ScreenPosition.h">
       <Filter>camera</Filter>
     </ClInclude>
     <ClInclude Include="actor\characterState\WallRunState.h">

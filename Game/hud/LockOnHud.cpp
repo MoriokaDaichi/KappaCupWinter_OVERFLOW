@@ -2,12 +2,15 @@
 #include "hud/LockOnHud.h"
 
 #include "actor/BattleCharacter.h"
+#include "camera/ScreenPosition.h"
+#include "param/GameParam.h"
 
 namespace
 {
 	// Vector4 は constexpr にできないので、クラスの定数ではなくここに置く
 	const Vector4 FILLING_COLOR(1.0f, 1.0f, 1.0f, 0.9f);		///< ロックしかけの色
 	const Vector4 LOCKED_COLOR(1.0f, 0.25f, 0.2f, 1.0f);		///< ロックした色
+	const Vector4 LOCK_BOX_COLOR(0.0f, 0.90f, 1.0f, 0.5f);		///< ロックする範囲の四角の色（シアン #00e5ff を薄く）
 }
 
 void LockOnHud::Init(const BattleCharacter* player)
@@ -18,6 +21,30 @@ void LockOnHud::Init(const BattleCharacter* player)
 	{
 		ring.Init(RING_SIZE);
 	}
+
+	// 板は 1 枚だけ作るので、どの Lv の四角も入るように、いちばん大きい幅と高さにする
+	for (const GunParam::Level& level : nsGameParam::Get().gun.levels)
+	{
+		m_lockBoxMaxSize.x = max(m_lockBoxMaxSize.x, level.lockBoxWidth);
+		m_lockBoxMaxSize.y = max(m_lockBoxMaxSize.y, level.lockBoxHeight);
+	}
+	m_lockBox.Init("Assets/shader/hudLockBox.fx", m_lockBoxMaxSize.x, m_lockBoxMaxSize.y);
+}
+
+void LockOnHud::DrawLockBox()
+{
+	if (m_lockBoxMaxSize.x <= 0.0f || m_lockBoxMaxSize.y <= 0.0f)
+	{
+		return;
+	}
+
+	// 板に対する今の四角の割合をシェーダーに渡す（半分の大きさ × 2 ＝ 幅・高さ）
+	const Vector2& halfSize = m_player->GetGun().GetLockBoxHalfSize();
+	const float widthRate = halfSize.x * 2.0f / m_lockBoxMaxSize.x;
+	const float heightRate = halfSize.y * 2.0f / m_lockBoxMaxSize.y;
+
+	m_lockBox.Update(Vector2::Zero, LOCK_BOX_COLOR, widthRate, 0.0f, heightRate);
+	m_lockBox.Draw();
 }
 
 void LockOnHud::Draw(RenderContext& rc)
@@ -26,6 +53,8 @@ void LockOnHud::Draw(RenderContext& rc)
 	{
 		return;
 	}
+
+	DrawLockBox();
 
 	m_usedRingNum = 0;
 	const MultiLocker& locker = m_player->GetGun().GetMultiLocker();
@@ -50,21 +79,6 @@ void LockOnHud::Draw(RenderContext& rc)
 	}
 }
 
-bool LockOnHud::CalcScreenPosition(const BattleCharacter& target, Vector2& screenPos) const
-{
-	const Vector3 chest = target.GetChestPosition();
-
-	// カメラの後ろの点も画面に映ってしまう（前後が逆さに出る）ので、出さない
-	const Vector3 toTarget = chest - g_camera3D->GetPosition();
-	if (toTarget.Dot(g_camera3D->GetForward()) <= 0.0f)
-	{
-		return false;
-	}
-
-	g_camera3D->CalcScreenPositionFromWorldPosition(screenPos, chest);
-	return true;
-}
-
 void LockOnHud::DrawRing(RenderContext& rc, const BattleCharacter& target, const float progress, const Vector4& color)
 {
 	if (m_usedRingNum >= MAX_RING)
@@ -73,7 +87,7 @@ void LockOnHud::DrawRing(RenderContext& rc, const BattleCharacter& target, const
 	}
 
 	Vector2 screenPos;
-	if (!CalcScreenPosition(target, screenPos))
+	if (!nsScreen::CalcScreenPosition(target.GetChestPosition(), screenPos))
 	{
 		return;
 	}

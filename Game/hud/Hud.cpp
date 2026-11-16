@@ -2,6 +2,7 @@
 #include "hud/Hud.h"
 
 #include "actor/BattleCharacter.h"
+#include "camera/ScreenPosition.h"
 #include "gimmick/Anchor.h"
 #include "gimmick/GiantFirewall.h"
 #include "param/GameParam.h"
@@ -118,15 +119,12 @@ void Hud::DrawGrappleMarker()
 		return;
 	}
 
-	// カメラの後ろの点も画面に映ってしまう（前後が逆さに出る）ので、出さない
-	const Vector3 toAnchor = anchor->GetPosition() - g_camera3D->GetPosition();
-	if (toAnchor.Dot(g_camera3D->GetForward()) <= 0.0f)
+	// カメラの後ろにあるときは出さない
+	Vector2 screenPos;
+	if (!nsScreen::CalcScreenPosition(anchor->GetPosition(), screenPos))
 	{
 		return;
 	}
-
-	Vector2 screenPos;
-	g_camera3D->CalcScreenPositionFromWorldPosition(screenPos, anchor->GetPosition());
 
 	m_bracket.Update(screenPos, GRAPPLE_COLOR, 0.0f);
 	m_bracket.Draw();

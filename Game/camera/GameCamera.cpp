@@ -25,7 +25,6 @@ void GameCamera::Update()
 		return;
 	}
 
-	UpdateAimRate();
 	Rotate();
 	UpdateViewAngle();
 	UpdatePosition();
@@ -38,10 +37,9 @@ void GameCamera::Rotate()
 	const Vector2 stick = m_input->GetCamera();
 
 	const float dt = g_gameTime->GetFrameDeltaTime();
-	const float scale = Math::Lerp(m_aimRate, 1.0f, m_param.aimRotateScale);
 
-	m_yaw += stick.x * m_param.rotateSpeedX * dt * scale;
-	m_pitch += stick.y * m_param.rotateSpeedY * dt * scale;
+	m_yaw += stick.x * m_param.rotateSpeedX * dt;
+	m_pitch += stick.y * m_param.rotateSpeedY * dt;
 
 	if (m_pitch < m_param.pitchMin)
 	{
@@ -77,15 +75,15 @@ void GameCamera::UpdateViewAngle()
 	const float kickRate = (m_param.levelUpKickTime > 0.0f) ? m_kickTimer / m_param.levelUpKickTime : 0.0f;
 	const float kick = m_param.levelUpViewAngleKick * kickRate * kickRate;
 
-	const float viewAngle = m_viewAngle - m_aimRate * m_param.aimViewAngleDown + kick;
+	const float viewAngle = m_viewAngle + kick;
 
 	g_camera3D->SetViewAngle(Math::DegToRad(viewAngle));
 }
 
 void GameCamera::UpdatePosition()
 {
-	const float distance = Math::Lerp(m_aimRate, m_param.distance, m_param.aimDistance);
-	const float shoulderOffset = Math::Lerp(m_aimRate, m_param.shoulderOffset, m_param.aimShoulderOffset);
+	const float distance = m_param.distance;
+	const float shoulderOffset = m_param.shoulderOffset;
 
 	Vector3 pivot = m_player->GetPosition();
 	pivot.y += m_param.targetHeight;
@@ -135,19 +133,4 @@ void GameCamera::UpdatePosition()
 
 	g_camera3D->SetTarget(shoulderResult);
 	g_camera3D->SetPosition(result);
-}
-
-void GameCamera::UpdateAimRate()
-{
-	const float step = g_gameTime->GetFrameDeltaTime() / m_param.aimTransitionTime;
-	const float target = m_input->IsPress(EnInputAction::Aim) ? 1.0f : 0.0f;
-
-	if (m_aimRate < target)
-	{
-		m_aimRate = min(m_aimRate + step, target);
-	}
-	else
-	{
-		m_aimRate = max(m_aimRate - step, target);
-	}
 }

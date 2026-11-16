@@ -6,7 +6,7 @@
     { "z": 4800.0,   "text": "RUN ALONG WALLS" },
     { "z": 10800.0,  "text": "AVOID FENCES" },
     { "z": 14800.0,  "text": "[RB] HOLD SWING" },
-    { "z": 33600.0,  "text": "[LT]AIM [RT]FIRE" },
+    { "z": 33600.0,  "text": "[RT] FIRE IN BOX" },
     { "z": 84700.0,  "text": "LASERS BLINK" },
     { "z": 101800.0, "text": "MAX SPEED BREAKS" }
   ]
