@@ -2,6 +2,7 @@
 #include "hud/HudShape.h"
 #include "hud/HudText.h"
 #include "hud/SpeedMeter.h"
+#include "hud/TutorialHud.h"
 
 class BattleCharacter;
 class Checkpoint;
@@ -9,17 +10,17 @@ class GiantFirewall;
 
 /**
  * ゲーム中の HUD（企画書の下書き「ゲーム画面」の配置）。Game が持つ
- * 左上にタイム、右上にチェックポイント、真ん中に照準、右下にスピードメーター、ロックしたアンカーに角カッコを出す
+ * 左上にタイム、右上にチェックポイント、真ん中に照準、右下にスピードメーター、ロックしたアンカーに角カッコ、上のほうに案内を出す
  */
 class Hud
 {
 public:
 	/** 見るものを受け取る（どれも借りているだけ） */
 	void Init(const BattleCharacter* player, const Checkpoint* checkpoint, const GiantFirewall* giantFirewall);
-	/** タイムを進める。巨大ファイアウォールを突破したら止める（毎フレーム Game の Update から呼ぶ） */
+	/** 案内を進め、タイムを進める。タイムは巨大ファイアウォールを突破したら止める（毎フレーム Game の Update から呼ぶ） */
 	void Update();
-	/** タイムを 0 に戻す（最初からやり直すとき） */
-	void Reset() { m_time = 0.0f; }
+	/** タイムを 0 に戻し、案内を最初からにする（最初からやり直すとき） */
+	void Reset() { m_time = 0.0f; m_tutorial.Reset(); }
 	/** 全部を描く（毎フレーム Game の Render から呼ぶ。全員が動いた後の位置に出すため） */
 	void Draw();
 
@@ -48,6 +49,7 @@ private:
 	float m_time = 0.0f;								///< 経過時間（秒）。突破したら止まる
 
 	SpeedMeter m_speedMeter;							///< 右下のスピードメーター
+	TutorialHud m_tutorial;								///< 上のほうの案内
 	HudShape m_crosshair;								///< 真ん中の照準（Assets/shader/hudCrosshair.fx）
 	HudShape m_bracket;									///< ロックしたアンカーを囲む角カッコ（Assets/shader/hudBracket.fx）
 	HudText m_timeLabel;								///< 「TIME」

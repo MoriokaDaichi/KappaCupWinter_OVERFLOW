@@ -24,6 +24,7 @@ void Hud::Init(const BattleCharacter* player, const Checkpoint* checkpoint, cons
 	m_time = 0.0f;
 
 	m_speedMeter.Init(player);
+	m_tutorial.Init(player);
 	m_crosshair.Init("Assets/shader/hudCrosshair.fx", CROSSHAIR_SIZE, CROSSHAIR_SIZE);
 	m_bracket.Init("Assets/shader/hudBracket.fx", BRACKET_SIZE, BRACKET_SIZE);
 
@@ -50,6 +51,9 @@ void Hud::Init(const BattleCharacter* player, const Checkpoint* checkpoint, cons
 
 void Hud::Update()
 {
+	// 案内はタイムが止まった後も進める（突破の後の案内を出し、出したものを消すため）
+	m_tutorial.Update();
+
 	if (m_giantFirewall != nullptr && m_giantFirewall->IsBroken())
 	{
 		return;
@@ -70,6 +74,7 @@ void Hud::Draw()
 	DrawGrappleMarker();
 	DrawInfo();
 	m_speedMeter.Draw();
+	m_tutorial.Draw();
 }
 
 void Hud::DrawInfo()
