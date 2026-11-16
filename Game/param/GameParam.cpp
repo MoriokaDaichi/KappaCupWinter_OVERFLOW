@@ -39,6 +39,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GunParam, range, bulletLifeTime, aimHoldTime,
 	lockDistance, lockTime, homingSpeed, homingTurnRate, lockShootInterval, splitDelay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EnemyBulletParam, speed, lifeTime, scale, damage)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(WarningLineParam, thickness, startThickness, growTime, brightness, pastTargetLength)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TutorialParam::Message, z, text)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TutorialParam, showTime, messages)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpeedParam, baseMin, baseMax, bonusMax, groundDecay, idleDecay, wallRunGain, levelUpSpeeds, maxSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EffectParam, hitScale, defeatScale, bulletScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SoundParam, bgm, run, jump, shoot, hit, defeat, explosion, damage, firewallBreak, grappleShoot, grappleHook, swing, dashPad, fenceShock, laserHit)
@@ -427,6 +429,24 @@ namespace
 		}
 	}
 
+	/** 案内の文字が長すぎないか（長い分は表示されない）と、z の小さい順に並んでいるか（表示する側が前から順に見るため）を確かめる */
+	void CheckTutorial(const TutorialParam& tutorial)
+	{
+		float prevZ = -FLT_MAX;
+		for (const TutorialParam::Message& message : tutorial.messages)
+		{
+			if (message.text.size() > TutorialParam::MAX_TEXT_LENGTH)
+			{
+				throw std::runtime_error("Assets/param/tutorial.json\ntext is too long: " + message.text);
+			}
+			if (message.z < prevZ)
+			{
+				throw std::runtime_error("Assets/param/tutorial.json\nmessages must be sorted by z: " + message.text);
+			}
+			prevZ = message.z;
+		}
+	}
+
 	/** path の JSON を読んで out に入れる。失敗したら、ファイル名を付けた例外を投げる */
 	template <class T>
 	void ReadFile(const char* path, T& out)
@@ -470,6 +490,7 @@ namespace
 		ReadFile("Assets/param/gun.json", out.gun);
 		ReadFile("Assets/param/enemy_bullet.json", out.enemyBullet);
 		ReadFile("Assets/param/warning_line.json", out.warningLine);
+		ReadFile("Assets/param/tutorial.json", out.tutorial);
 		ReadFile("Assets/param/speed.json", out.speed);
 		ReadFile("Assets/param/debug.json", out.debug);
 
@@ -479,6 +500,7 @@ namespace
 		CheckCharacter("Assets/param/chara/enemy_crawler.json", out.enemyCrawler);
 		CheckSpawn(out);
 		CheckStage(out.stage);
+		CheckTutorial(out.tutorial);
 
 		const size_t speedLevelCount = out.speed.levelUpSpeeds.size() + 1;
 		const size_t gunLevelCount = out.gun.levels.size();

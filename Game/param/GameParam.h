@@ -252,6 +252,22 @@ struct WarningLineParam
 	float pastTargetLength = 0.0f;	///< 狙う点からさらに伸ばす長さ（狙う点で切れると、相手を貫いているように見えないため）
 };
 
+/** 各要素が初めて出る場所で出す案内（tutorial.json） */
+struct TutorialParam
+{
+	/** 案内 1 つ */
+	struct Message
+	{
+		float z = 0.0f;					///< プレイヤーがこの奥行き（z）を越えたら出す
+		std::string text;				///< 出す文字（HUD の文字。英大文字・数字・記号だけ、MAX_TEXT_LENGTH 文字まで）
+	};
+
+	static constexpr int MAX_TEXT_LENGTH = 16;	///< 案内の文字数の上限（HudText::MAX_LENGTH と同じ。GameParam は HUD を知らないので、ここにも置く）
+
+	float showTime = 0.0f;				///< 1 つの案内を出しておく秒数
+	std::vector<Message> messages;		///< 案内の一覧（z の小さい順に並べる）
+};
+
 /** グラップルのワイヤーの値（grappleWire.json） */
 struct GrappleWireParam
 {
@@ -427,6 +443,7 @@ struct GameParam
 	GunParam gun;
 	EnemyBulletParam enemyBullet;
 	WarningLineParam warningLine;
+	TutorialParam tutorial;
 	SpeedParam speed;
 	DebugParam debug;
 };
