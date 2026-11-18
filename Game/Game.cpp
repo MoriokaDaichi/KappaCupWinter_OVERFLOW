@@ -71,7 +71,9 @@ void Game::Update()
 	InputManager::GetInstance().Update();
 
 	m_debugManager.Update();
-	if (m_debugManager.ConsumeResetRequest())
+	// Back ボタン（キーボードはスペース）でも最初からやり直せる。デバッグ画面のない Release でも使える（試遊会用）
+	const bool isRestartPressed = InputManager::GetInstance().IsTrigger(EnInputAction::Restart);
+	if (m_debugManager.ConsumeResetRequest() || isRestartPressed)
 	{
 		Reset();
 	}
