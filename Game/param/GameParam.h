@@ -281,6 +281,8 @@ struct SpeedParam
 	float wallRunGain = 0.0f;			///< 壁走り中に、上乗せが1秒あたりに増える量
 	std::array<float, 4> levelUpSpeeds = {};	///< Lv2・3・4・5 になる速さ
 	float maxSpeed = 0.0f;				///< メーターが振り切る速さ
+	float surgeSpeed = 0.0f;			///< ダッシュ板に乗ったときに、少しの間だけ走る速さに足す量（上乗せの上限とは別。Lv とメーターには入れない）
+	float surgeDecay = 0.0f;			///< その足した量が、1秒あたりに減る量
 };
 
 /** エフェクトの値（effect.json） */

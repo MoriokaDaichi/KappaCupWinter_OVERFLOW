@@ -42,7 +42,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EnemyBulletParam, speed, lifeTime, scale, dam
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(WarningLineParam, thickness, startThickness, growTime, brightness, pastTargetLength)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TutorialParam::Message, z, text)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TutorialParam, showTime, messages)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpeedParam, baseMin, baseMax, bonusMax, groundDecay, idleDecay, wallRunGain, levelUpSpeeds, maxSpeed)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpeedParam, baseMin, baseMax, bonusMax, groundDecay, idleDecay, wallRunGain, levelUpSpeeds, maxSpeed, surgeSpeed, surgeDecay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EffectParam, hitScale, defeatScale, bulletScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SoundParam, bgm, run, jump, shoot, hit, defeat, explosion, damage, firewallBreak, grappleShoot, grappleHook, swing, dashPad, fenceShock, laserHit)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Block, position, size)

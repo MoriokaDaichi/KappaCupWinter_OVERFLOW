@@ -17,6 +17,8 @@ void DashPad::OnEnter(BattleCharacter& player)
 {
 	nsSound::Play(EnSound::DashPad);
 	player.GetSpeedSystem().AddBonus(BOOST);
+	// 上乗せが上限だと AddBonus では増えないので、上限とは別のサージでも加速させる（いつ乗っても速くなる）
+	player.GetSpeedSystem().StartSurge();
 	player.AddMoveSpeed(Vector3(0.0f, 0.0f, PUSH_SPEED));
 }
 

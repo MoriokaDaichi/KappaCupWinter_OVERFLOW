@@ -62,7 +62,7 @@
     "tiltAngle": 30.0
   },
   "lock": {
-    "maxDistance": 3000.0,
+    "maxDistance": 4500.0,
     "maxAngle": 30.0,
     "angleWeight": 0.7,
     "distanceWeight": 0.3,
@@ -77,7 +77,7 @@
     "reelEase": 3.0,
     "pumpAccel": 800.0,
     "faceMinSpeed": 50.0,
-    "maxSpeed": 2000.0,
+    "maxSpeed": 2960.0,
     "releaseBoost": 300.0,
     "releaseLift": 0.0,
     "releaseMinSpeed": 300.0

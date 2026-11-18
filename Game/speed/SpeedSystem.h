@@ -15,6 +15,12 @@ public:
 	void RaiseBonusTo(const float bonus);
 	/** 基礎速度 ＋ 上乗せ */
 	float GetSpeed() const { return m_baseSpeed + m_bonusSpeed; }
+	/** 走る・壁を走る・空中で目指す速さ（基礎速度 ＋ 上乗せ ＋ ダッシュ板のサージ） */
+	float GetTargetSpeed() const { return GetSpeed() + m_surgeSpeed; }
+	/** ダッシュ板のサージを入れる。上乗せが上限でも加速するように、上限とは別に足す（重ねずに surgeSpeed に戻す） */
+	void StartSurge() { m_surgeSpeed = m_param.surgeSpeed; }
+	/** サージを減らす（毎フレーム呼ぶ） */
+	void UpdateSurge();
 	/** 基礎速度を返す（表示用） */
 	float GetBaseSpeed() const { return m_baseSpeed; }
 	/** 上乗せ速度を返す（表示用） */
@@ -46,6 +52,7 @@ private:
 	const SpeedParam& m_param = nsGameParam::Get().speed;		///< 調整用の値（Assets/param/speed.json）
 	float m_baseSpeed = 0.0f;									///< 基礎速度
 	float m_bonusSpeed = 0.0f;									///< 上乗せの速度
+	float m_surgeSpeed = 0.0f;									///< ダッシュ板のサージ（少しの間だけ走る速さに足す。Lv とメーターには入れない）
 	bool m_isOverdrive = false;									///< OVERDRIVE中か
 	bool m_isBonusKept = false;									///< このフレームに上乗せを減らさないか
 };

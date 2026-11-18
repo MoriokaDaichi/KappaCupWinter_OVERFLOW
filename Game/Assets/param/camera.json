@@ -8,7 +8,7 @@
   "viewAngleNormal": 60.0,
   "viewAngleMax": 80.0,
   "viewAngleLerpRate": 5.0,
-  "maxSpeedForFov": 1500.0,
+  "maxSpeedForFov": 2960.0,
   "collisionRadius": 10.0,
   "nearClip": 1.0,
   "farClip": 45000.0,

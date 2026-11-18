@@ -209,7 +209,7 @@ void BattleCharacter::Move()
 	const Vector3 moveDir = GetMoveDirection();
 
 	//速度に入れる
-	ApproachHorizontal(moveDir * GetSpeedSystem().GetSpeed(), m_param->move.groundAccel);
+	ApproachHorizontal(moveDir * GetSpeedSystem().GetTargetSpeed(), m_param->move.groundAccel);
 
 	//スティックを倒しているときだけ向きを変える（離したときは今の向きを保つ）
 	FaceDirection(moveDir);
@@ -223,7 +223,7 @@ void BattleCharacter::AirMove()
 	}
 
 	const Vector3 moveDir = GetMoveDirection();
-	const Vector3 target = moveDir * GetSpeedSystem().GetSpeed();
+	const Vector3 target = moveDir * GetSpeedSystem().GetTargetSpeed();
 
 	float t = m_param->move.airControl * g_gameTime->GetFrameDeltaTime();
 	if (t > 1.0f)
@@ -489,6 +489,8 @@ void BattleCharacter::UpdateSpeedBonus()
 	default:
 		break;
 	}
+
+	GetSpeedSystem().UpdateSurge();
 
 	// ダッシュ板などが付けた「このフレームは減らさない」の印を消す（次のフレームはまた付け直してもらう）
 	GetSpeedSystem().EndFrame();

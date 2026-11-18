@@ -5,7 +5,13 @@ void SpeedSystem::Reset()
 {
 	m_baseSpeed = m_param.baseMin;
 	m_bonusSpeed = 0.0f;
+	m_surgeSpeed = 0.0f;
 	m_isOverdrive = false;
+}
+
+void SpeedSystem::UpdateSurge()
+{
+	m_surgeSpeed = max(m_surgeSpeed - m_param.surgeDecay * g_gameTime->GetFrameDeltaTime(), 0.0f);
 }
 
 void SpeedSystem::AddBase(const float amount)
@@ -92,8 +98,9 @@ void SpeedSystem::SetForDebug(const float base, const float bonus)
 
 void SpeedSystem::ClearBonus()
 {
-	m_bonusSpeed = 0.0f; 
-	m_isOverdrive = false; 
+	m_bonusSpeed = 0.0f;
+	m_surgeSpeed = 0.0f;
+	m_isOverdrive = false;
 }
 
 void SpeedSystem::UpdateOverdrive()
