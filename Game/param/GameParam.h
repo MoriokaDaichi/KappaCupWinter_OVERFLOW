@@ -380,6 +380,14 @@ struct StageParam
 		std::array<float, 3> size = {};		///< 幅・高さ・奥行き
 	};
 
+	/** 壁に貼るダッシュ板 1 つ（判定は箱。見た目の板は side の側の面に立てて描く） */
+	struct WallPad
+	{
+		std::array<float, 3> position = {};	///< 判定の箱の中心の位置（x, y, z）
+		std::array<float, 3> size = {};		///< 判定の箱の幅・高さ・奥行き
+		int side = 0;						///< 板を貼る面（1 で箱の +x の面、-1 で -x の面。そこに壁がある）
+	};
+
 	/** 小物 1 つ（当たり判定の有無は PROP_TYPES で決まる） */
 	struct Prop
 	{
@@ -400,6 +408,7 @@ struct StageParam
 		std::vector<Block> hazards;					///< 穴の底の一覧（当たり判定なし）
 		std::vector<Prop> props;					///< 小物の一覧
 		std::vector<Block> dashPads;				///< ダッシュ板の一覧（入った瞬間に上乗せが増える範囲）
+		std::vector<WallPad> wallPads;				///< 壁に貼るダッシュ板の一覧
 		std::vector<Block> fences;					///< 電気柵の一覧（入った瞬間に基礎速度が減る範囲）
 		std::vector<Block> lasers;					///< レーザーの壁の一覧（点いている間に入ると基礎速度が減る範囲）
 		std::array<float, 3> checkpoint = {};			///< 落ちたときに戻る足元の位置

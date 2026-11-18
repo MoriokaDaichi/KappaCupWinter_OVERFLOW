@@ -6,7 +6,14 @@
 class DashPad : public Gimmick
 {
 public:
+	/**
+	 * @param wallSide	板を貼る面。FLOOR なら判定の箱の底に寝かせる。1 なら箱の +x の面、-1 なら -x の面に立てる（そこに壁がある）
+	 */
+	explicit DashPad(const int wallSide = FLOOR) : m_wallSide(wallSide) {}
+
 	void Draw(RenderContext& rc) override;
+
+	static constexpr int FLOOR = 0;		///< 床に置く板（wallSide に渡す）
 
 private:
 	void InitView() override;
@@ -19,4 +26,5 @@ private:
 	static constexpr float MODEL_SIZE = 100.0f;				///< gimmick_dashpad.tkm の幅と奥行
 
 	GimmickView m_view;		///< 見た目（矢印が流れる板）
+	int m_wallSide = FLOOR;	///< 板を貼る面（FLOOR・1・-1）
 };

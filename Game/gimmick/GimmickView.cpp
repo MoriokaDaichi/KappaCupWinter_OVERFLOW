@@ -19,7 +19,7 @@ void GimmickView::Init(const char* tkmFilePath, const Kind kind, const int maxCo
 	m_model.Init(initData);
 }
 
-void GimmickView::Add(const Vector3& position, const Vector3& scale)
+void GimmickView::Add(const Vector3& position, const Vector3& scale, const float roll)
 {
 	if (m_count >= m_maxCount)
 	{
@@ -27,7 +27,7 @@ void GimmickView::Add(const Vector3& position, const Vector3& scale)
 	}
 
 	Instance instance;
-	instance.position.Set(position.x, position.y, position.z, 0.0f);
+	instance.position.Set(position.x, position.y, position.z, roll);
 	instance.scale.Set(scale.x, scale.y, scale.z, 0.0f);
 	m_instances[m_count] = instance;
 	m_count++;

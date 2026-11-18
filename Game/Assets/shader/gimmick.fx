@@ -55,9 +55,17 @@ cbuffer GimmickCb : register(b1)
 // GimmickView の Instance と同じ並び
 struct Instance
 {
-	float4 position;	// xyz が底の中心
+	float4 position;	// xyz が底の中心。w が Z 軸まわりの回転（ラジアン）
 	float4 scale;		// xyz が倍率
 };
+
+/** Z 軸まわりに回す（+ の角度で +X が +Y へ向く） */
+float3 RotateZ(const float3 v, const float roll)
+{
+	const float s = sin(roll);
+	const float c = cos(roll);
+	return float3(v.x * c - v.y * s, v.x * s + v.y * c, v.z);
+}
 
 StructuredBuffer<Instance> g_instances : register(t10);
 Texture2D<float4> g_mask : register(t0);	// マスク（モデルの色のテクスチャの枠に入っている）
@@ -80,8 +88,9 @@ struct PSInput
 	float4 pos : SV_POSITION;
 	float3 worldPos : TEXCOORD0;
 	float2 uv : TEXCOORD1;
-	float3 normal : TEXCOORD2;
+	float3 normal : TEXCOORD2;			// 回す前の法線（壁に立てた板も、床の板と同じ明るさに見せる）
 	nointerpolation float3 center : TEXCOORD3;
+	nointerpolation float roll : TEXCOORD4;
 };
 
 PSInput VSMain(VSInput In)
@@ -90,18 +99,22 @@ PSInput VSMain(VSInput In)
 
 	// mWorld はモデルの Z 上向きを Y 上向きに直す回転だけ（Model::Init で単位の位置と大きさにしてある）
 	PSInput Out;
-	Out.worldPos = instance.position.xyz + mul(mWorld, float4(In.pos.xyz, 1.0f)).xyz * instance.scale.xyz;
+	const float3 local = mul(mWorld, float4(In.pos.xyz, 1.0f)).xyz * instance.scale.xyz;
+	Out.worldPos = instance.position.xyz + RotateZ(local, instance.position.w);
 	Out.pos = mul(mProj, mul(mView, float4(Out.worldPos, 1.0f)));
 	Out.uv = In.uv;
 	Out.normal = mul(mWorld, float4(In.normal, 0.0f)).xyz / instance.scale.xyz;
 	Out.center = instance.position.xyz;
+	Out.roll = instance.position.w;
 	return Out;
 }
 
 /** ダッシュ板の矢印（0〜1）。板の真ん中を先頭にした「く」の字が、前（+Z）へ流れる */
-float CalcChevron(const float3 worldPos, const float3 center)
+float CalcChevron(const float3 worldPos, const float3 center, const float roll)
 {
-	const float along = (worldPos.z - center.z + abs(worldPos.x - center.x) * CHEVRON_SLOPE) / CHEVRON_INTERVAL;
+	// 回す前の板の上での位置にして、板の幅の向き（回す前の X）で「く」の字を作る
+	const float3 local = RotateZ(worldPos - center, -roll);
+	const float along = (local.z + abs(local.x) * CHEVRON_SLOPE) / CHEVRON_INTERVAL;
 	return step(frac(along - g_time * CHEVRON_SPEED), CHEVRON_WIDTH);
 }
 
@@ -125,7 +138,7 @@ float4 PSMain(PSInput In) : SV_Target0
 	if (g_kind == KIND_DASH_PAD)
 	{
 		color += CYAN * mask.r * DASH_PAD_GLOW * g_brightness;
-		const float chevron = CalcChevron(In.worldPos, In.center);
+		const float chevron = CalcChevron(In.worldPos, In.center, In.roll);
 		color += CYAN * mask.g * lerp(PAD_FLOOR_GLOW, CHEVRON_GLOW, chevron) * g_brightness;
 	}
 	else if (g_kind == KIND_FENCE)

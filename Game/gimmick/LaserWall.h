@@ -20,7 +20,7 @@ private:
 private:
 	static constexpr float DAMAGE = 100.0f;				///< 減らす基礎速度
 	static constexpr float ON_TIME = 2.0f;				///< ついている秒数
-	static constexpr float OFF_TIME = 1.0f;				///< 消えている秒数
+	static constexpr float OFF_TIME = 3.0f;				///< 消えている秒数
 	static constexpr float WARNING_TIME = 0.5f;			///< つく何秒前から知らせるか
 	static constexpr float WARNING_BLINK = 0.1f;		///< 知らせる点滅の 1 回分の秒数
 	static constexpr float WARNING_BRIGHTNESS = 0.2f;	///< 知らせる点滅の明るさ

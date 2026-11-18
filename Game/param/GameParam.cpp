@@ -46,8 +46,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpeedParam, baseMin, baseMax, bonusMax, groun
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EffectParam, hitScale, defeatScale, bulletScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SoundParam, bgm, run, jump, shoot, hit, defeat, explosion, damage, firewallBreak, grappleShoot, grappleHook, swing, dashPad, fenceShock, laserHit)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Block, position, size)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::WallPad, position, size, side)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Prop, model, position, scale, yaw)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Section, name, blocks, panels, anchors, towers, hazards, props, checkpoint, dashPads, fences, lasers)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Section, name, blocks, panels, anchors, towers, hazards, props, checkpoint, dashPads, wallPads, fences, lasers)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam, playerStart, giantFirewall, sections)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam::WarpPoint, name, position)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam, warpPoints)
@@ -416,6 +417,15 @@ namespace
 					throw std::runtime_error("Assets/param/stage.json\nsize must be positive: " + section.name);
 				}
 				blockCount++;
+			}
+
+			// side を書き間違えると、板が判定の箱の中に浮いて描かれる
+			for (const StageParam::WallPad& pad : section.wallPads)
+			{
+				if (pad.side != 1 && pad.side != -1)
+				{
+					throw std::runtime_error("Assets/param/stage.json\nwallPads side must be 1 or -1: " + section.name);
+				}
 			}
 		}
 

@@ -101,6 +101,16 @@ void Stage::Build()
 			m_gimmicks.push_back(std::move(gimmick));
 		}
 
+		for (const StageParam::WallPad& pad : section.wallPads)
+		{
+			StageParam::Block block;
+			block.position = pad.position;
+			block.size = pad.size;
+			std::unique_ptr<Gimmick> gimmick = std::make_unique<DashPad>(pad.side);
+			gimmick->Init(block);
+			m_gimmicks.push_back(std::move(gimmick));
+		}
+
 		for (const StageParam::Block& block : section.fences)
 		{
 			std::unique_ptr<Gimmick> gimmick = std::make_unique<ElectricFence>();

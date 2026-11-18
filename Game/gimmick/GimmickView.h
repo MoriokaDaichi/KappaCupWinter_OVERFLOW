@@ -22,8 +22,11 @@ public:
 	 * @param maxCount		置ける数
 	 */
 	void Init(const char* tkmFilePath, const Kind kind, const int maxCount);
-	/** 1 つ置く。position はモデルの底の中心、scale は軸ごとの倍率 */
-	void Add(const Vector3& position, const Vector3& scale);
+	/**
+	 * 1 つ置く。position はモデルの底の中心、scale は軸ごとの倍率
+	 * roll は Z 軸（進む向き）まわりの回転（ラジアン）。倍率をかけた後に回す。壁に立てる板に使う
+	 */
+	void Add(const Vector3& position, const Vector3& scale, const float roll = 0.0f);
 	/** 描く予約をする（毎フレーム呼ぶ）。brightness は光る所の明るさの倍率（0 で光らない） */
 	void Draw(const float brightness);
 
@@ -35,7 +38,7 @@ private:
 	/** シェーダーに渡す値（gimmick.fx の Instance と同じ並び） */
 	struct Instance
 	{
-		Vector4 position;		///< xyz が底の中心
+		Vector4 position;		///< xyz が底の中心。w が Z 軸まわりの回転（ラジアン）
 		Vector4 scale;			///< xyz が倍率
 	};
 
