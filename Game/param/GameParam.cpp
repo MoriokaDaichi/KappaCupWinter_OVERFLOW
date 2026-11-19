@@ -30,7 +30,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Shooter, detectRange, aimTime
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Fly, speed, accel)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraParam, distance, targetHeight, rotateSpeedX, rotateSpeedY, pitchMin, pitchMax,
 	viewAngleNormal, viewAngleMax, viewAngleLerpRate, maxSpeedForFov, collisionRadius, nearClip, farClip, shoulderOffset,
-	levelUpViewAngleKick, levelUpKickTime, pivotFollowRate, swingPivotFollowRate, pivotMaxLag, speedPullBack)
+	levelUpViewAngleKick, levelUpKickTime, pivotFollowRate, swingPivotFollowRate, pivotMaxLag, speedPullBack,
+	wallRunRollAngle, wallRunRollRate)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GravityParam, gravity, fallMultiplier, maxFallSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnchorParam, normalScale, lockedScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GrappleWireParam, thicknessScale)

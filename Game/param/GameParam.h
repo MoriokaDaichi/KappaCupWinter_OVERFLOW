@@ -185,6 +185,8 @@ struct CameraParam
 	float swingPivotFollowRate = 0.0f;	///< スイング中の1秒あたりに差を縮める割合
 	float pivotMaxLag = 0.0f;			///< 注視点の高さの遅れの上限（cm）
 	float speedPullBack = 0.0f;			///< 最高速のときに、カメラを後ろへ引く距離（cm。0 で引かない）
+	float wallRunRollAngle = 0.0f;		///< 壁走り中に、カメラを壁から離れる側へ傾ける角度（度。0 で傾けない）
+	float wallRunRollRate = 0.0f;		///< カメラの傾きが目標へ近づく速さ（1秒あたりに差を縮める割合）
 };
 
 /** 重力の値（gravity.json） */

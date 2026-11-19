@@ -2,6 +2,7 @@
 #include "camera/GameCamera.h"
 #include "actor/BattleCharacter.h"
 #include "input/InputManager.h"
+#include "actor/characterState/WallRunState.h"
 
 bool GameCamera::Start()
 {
@@ -29,6 +30,7 @@ void GameCamera::Update()
 	Rotate();
 	UpdateSpeedRate();
 	UpdatePosition();
+	UpdateRoll();
 
 	g_camera3D->Update();
 }
@@ -161,4 +163,31 @@ void GameCamera::UpdatePosition()
 
 	g_camera3D->SetTarget(shoulderResult);
 	g_camera3D->SetPosition(result);
+}
+
+void GameCamera::UpdateRoll()
+{
+	Quaternion qYaw;
+	qYaw.SetRotationDegY(m_yaw);
+
+	Vector3 right(1.0f, 0.0f, 0.0f);
+	qYaw.Apply(right);
+
+	float targetRoll = 0.0f;
+
+	if (m_player->GetCurrentState() == EnCharacterState::WallRun)
+	{
+		Vector3 wallNormal;
+		if (WallRunState::FindWall(*m_player, wallNormal))
+		{
+			// 法線が右を向いている＝壁は左。壁から離れる右へ傾ける
+			targetRoll = (Dot(wallNormal, right) > 0.0f) ? m_param.wallRunRollAngle : -m_param.wallRunRollAngle;
+		}
+	}
+
+	m_roll = Math::Lerp(min(m_param.wallRunRollRate * g_gameTime->GetFrameDeltaTime(), 1.0f), m_roll, targetRoll);
+	const float rollRad = Math::DegToRad(m_roll);
+	const Vector3 up = Vector3::Up * cosf(rollRad) + right * sinf(rollRad);
+
+	g_camera3D->SetUp(up);
 }

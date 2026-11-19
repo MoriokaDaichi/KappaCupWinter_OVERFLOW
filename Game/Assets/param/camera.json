@@ -18,5 +18,7 @@
   "pivotFollowRate": 18.0,
   "swingPivotFollowRate": 3.0,
   "pivotMaxLag": 80.0,
-  "speedPullBack": 80.0
+  "speedPullBack": 80.0,
+  "wallRunRollAngle": 6.0,
+  "wallRunRollRate": 8.0
 }

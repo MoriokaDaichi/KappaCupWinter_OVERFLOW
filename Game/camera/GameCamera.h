@@ -5,7 +5,7 @@
 class BattleCharacter;
 class InputManager;
 
-/** プレイヤーに追従するばねカメラ。プレイヤーの速度によって後ろへ引く・視野角がかわる・スイング中は高さを遅れて追う */
+/** プレイヤーに追従するばねカメラ。プレイヤーの速度によって後ろへ引く・視野角がかわる・スイング中は高さを遅れて追う・壁走りで傾ける */
 class GameCamera : public IGameObject
 {
 public:
@@ -25,6 +25,8 @@ private:
 	void UpdateSpeedRate();
 	/** 注視点と位置を計算してカメラに渡す */
 	void UpdatePosition();
+	/** 壁走り中は壁から離れる側へ傾け、それ以外はまっすぐに戻す */
+	void UpdateRoll();
 
 private:
 	const CameraParam& m_param = nsGameParam::Get().camera;	///< 調整用の値（Assets/param/camera.json）
@@ -44,4 +46,5 @@ private:
 	int m_lastLevel = 0;					///< 前のフレームの速度 Lv（上がった瞬間を知るため）
 	float m_pivotY = 0.0f;					///< 注視点の高さ。プレイヤーの高さを少し遅れて追う
 	int m_lastWarpCount = 0;				///< 前のフレームで見たワープの回数
+	float m_roll = 0.0f;					///< 今の傾き（度）。プラスで右へ傾く
 };
