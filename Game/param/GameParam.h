@@ -187,6 +187,7 @@ struct CameraParam
 	float speedPullBack = 0.0f;			///< 最高速のときに、カメラを後ろへ引く距離（cm。0 で引かない）
 	float wallRunRollAngle = 0.0f;		///< 壁走り中に、カメラを壁から離れる側へ傾ける角度（度。0 で傾けない）
 	float wallRunRollRate = 0.0f;		///< カメラの傾きが目標へ近づく速さ（1秒あたりに差を縮める割合）
+	float shoulderSwapTime = 0.0f;		///< カメラを反対の肩へ移しきるまでの秒数（0 で一瞬）
 };
 
 /** 重力の値（gravity.json） */

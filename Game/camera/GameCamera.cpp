@@ -30,6 +30,7 @@ void GameCamera::Update()
 	Rotate();
 	UpdateSpeedRate();
 	UpdateWallSide();
+	UpdateShoulder();
 	UpdatePosition();
 	UpdateRoll();
 
@@ -131,7 +132,7 @@ void GameCamera::UpdatePosition()
 
 	const Vector3 right = GetCameraRight();
 
-	const Vector3 shoulder = pivot + right * shoulderOffset;
+	const Vector3 shoulder = pivot + right * shoulderOffset * m_shoulder;
 	Vector3 shoulderResult;
 
 	// 壁に当たったら、肩の点を体の中心の方へ少し戻す
@@ -201,4 +202,28 @@ Vector3 GameCamera::GetCameraRight() const
 	qYaw.Apply(right);
 
 	return right;
+}
+
+void GameCamera::UpdateShoulder()
+{
+	if (m_input->IsTrigger(EnInputAction::ShoulderSwap))
+	{
+		m_shoulderSide = -m_shoulderSide;
+	}
+
+	const float target = (m_wallSide != 0) ? - static_cast<float>(m_wallSide) : static_cast<float>(m_shoulderSide);
+
+	if (m_param.shoulderSwapTime <= 0.0f)
+	{
+		m_shoulder = target;
+		return;
+	}
+
+	// 2.0f は左肩（-1）から右肩（+1）までの距離
+	const float step = 2.0f / m_param.shoulderSwapTime * g_gameTime->GetFrameDeltaTime();
+
+	const float diff = target - m_shoulder;
+	const float moveAmount = min(step, fabsf(diff));
+	const float dir = (diff > 0.0f) ? 1.0f : -1.0f;
+	m_shoulder += dir * moveAmount;
 }

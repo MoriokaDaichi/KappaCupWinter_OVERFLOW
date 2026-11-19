@@ -31,6 +31,8 @@ private:
 	void UpdateWallSide();
 	/** カメラの右の向き（水平。m_yaw で回したもの）を返す */
 	Vector3 GetCameraRight() const;
+	/** 肩の位置を決める。壁走り中は壁の反対の肩、それ以外はボタンで選んだ肩へ、shoulderSwapTime 秒で動かす */
+	void UpdateShoulder();
 
 private:
 	const CameraParam& m_param = nsGameParam::Get().camera;	///< 調整用の値（Assets/param/camera.json）
@@ -52,4 +54,6 @@ private:
 	int m_lastWarpCount = 0;				///< 前のフレームで見たワープの回数
 	float m_roll = 0.0f;					///< 今の傾き（度）。プラスで右へ傾く
 	int m_wallSide = 0;						///< 壁走り中の壁の側（画面の右 +1、左 -1、壁走りでないか壁がなければ 0）
+	int m_shoulderSide = 1;					///< ボタンで選んだ肩（右 +1 ／ 左 -1）。最初は +1
+	float m_shoulder = 1.0f;				///< 今の肩の位置（-1〜+1）。目標へ少しずつ動く
 };
