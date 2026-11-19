@@ -5,7 +5,7 @@
 class BattleCharacter;
 class InputManager;
 
-/** プレイヤーに追従するばねカメラ。プレイヤーの速度によって視野角がかわる */
+/** プレイヤーに追従するばねカメラ。プレイヤーの速度によって視野角がかわる・スイング中は高さを遅れて追う */
 class GameCamera : public IGameObject
 {
 public:
@@ -42,4 +42,6 @@ private:
 	float m_yaw = 0.0f;						///< 左右の角度（度）。0 でプレイヤーの後ろ（-Z 側）から見る
 	float m_kickTimer = 0.0f;				///< Lv アップで広げた視野角が戻るまでの残り時間（秒）
 	int m_lastLevel = 0;					///< 前のフレームの速度 Lv（上がった瞬間を知るため）
+	float m_pivotY = 0.0f;					///< 注視点の高さ。プレイヤーの高さを少し遅れて追う
+	int m_lastWarpCount = 0;				///< 前のフレームで見たワープの回数
 };

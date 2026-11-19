@@ -157,6 +157,7 @@ void BattleCharacter::Warp(const Vector3& position)
 	SetMoveSpeed(Vector3::Zero);
 	ChangeState(next);
 	m_charaCon.SetPosition(position);
+	m_warpCount++;
 }
 
 bool BattleCharacter::IsJumpTrigger() const

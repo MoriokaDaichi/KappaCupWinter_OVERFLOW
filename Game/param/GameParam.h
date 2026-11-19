@@ -181,6 +181,9 @@ struct CameraParam
 	float shoulderOffset = 0.0f;		///< 注視点を右にずらす量
 	float levelUpViewAngleKick = 0.0f;	///< 速度 Lv が上がった瞬間に、視野角を広げる量（度）
 	float levelUpKickTime = 0.0f;		///< 広げた視野角が戻るまでの時間（秒）
+	float pivotFollowRate = 0.0f;		///< スイング以外（地上・空中・壁走り）で1秒あたりに差を縮める割合
+	float swingPivotFollowRate = 0.0f;	///< スイング中の1秒あたりに差を縮める割合
+	float pivotMaxLag = 0.0f;			///< 注視点の高さの遅れの上限（cm）
 };
 
 /** 重力の値（gravity.json） */

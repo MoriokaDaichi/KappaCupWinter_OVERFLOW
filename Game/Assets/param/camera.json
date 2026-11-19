@@ -14,5 +14,8 @@
   "farClip": 45000.0,
   "shoulderOffset": 50.0,
   "levelUpViewAngleKick": 8.0,
-  "levelUpKickTime": 0.5
+  "levelUpKickTime": 0.5,
+  "pivotFollowRate": 18.0,
+  "swingPivotFollowRate": 3.0,
+  "pivotMaxLag": 80.0
 }

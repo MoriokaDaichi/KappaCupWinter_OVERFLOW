@@ -66,8 +66,10 @@ public:
 	 * Stun の State を持たないキャラは何もしない
 	 */
 	void Stun(const Vector3& knockback);
-	/** position へ瞬間移動する。速さを 0 にして空中の状態から始める（デバッグ画面・チェックポイント用） */
+	/** position へ瞬間移動する。速さを 0 にして空中の状態から始める（リセット（Respawn）・デバッグ画面・チェックポイント用） */
 	void Warp(const Vector3& position);
+	/** ワープした回数を返す。ワープしたことを知りたいクラス（GameCamera）が見る */
+	int GetWarpCount() const { return m_warpCount; }
 
 public:
 	/** このフレームのコマンドを返す（State や能力が読む） */
@@ -190,6 +192,7 @@ private:
 	int m_jumpCount = 0;														///< いま何回跳んだか
 	float m_hp = 0.0f;															///< 今の体力（設定に health があるキャラだけ使う）
 	bool m_isReuseOnDefeat = false;												///< 倒れたときに消さず、隠しておくか
+	int m_warpCount = 0;														///< ワープした回数
 	StateMachine<BattleCharacter, EnCharacterState, BattleCharacterState> m_stateMachine;	///< 状態の切り替え役
 	TransitionTable m_transitionTable;											///< 切り替え表（設定の transitions から作る）
 	std::unique_ptr<Grapple> m_grapple;											///< グラップルの能力（abilities に "Grapple" があるときだけ作る）

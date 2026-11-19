@@ -13,6 +13,8 @@ bool GameCamera::Start()
 	if (m_player != nullptr)
 	{
 		m_lastLevel = m_player->GetSpeedSystem().GetLevel();
+		m_pivotY = m_player->GetPosition().y + m_param.targetHeight;
+		m_lastWarpCount = m_player->GetWarpCount();
 	}
 
 	return true;
@@ -87,6 +89,27 @@ void GameCamera::UpdatePosition()
 
 	Vector3 pivot = m_player->GetPosition();
 	pivot.y += m_param.targetHeight;
+
+	if (m_player->GetWarpCount() != m_lastWarpCount)
+	{
+		m_pivotY = pivot.y;
+		m_lastWarpCount = m_player->GetWarpCount();
+	}
+
+	const float followRate = (m_player->GetCurrentState() == EnCharacterState::Swing) ? m_param.swingPivotFollowRate : m_param.pivotFollowRate;
+	m_pivotY = Math::Lerp(min(followRate * g_gameTime->GetFrameDeltaTime(), 1.0f), m_pivotY, pivot.y);
+
+	const float gap = m_pivotY - pivot.y;
+	if (gap > m_param.pivotMaxLag)
+	{
+		m_pivotY = pivot.y + m_param.pivotMaxLag;
+	}
+	else if (gap < -m_param.pivotMaxLag)
+	{
+		m_pivotY = pivot.y - m_param.pivotMaxLag;
+	}
+
+	pivot.y = m_pivotY;
 
 	Vector3 toCamera(0.0f, 0.0f, -1.0f);
 
