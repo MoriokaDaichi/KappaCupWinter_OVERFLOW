@@ -9,7 +9,6 @@ bool GameCamera::Start()
 	g_camera3D->SetNear(m_param.nearClip);
 	g_camera3D->SetFar(m_param.farClip);
 
-	m_viewAngle = m_param.viewAngleNormal;
 	if (m_player != nullptr)
 	{
 		m_lastLevel = m_player->GetSpeedSystem().GetLevel();
@@ -28,7 +27,7 @@ void GameCamera::Update()
 	}
 
 	Rotate();
-	UpdateViewAngle();
+	UpdateSpeedRate();
 	UpdatePosition();
 
 	g_camera3D->Update();
@@ -54,17 +53,23 @@ void GameCamera::Rotate()
 	}
 }
 
-void GameCamera::UpdateViewAngle()
+void GameCamera::UpdateSpeedRate()
 {
-	Vector3 horizontal = m_player->GetMoveSpeed();
-	horizontal.y = 0.0f;
-	const float speed = horizontal.Length();
+	Vector3 velocity = m_player->GetMoveSpeed();
+
+	if (m_player->GetCurrentState() != EnCharacterState::Swing)
+	{
+		velocity.y = 0.0f;
+	}
+
+	const float speed = velocity.Length();
 
 	float rate = speed / m_param.maxSpeedForFov;
 	rate = min(rate, 1.0f);
-	const float angle = Math::Lerp(rate, m_param.viewAngleNormal, m_param.viewAngleMax);
 
-	m_viewAngle = Math::Lerp(min(m_param.viewAngleLerpRate * g_gameTime->GetFrameDeltaTime(), 1.0f), m_viewAngle, angle);
+	const float lerpRate = min(m_param.viewAngleLerpRate * g_gameTime->GetFrameDeltaTime(), 1.0f);
+	m_speedRate = Math::Lerp(lerpRate, m_speedRate, rate);
+	const float angle = Math::Lerp(m_speedRate, m_param.viewAngleNormal, m_param.viewAngleMax);
 
 	// Lv が上がった瞬間に一気に広げ、はじめ速く後でゆっくり戻す（下がったときも覚え直す）
 	const int level = m_player->GetSpeedSystem().GetLevel();
@@ -77,14 +82,14 @@ void GameCamera::UpdateViewAngle()
 	const float kickRate = (m_param.levelUpKickTime > 0.0f) ? m_kickTimer / m_param.levelUpKickTime : 0.0f;
 	const float kick = m_param.levelUpViewAngleKick * kickRate * kickRate;
 
-	const float viewAngle = m_viewAngle + kick;
+	const float viewAngle = angle + kick;
 
 	g_camera3D->SetViewAngle(Math::DegToRad(viewAngle));
 }
 
 void GameCamera::UpdatePosition()
 {
-	const float distance = m_param.distance;
+	const float distance = m_param.distance + m_speedRate * m_param.speedPullBack;
 	const float shoulderOffset = m_param.shoulderOffset;
 
 	Vector3 pivot = m_player->GetPosition();

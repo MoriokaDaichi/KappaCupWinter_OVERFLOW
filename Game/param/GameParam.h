@@ -173,8 +173,8 @@ struct CameraParam
 	float pitchMax = 0.0f;				///< 見上げられる限界（度）。上げすぎると地面にめり込む
 	float viewAngleNormal = 0.0f;		///< 通常時の視野角（度）
 	float viewAngleMax = 0.0f;			///< 最高速のときの視野角（度）
-	float viewAngleLerpRate = 0.0f;		///< 目標の視野角へ近づく速さ（1秒あたり）
-	float maxSpeedForFov = 0.0f;		///< この速さで視野角が最大になる
+	float viewAngleLerpRate = 0.0f;		///< 速さの割合（視野角と引く距離）が目標へ近づく速さ（1秒あたり）
+	float maxSpeedForFov = 0.0f;		///< この速さで視野角と引く距離が最大になる
 	float collisionRadius = 0.0f;		///< 壁めり込みを防ぐ球の半径（Start でだけ使うので、読み直しても変わらない）
 	float nearClip = 0.0f;				///< 近くの描画の限界（Start でだけ使う）。near は Windows のマクロと重なるので使わない
 	float farClip = 0.0f;				///< 遠くの描画の限界（Start でだけ使う。ステージが広いので大きめ）
@@ -184,6 +184,7 @@ struct CameraParam
 	float pivotFollowRate = 0.0f;		///< スイング以外（地上・空中・壁走り）で1秒あたりに差を縮める割合
 	float swingPivotFollowRate = 0.0f;	///< スイング中の1秒あたりに差を縮める割合
 	float pivotMaxLag = 0.0f;			///< 注視点の高さの遅れの上限（cm）
+	float speedPullBack = 0.0f;			///< 最高速のときに、カメラを後ろへ引く距離（cm。0 で引かない）
 };
 
 /** 重力の値（gravity.json） */

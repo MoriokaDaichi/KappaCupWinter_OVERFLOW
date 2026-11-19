@@ -5,7 +5,7 @@
 class BattleCharacter;
 class InputManager;
 
-/** プレイヤーに追従するばねカメラ。プレイヤーの速度によって視野角がかわる・スイング中は高さを遅れて追う */
+/** プレイヤーに追従するばねカメラ。プレイヤーの速度によって後ろへ引く・視野角がかわる・スイング中は高さを遅れて追う */
 class GameCamera : public IGameObject
 {
 public:
@@ -21,8 +21,8 @@ public:
 private:
 	/** スティックでカメラの向きを回す */
 	void Rotate();
-	/** 速さに合わせて視野角を変える。速度 Lv が上がった瞬間は、一瞬広げて戻す */
-	void UpdateViewAngle();
+	/** 速さの割合を出し（引く距離にも使う）、視野角を決める。速度 Lv が上がった瞬間は、一瞬広げて戻す */
+	void UpdateSpeedRate();
 	/** 注視点と位置を計算してカメラに渡す */
 	void UpdatePosition();
 
@@ -37,7 +37,7 @@ private:
 	static constexpr float CAMERA_MIN_DISTANCE = 1.0f;		///< カメラと注視点がこれより近いときは、この距離だけ離す
 
 	Vector3 m_toCameraPos = Vector3::Zero;	///< 注視点からカメラまでのベクトル。スティックでこれを回す
-	float m_viewAngle = 0.0f;				///< 今の視野角。目標の値に少しずつ近づけるので、値を持っておく
+	float m_speedRate = 0.0f;				///< 速さの割合（0〜1）。少しずつ近づける。視野角と引く距離に使う
 	float m_pitch = 0.0f;					///< 上下の角度（度）。プラスで見上げる。pitchMin〜pitchMax に収める
 	float m_yaw = 0.0f;						///< 左右の角度（度）。0 でプレイヤーの後ろ（-Z 側）から見る
 	float m_kickTimer = 0.0f;				///< Lv アップで広げた視野角が戻るまでの残り時間（秒）
