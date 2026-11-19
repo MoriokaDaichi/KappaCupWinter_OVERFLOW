@@ -27,6 +27,10 @@ private:
 	void UpdatePosition();
 	/** 壁走り中は壁から離れる側へ傾け、それ以外はまっすぐに戻す */
 	void UpdateRoll();
+	/** 壁走り中の壁が、画面の左右どちらにあるかを調べて m_wallSide に入れる（傾きと肩で使う） */
+	void UpdateWallSide();
+	/** カメラの右の向き（水平。m_yaw で回したもの）を返す */
+	Vector3 GetCameraRight() const;
 
 private:
 	const CameraParam& m_param = nsGameParam::Get().camera;	///< 調整用の値（Assets/param/camera.json）
@@ -47,4 +51,5 @@ private:
 	float m_pivotY = 0.0f;					///< 注視点の高さ。プレイヤーの高さを少し遅れて追う
 	int m_lastWarpCount = 0;				///< 前のフレームで見たワープの回数
 	float m_roll = 0.0f;					///< 今の傾き（度）。プラスで右へ傾く
+	int m_wallSide = 0;						///< 壁走り中の壁の側（画面の右 +1、左 -1、壁走りでないか壁がなければ 0）
 };

@@ -29,6 +29,7 @@ void GameCamera::Update()
 
 	Rotate();
 	UpdateSpeedRate();
+	UpdateWallSide();
 	UpdatePosition();
 	UpdateRoll();
 
@@ -128,8 +129,7 @@ void GameCamera::UpdatePosition()
 	qPitch.Apply(toCamera);
 	qYaw.Apply(toCamera);
 
-	Vector3 right(1.0f, 0.0f, 0.0f);
-	qYaw.Apply(right);
+	const Vector3 right = GetCameraRight();
 
 	const Vector3 shoulder = pivot + right * shoulderOffset;
 	Vector3 shoulderResult;
@@ -167,27 +167,38 @@ void GameCamera::UpdatePosition()
 
 void GameCamera::UpdateRoll()
 {
-	Quaternion qYaw;
-	qYaw.SetRotationDegY(m_yaw);
+	const Vector3 right = GetCameraRight();
 
-	Vector3 right(1.0f, 0.0f, 0.0f);
-	qYaw.Apply(right);
-
-	float targetRoll = 0.0f;
-
-	if (m_player->GetCurrentState() == EnCharacterState::WallRun)
-	{
-		Vector3 wallNormal;
-		if (WallRunState::FindWall(*m_player, wallNormal))
-		{
-			// 法線が右を向いている＝壁は左。壁から離れる右へ傾ける
-			targetRoll = (Dot(wallNormal, right) > 0.0f) ? m_param.wallRunRollAngle : -m_param.wallRunRollAngle;
-		}
-	}
+	const float targetRoll = -static_cast<float>(m_wallSide) * m_param.wallRunRollAngle;
 
 	m_roll = Math::Lerp(min(m_param.wallRunRollRate * g_gameTime->GetFrameDeltaTime(), 1.0f), m_roll, targetRoll);
 	const float rollRad = Math::DegToRad(m_roll);
 	const Vector3 up = Vector3::Up * cosf(rollRad) + right * sinf(rollRad);
 
 	g_camera3D->SetUp(up);
+}
+
+void GameCamera::UpdateWallSide()
+{
+	m_wallSide = 0;
+	if (m_player->GetCurrentState() == EnCharacterState::WallRun)
+	{
+		Vector3 wallNormal;
+		if (WallRunState::FindWall(*m_player, wallNormal))
+		{
+			// 法線は壁からプレイヤーへ向く。左を向いている（内積がマイナス）なら、壁は右
+			const Vector3 right = GetCameraRight();
+			m_wallSide = (Dot(wallNormal, right) < 0.0f) ? 1 : -1;
+		}
+	}
+}
+
+Vector3 GameCamera::GetCameraRight() const
+{
+	Quaternion qYaw;
+	qYaw.SetRotationDegY(m_yaw);
+	Vector3 right(1.0f, 0.0f, 0.0f);
+	qYaw.Apply(right);
+
+	return right;
 }
