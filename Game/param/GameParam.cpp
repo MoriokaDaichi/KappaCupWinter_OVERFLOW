@@ -188,7 +188,7 @@ namespace
 	/** 能力の名前が知っているものかを調べる。知らない名前なら、ファイル名つきで例外を投げる */
 	void CheckAbilities(const char* path, const CharacterParam& param)
 	{
-		static const std::array<const char*, 3> KNOWN_ABILITIES = { "Grapple", "Gun", "EnemyGun" };
+		static const std::array<const char*, 4> KNOWN_ABILITIES = { "Grapple", "Gun", "EnemyGun", "Anchor" };
 
 		for (const std::string& name : param.abilities)
 		{

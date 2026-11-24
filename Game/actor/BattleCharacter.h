@@ -36,6 +36,8 @@ class BattleCharacter : public Character
 {
 public:
 	BattleCharacter();
+	/** 体に付けたアンカーを消す（アンカーは別の GameObject なので、一緒には消えない） */
+	~BattleCharacter() override;
 	/** 設定に書いた部品（アニメーション・手の骨・State・能力・銃の見た目）を作る */
 	bool Start() override;
 
@@ -46,8 +48,11 @@ public:
 	void SetParam(const CharacterParam& param) { m_param = &param; }
 	/** 狙えるか（Start が済んでいて、まだ倒されていない）。Start の前は位置が決まっていないので狙わない */
 	bool CanBeTargeted() const { return IsStart() && !IsDead() && IsActive(); }
-	/** damage だけ体力を減らす。0 以下になったら倒れて true を返す。体力を持たないキャラは、代わりに基礎速度が減る */
-	bool TakeDamage(const float damage);
+	/**
+	 * damage だけ体力を減らす。0 以下になったら倒れて（Defeat）true を返す。体力を持たないキャラは、代わりに基礎速度が減る
+	 * by: 攻撃したキャラ（倒したときに撃破ブーストを受け取る）。いなければ nullptr
+	 */
+	bool TakeDamage(const float damage, BattleCharacter* by = nullptr);
 	/** 倒れたときに消さず、隠しておくようにする（湧き直す敵に使う。作り直すとモデルの準備でゲームが止まるため） */
 	void SetReuseOnDefeat(const bool isReuse) { m_isReuseOnDefeat = isReuse; }
 	/** 隠しておいた体を position に戻す。体力・速さも最初に戻す */
@@ -154,8 +159,15 @@ protected:
 	void Render(RenderContext& rc) override;
 
 private:
+	/**
+	 * 倒れる。エフェクトと音を出し、by（倒したキャラ）に撃破ブーストを渡して、隠すか消す
+	 * 弾で体力が 0 になったとき（TakeDamage）と、体のアンカーを離されたとき（UpdateBodyAnchor）の両方がここを通る
+	 */
+	void Defeat(BattleCharacter* by);
 	/** 倒れた体を隠す（動かさない・描かない。当たり判定の線が見えないように、体も遠くへ動かす） */
 	void Hide();
+	/** 体のアンカーを胸へ動かし、離されていたら倒れる（abilities に "Anchor" があるキャラだけ） */
+	void UpdateBodyAnchor();
 	/** 設定の states に書いた State だけを作って登録し、切り替え表を作って、Idle から始める */
 	void InitState();
 	/** 設定の abilities に書いた能力を作る */
@@ -198,6 +210,7 @@ private:
 	std::unique_ptr<Grapple> m_grapple;											///< グラップルの能力（abilities に "Grapple" があるときだけ作る）
 	std::unique_ptr<Gun> m_gun;													///< 銃（abilities に "Gun" があるときだけ作る）
 	std::unique_ptr<EnemyGun> m_enemyGun;										///< 敵の銃（abilities に "EnemyGun" があるときだけ作る）
+	GOHandle<Anchor> m_bodyAnchor;												///< 体に付けたアンカー（abilities に "Anchor" があるときだけ作る。別の GameObject なので GOHandle）
 	std::unique_ptr<CharacterAnimation> m_animation;							///< アニメーション（設定に animation があるときだけ作る）
 	std::unique_ptr<HandBones> m_handBones;										///< 手の骨（設定に hands があるときだけ作る）
 	std::unique_ptr<GunModel> m_gunModel;										///< 手に持つ銃の見た目（銃と手の骨の両方があるときだけ作る）

@@ -17,7 +17,7 @@ void SwingState::Enter()
 {
 	m_owner->GetGrapple().GetWire().SetVisible(true);
 
-	m_swingAnchor = m_owner->GetLockedAnchor();
+	m_swingAnchor.Reset(m_owner->GetLockedAnchor());
 
 	//まだつかまない。ワイヤーの先を手元から飛ばし、届いたら HookAnchor でつかむ
 	m_wireTipLength = 0.0f;
@@ -35,7 +35,7 @@ void SwingState::Update()
 
 void SwingState::Exit()
 {
-	m_swingAnchor = nullptr;
+	m_swingAnchor.Clear();
 
 	// 離したときの速さを上乗せに残す（空中で減速しないように）
 	if (m_isHooked)
@@ -56,32 +56,70 @@ bool SwingState::IsConditionMet(const EnCondition when) const
 	{
 		return m_isHooked;
 	}
+	if (when == EnCondition::AnchorLost)
+	{
+		return GetActiveAnchor() == nullptr;
+	}
 	return false;
 }
 
 void SwingState::DoAction(const EnTransitionAction action)
 {
+	// ReleaseBoost は「離した」行（ボタンを離した・跳んだ）にだけ書くので、ここで離したことをアンカーにも伝える
 	if (action == EnTransitionAction::ReleaseBoost)
 	{
 		ReleaseBoost();
+		NotifyAnchorReleased();
 	}
+}
+
+Anchor* SwingState::GetActiveAnchor() const
+{
+	// 敵のアンカーは、敵が倒れると消える（DeleteGO）か、隠れる（湧き直す敵。Deactivate）
+	Anchor* anchor = m_swingAnchor.Get();
+	if (anchor == nullptr || !anchor->IsActive())
+	{
+		return nullptr;
+	}
+	return anchor;
+}
+
+void SwingState::NotifyAnchorReleased()
+{
+	// ワイヤーが届く前に離したときは、刺さっていないので伝えない
+	Anchor* anchor = GetActiveAnchor();
+	if (anchor == nullptr || !m_isHooked)
+	{
+		return;
+	}
+	anchor->NotifyReleased(*m_owner);
 }
 
 void SwingState::Move()
 {
+	const Anchor* anchor = GetActiveAnchor();
+
+	// 消えたら何もしない。Air へ移すのは切り替え表（AnchorLost）
+	if (anchor == nullptr)
+	{
+		return;
+	}
+
+	const Vector3 anchorPosition = anchor->GetPosition();
+
 	// ワイヤーの先を渡す。つかんだ後はどこまでも届く長さにして、手からアンカーまで全部描く
 	const float tipLength = m_isHooked ? WIRE_HOOKED_LENGTH : m_wireTipLength;
-	m_owner->GetGrapple().GetWire().SetTarget(m_swingAnchor->GetPosition(), tipLength);
+	m_owner->GetGrapple().GetWire().SetTarget(anchorPosition, tipLength);
 
 	if (!m_isHooked)
 	{
-		ShootWire();
+		ShootWire(anchorPosition);
 		return;
 	}
 
 	m_owner->ApplyGravity();
 
-	const Vector3 toPlayer = m_owner->GetChestPosition() - m_swingAnchor->GetPosition();
+	const Vector3 toPlayer = m_owner->GetChestPosition() - anchorPosition;
 	const float distance = toPlayer.Length();
 
 	if (distance < SWING_MIN_DISTANCE)
@@ -133,13 +171,13 @@ void SwingState::Move()
 		m_owner->FaceDirection(horizontal);
 	}
 
-	UpdateTilt();
+	UpdateTilt(anchorPosition);
 }
 
-void SwingState::ShootWire()
+void SwingState::ShootWire(const Vector3& anchorPosition)
 {
 	const Vector3 origin = m_owner->GetChestPosition();
-	const Vector3 toAnchor = m_swingAnchor->GetPosition() - origin;
+	const Vector3 toAnchor = anchorPosition - origin;
 	const float distance = toAnchor.Length();
 
 	m_wireTipLength += m_param.wireShootSpeed * g_gameTime->GetFrameDeltaTime();
@@ -233,11 +271,11 @@ void SwingState::ReleaseBoost()
 	m_owner->AddMoveSpeed(Vector3::Up * m_param.releaseLift);
 }
 
-void SwingState::UpdateTilt()
+void SwingState::UpdateTilt(const Vector3& anchorPosition)
 {
 	// 体の上をアンカーに向ける（ロープにぶら下がって見えるように）。胸を中心に回す
 	Quaternion target;
-	target.SetRotation(Vector3::Up, m_swingAnchor->GetPosition() - m_owner->GetChestPosition());
+	target.SetRotation(Vector3::Up, anchorPosition - m_owner->GetChestPosition());
 
 	m_owner->SetModelTiltTarget(target, m_bodyParam.chestHeight);
 }

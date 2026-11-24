@@ -18,13 +18,13 @@ public:
 	 */
 	void Update(const Vector3& position, const Vector3& chestPosition,const Vector3& aimOrigin, const Vector3& aimDirection);
 	/** スイングに使うロック中のアンカーを返す */
-	Anchor* GetLockedAnchor() const { return m_lockedAnchor; }
+	Anchor* GetLockedAnchor() const { return m_lockedAnchor.Get(); }
 
 private:
 	/** アンカー1つの点数を出す。候補にならないときはマイナス（例：-1.0f）を返す */
 	float CalcLockScore(const Vector3& position, const Vector3& chestPosition, const Anchor* anchor, const Vector3& aimOrigin, const Vector3& aimDirection) const;
 
 private:
-	Anchor* m_lockedAnchor = nullptr;		///< ロック中のアンカー（借りているだけ）
+	GOHandle<Anchor> m_lockedAnchor;		///< ロック中のアンカー（借りているだけ）
 	const CharacterParam::Lock& m_param;	///< 調整用の値のうち、ロックの分（持ち主の設定から受け取る）
 };

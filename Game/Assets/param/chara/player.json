@@ -21,6 +21,7 @@
     { "from": "WallRun", "when": [ "OnGround" ],                        "to": "Run" },
     { "from": "WallRun", "when": [ "WallLost" ],                        "to": "Air" },
 
+    { "from": "Swing",   "when": [ "AnchorLost" ],                      "to": "Air" },
     { "from": "Swing",   "when": [ "GrappleRelease" ],                  "to": "Air",  "do": [ "ReleaseBoost" ] },
     { "from": "Swing",   "when": [ "JumpTrigger" ],                     "to": "Air",  "do": [ "ReleaseBoost", "Jump" ] },
     { "from": "Swing",   "when": [ "Hooked", "Landed", "MoveInput" ],   "to": "Run" },

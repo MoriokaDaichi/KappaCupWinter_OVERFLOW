@@ -6,11 +6,24 @@
 
 void AnchorLocker::Update(const Vector3& position, const Vector3& chestPosition, const Vector3& aimOrigin, const Vector3& aimDirection)
 {
+	Anchor* locked = m_lockedAnchor.Get();
+	// 隠れている（倒れて湧き直しを待つ敵の）アンカーは、もうロックしていないものとして扱う
+	if (locked != nullptr && !locked->IsActive())
+	{
+		locked->SetLocked(false);
+		locked = nullptr;
+	}
 	Anchor* best = nullptr;
 	float bestScore = 0.0f;
 
 	QueryGOs<Anchor>("anchor", [&](Anchor* anchor)
 		{
+			// QueryGOs は隠れているものも返すので、自分で外す
+			if (!anchor->IsActive())
+			{
+				return true;
+			}
+
 			float score = CalcLockScore(position, chestPosition, anchor, aimOrigin, aimDirection);
 
 			if (score < 0.0f)
@@ -18,7 +31,7 @@ void AnchorLocker::Update(const Vector3& position, const Vector3& chestPosition,
 				return true;
 			}
 
-			if (anchor == m_lockedAnchor)
+			if (anchor == locked)
 			{
 				score += m_param.keepBonus;
 			}
@@ -32,14 +45,14 @@ void AnchorLocker::Update(const Vector3& position, const Vector3& chestPosition,
 			return true;
 		});
 
-	if (best == m_lockedAnchor)
+	if (best == locked)
 	{
 		return;
 	}
 
-	if (m_lockedAnchor != nullptr)
+	if (locked != nullptr)
 	{
-		m_lockedAnchor->SetLocked(false);
+		locked->SetLocked(false);
 	}
 
 	if (best != nullptr)
@@ -47,7 +60,7 @@ void AnchorLocker::Update(const Vector3& position, const Vector3& chestPosition,
 		best->SetLocked(true);
 	}
 
-	m_lockedAnchor = best;
+	m_lockedAnchor.Reset(best);
 }
 
 float AnchorLocker::CalcLockScore(const Vector3& position, const Vector3& chestPosition, const Anchor* anchor, const Vector3& aimOrigin, const Vector3& aimDirection) const

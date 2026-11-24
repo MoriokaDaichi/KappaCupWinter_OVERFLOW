@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "gimmick/Anchor.h"
 
+#include "actor/BattleCharacter.h"
+
 bool Anchor::Start()
 {
 	// 飾りの多い場面でも目立つように、ライトに関係なく光らせる
@@ -25,4 +27,16 @@ void Anchor::Update()
 void Anchor::Render(RenderContext& rc)
 {
 	m_modelRender.Draw(rc);
+}
+
+void Anchor::NotifyReleased(BattleCharacter& by)
+{
+	m_releasedBy.Reset(&by);
+}
+
+BattleCharacter* Anchor::TakeReleasedBy()
+{
+	BattleCharacter* by = m_releasedBy.Get();
+	m_releasedBy.Clear();
+	return by;
 }

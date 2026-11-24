@@ -216,21 +216,8 @@ void BulletSystem::DamageTarget(Bullet& bullet, BattleCharacter& hitTarget)
 		bullet.target.Clear();
 	}
 
-	// TakeDamage で隠れる・消えることがあるので、胸の位置は先に出しておく
-	const Vector3 chest = hitTarget.GetChestPosition();
-	if (!hitTarget.TakeDamage(bullet.damage))
-	{
-		return;
-	}
-
-	nsEffect::Play(EnEffect::Defeat, chest, m_effectParam.defeatScale);
-	nsSound::Play(EnSound::Defeat);
-
-	BattleCharacter* shooter = bullet.shooter.Get();
-	if (shooter != nullptr)
-	{
-		shooter->GetSpeedSystem().AddBase(hitTarget.GetParam().health.killBoost);
-	}
+	// 倒れたときのエフェクト・音・撃った人の撃破ブーストは、TakeDamage の中（BattleCharacter::Defeat）でする
+	hitTarget.TakeDamage(bullet.damage, bullet.shooter.Get());
 }
 
 void BulletSystem::OnBulletImpact(Bullet& bullet, const Vector3& position)

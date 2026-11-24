@@ -1,6 +1,6 @@
 {
   "model": "Assets/modelData/enemy/crawler.tkm",
-  "abilities": [],
+  "abilities": [ "Anchor" ],
   "states": [ "Idle", "Fly" ],
   "transitions": [
     { "from": "Idle", "when": [ "MoveInput" ], "to": "Fly" }

@@ -117,6 +117,7 @@ bool TransitionTable::IsConditionMet(const BattleCharacter& owner, BattleCharact
 		return !WallRunState::FindWall(owner, wallNormal);
 	case EnCondition::Hooked:		// State に聞く条件（上で返している）
 	case EnCondition::StunOver:
+	case EnCondition::AnchorLost:
 	case EnCondition::Num:			// 条件ではない（個数）
 		break;
 	}

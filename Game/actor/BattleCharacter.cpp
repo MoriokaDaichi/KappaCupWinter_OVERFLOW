@@ -5,6 +5,8 @@
 #include "collision/RayCast.h"
 #include "weapon/BulletSystem.h"
 #include "sound/GameSound.h"
+#include "effect/EffectManager.h"
+#include "gimmick/Anchor.h"
 #include "actor/characterState/IdleState.h"
 #include "actor/characterState/RunState.h"
 #include "actor/characterState/AirState.h"
@@ -16,6 +18,15 @@
 
 BattleCharacter::BattleCharacter() : m_stateMachine(this)
 {
+}
+
+BattleCharacter::~BattleCharacter()
+{
+	Anchor* anchor = m_bodyAnchor.Get();
+	if (anchor != nullptr)
+	{
+		DeleteGO(anchor);
+	}
 }
 
 bool BattleCharacter::Start()
@@ -78,7 +89,7 @@ bool BattleCharacter::Start()
 	return true;
 }
 
-bool BattleCharacter::TakeDamage(const float damage)
+bool BattleCharacter::TakeDamage(const float damage, BattleCharacter* by)
 {
 	if (IsDead())
 	{
@@ -99,6 +110,23 @@ bool BattleCharacter::TakeDamage(const float damage)
 		return false;
 	}
 
+	Defeat(by);
+	return true;
+}
+
+void BattleCharacter::Defeat(BattleCharacter* by)
+{
+	m_hp = 0.0f;
+
+	nsEffect::Play(EnEffect::Defeat, GetChestPosition(), nsGameParam::Get().effect.defeatScale);
+	nsSound::Play(EnSound::Defeat);
+
+	if (by != nullptr)
+	{
+		by->GetSpeedSystem().AddBase(m_param->health.killBoost);
+	}
+
+	// 隠す・消すのは最後（消した後は自分のメンバに触らない）
 	if (m_isReuseOnDefeat)
 	{
 		Hide();
@@ -107,7 +135,6 @@ bool BattleCharacter::TakeDamage(const float damage)
 	{
 		DeleteGO(this);
 	}
-	return true;
 }
 
 void BattleCharacter::Respawn(const Vector3& position)
@@ -116,12 +143,48 @@ void BattleCharacter::Respawn(const Vector3& position)
 	m_speed.Reset();
 	Warp(position);
 	Activate();
+
+	Anchor* anchor = m_bodyAnchor.Get();
+	if (anchor != nullptr)
+	{
+		// 前に離されたことを覚えていても、湧き直した直後に倒れないように捨てる
+		anchor->TakeReleasedBy();
+		anchor->SetPosition(GetChestPosition());
+		anchor->Activate();
+	}
 }
 
 void BattleCharacter::Hide()
 {
 	Deactivate();
 	m_charaCon.GetRigidBody()->GetBody()->getWorldTransform().setOrigin(btVector3(0.0f, HIDDEN_HEIGHT, 0.0f));
+
+	// アンカーも隠す（ぶら下がっているキャラは、隠れたのを見てワイヤーが切れる。SwingState の AnchorLost）
+	Anchor* anchor = m_bodyAnchor.Get();
+	if (anchor != nullptr)
+	{
+		anchor->SetLocked(false);
+		anchor->Deactivate();
+	}
+}
+
+void BattleCharacter::UpdateBodyAnchor()
+{
+	Anchor* anchor = m_bodyAnchor.Get();
+	if (anchor == nullptr)
+	{
+		return;
+	}
+
+	// 離されたら倒れる（グラップルで刺して倒す）。離したキャラに撃破ブーストを渡す
+	BattleCharacter* releasedBy = anchor->TakeReleasedBy();
+	if (releasedBy != nullptr && !IsDead())
+	{
+		Defeat(releasedBy);
+		return;
+	}
+
+	anchor->SetPosition(GetChestPosition());
 }
 
 bool BattleCharacter::IsHitBySegment(const Vector3& start, const Vector3& end, const float extraRadius, Vector3& hitPoint) const
@@ -443,6 +506,9 @@ void BattleCharacter::OnBodyUpdated()
 	{
 		m_enemyGun->UpdateWarningLine(IsAimPress(), GetMuzzlePosition(), GetCommand().aimDirection, GetCommand().aimDistance);
 	}
+
+	// 体が動いた後に、アンカーを胸へ合わせる（倒れることがあるので最後に呼ぶ）
+	UpdateBodyAnchor();
 }
 
 void BattleCharacter::Render(RenderContext& rc)
@@ -550,5 +616,12 @@ void BattleCharacter::InitAbilities()
 	{
 		m_enemyGun = std::make_unique<EnemyGun>();
 		m_enemyGun->Init(FindGO<BulletSystem>("enemyBulletSystem"));
+	}
+	if (HasAbility("Anchor"))
+	{
+		// 名前を "anchor" にすると、プレイヤーの AnchorLocker がステージのアンカーと同じように探してロックする
+		Anchor* anchor = NewGO<Anchor>(0, "anchor");
+		anchor->SetPosition(GetChestPosition());
+		m_bodyAnchor.Reset(anchor);
 	}
 }
