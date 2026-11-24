@@ -5,7 +5,7 @@
 class Character : public IGameObject
 {
 public:
-	/** UpdateAction → UpdateBody → OnBodyUpdated の順に呼ぶ。子クラスは上書きしない */
+	/** UpdateAction → UpdateBody → OnBodyUpdated の順に呼ぶ。ヒットストップ中は動かさず、見た目だけ震わせる。子クラスは上書きしない */
 	void Update() override final;
 	/** モデルの描画 */
 	void Render(RenderContext& rc) override;
@@ -39,6 +39,11 @@ public:
 	void SetGravityScale(const float scale) { m_gravity.SetScale(scale); }
 	/** 渡された目標の傾きを覚えておく */
 	void SetModelTiltTarget(const Quaternion& target, const float pivotHeight);
+	/**
+	 * ヒットストップを始める。seconds 秒のあいだ動きを止め、見た目だけを amplitude の幅で左右に震わせる（だんだん小さくする）
+	 * 弾が当たった敵に使う（撃った側は止めない。走りの気持ちよさを止めないため）
+	 */
+	void StartHitStop(const float seconds, const float amplitude);
 
 protected:
 	/** 子クラスが書く（BattleCharacter なら、切り替え表と State を動かす） */
@@ -56,6 +61,8 @@ protected:
 private:
 	/** キャラクター共通（Execute → モデルに位置と向きを反映 → モデル更新） */
 	void UpdateBody();
+	/** ヒットストップ中の 1 フレーム。時間を進め、止まった位置から左右に震わせる */
+	void UpdateHitStop();
 
 protected:
 	CharacterController m_charaCon;	///< 当たり判定と移動
@@ -71,4 +78,10 @@ protected:
 
 private:
 	static constexpr float MIN_FACE_LENGTH_SQ = 0.001f;		///< 向きを決められる長さかどうかの境目（長さの2乗）
+
+	float m_hitStopTimer = 0.0f;			///< ヒットストップの残り（秒）。0 なら止まっていない
+	float m_hitStopTime = 0.0f;				///< 今のヒットストップの長さ（秒）。震えを小さくしていく割合に使う
+	float m_hitStopAmplitude = 0.0f;		///< 震えの幅
+	Vector3 m_hitStopBasePosition;			///< 止まった瞬間の見た目の位置（ここを中心に震わせる）
+	int m_hitStopFrame = 0;					///< 止まってからのフレーム数（偶数と奇数で左右を入れ替える）
 };

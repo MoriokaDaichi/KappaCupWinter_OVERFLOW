@@ -54,6 +54,7 @@ bool Game::Start()
 	m_giantFirewall.Init(m_player);
 	m_hud.Init(m_player, &m_checkpoint, &m_giantFirewall);
 	m_levelUpFlash.Init(m_player);
+	m_defeatFlash.Init(m_player);
 	m_stage.SetPlayer(m_player);
 	nsSound::SetLoop(EnSound::Bgm, true);
 
@@ -83,6 +84,7 @@ void Game::Update()
 	m_giantFirewall.Update();
 	m_hud.Update();
 	m_levelUpFlash.Update();
+	m_defeatFlash.Update();
 	// 足音は、プレイヤーが地上か壁を走っているときだけ（歩く敵も Run になるので、キャラの中では鳴らさない）
 	const EnCharacterState playerState = m_player->GetCurrentState();
 	nsSound::SetLoop(EnSound::Run, playerState == EnCharacterState::Run || playerState == EnCharacterState::WallRun);
@@ -100,6 +102,7 @@ void Game::Reset()
 	m_checkpoint.Reset();
 	m_giantFirewall.Reset();
 	m_hud.Reset();
+	m_defeatFlash.Reset();
 	m_enemySpawner.Reset();
 }
 
@@ -107,6 +110,7 @@ void Game::Render(RenderContext& rc)
 {
 	m_stage.Draw(rc);
 	m_levelUpFlash.Draw(rc);
+	m_defeatFlash.Draw(rc);
 	m_hud.Draw();
 	m_lockOnHud.Draw(rc);
 	m_giantFirewall.Draw(rc);

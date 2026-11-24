@@ -76,6 +76,10 @@ public:
 	void Warp(const Vector3& position);
 	/** ワープした回数を返す。ワープしたことを知りたいクラス（GameCamera）が見る */
 	int GetWarpCount() const { return m_warpCount; }
+	/** 自分の攻撃が敵に当たった回数を返す。当たったことを知りたいクラス（HitMarker）が、前の値と比べて見る */
+	int GetHitCount() const { return m_hitCount; }
+	/** 自分が敵を倒した回数を返す（弾でも、グラップルで刺しても数える。HitMarker・DefeatFlash が見る） */
+	int GetDefeatCount() const { return m_defeatCount; }
 
 public:
 	/** このフレームのコマンドを返す（State や能力が読む） */
@@ -206,6 +210,8 @@ private:
 	float m_hp = 0.0f;															///< 今の体力（設定に health があるキャラだけ使う）
 	bool m_isReuseOnDefeat = false;												///< 倒れたときに消さず、隠しておくか
 	int m_warpCount = 0;														///< ワープした回数
+	int m_hitCount = 0;															///< 自分の攻撃が敵に当たった回数（相手の TakeDamage が増やす）
+	int m_defeatCount = 0;														///< 自分が敵を倒した回数（相手の Defeat が増やす）
 	StateMachine<BattleCharacter, EnCharacterState, BattleCharacterState> m_stateMachine;	///< 状態の切り替え役
 	TransitionTable m_transitionTable;											///< 切り替え表（設定の transitions から作る）
 	std::unique_ptr<Grapple> m_grapple;											///< グラップルの能力（abilities に "Grapple" があるときだけ作る）

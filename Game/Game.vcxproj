@@ -287,6 +287,8 @@
     <ClCompile Include="hud\TutorialHud.cpp" />
     <ClCompile Include="hud\Hud.cpp" />
     <ClCompile Include="hud\LevelUpFlash.cpp" />
+    <ClCompile Include="hud\DefeatFlash.cpp" />
+    <ClCompile Include="hud\HitMarker.cpp" />
     <ClCompile Include="hud\HudText.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -359,6 +361,8 @@
     <ClInclude Include="hud\TutorialHud.h" />
     <ClInclude Include="hud\Hud.h" />
     <ClInclude Include="hud\LevelUpFlash.h" />
+    <ClInclude Include="hud\DefeatFlash.h" />
+    <ClInclude Include="hud\HitMarker.h" />
     <ClInclude Include="hud\HudText.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

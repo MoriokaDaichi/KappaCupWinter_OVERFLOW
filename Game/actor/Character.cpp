@@ -3,9 +3,50 @@
 
 void Character::Update()
 {
+	if (m_hitStopTimer > 0.0f)
+	{
+		// 止まっている間も、体に付いているもの（輪郭線・アンカー）は見た目に合わせる
+		UpdateHitStop();
+		OnBodyUpdated();
+		return;
+	}
+
 	UpdateAction();
 	UpdateBody();
 	OnBodyUpdated();
+}
+
+void Character::StartHitStop(const float seconds, const float amplitude)
+{
+	if (seconds <= 0.0f)
+	{
+		return;
+	}
+
+	// 止まっている途中にまた当たったら、震えの中心は最初に止まった位置のまま、時間だけ延ばす
+	if (m_hitStopTimer <= 0.0f)
+	{
+		m_hitStopBasePosition = m_modelPosition;
+		m_hitStopFrame = 0;
+	}
+	m_hitStopTimer = seconds;
+	m_hitStopTime = seconds;
+	m_hitStopAmplitude = amplitude;
+}
+
+void Character::UpdateHitStop()
+{
+	m_hitStopTimer = max(m_hitStopTimer - g_gameTime->GetFrameDeltaTime(), 0.0f);
+	m_hitStopFrame++;
+
+	// 画面の左右に震わせる（カメラの右の向き）。最初が大きく、止まり終わりに 0 へ近づける
+	const float side = (m_hitStopFrame % 2 == 0) ? 1.0f : -1.0f;
+	const float fade = (m_hitStopTime > 0.0f) ? m_hitStopTimer / m_hitStopTime : 0.0f;
+	const Vector3 offset = g_camera3D->GetRight() * (side * m_hitStopAmplitude * fade);
+
+	m_modelPosition = m_hitStopBasePosition + offset;
+	m_modelRender.SetPosition(m_modelPosition);
+	m_modelRender.Update();
 }
 
 void Character::Render(RenderContext& rc)

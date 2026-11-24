@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "hud/HudShape.h"
 #include "hud/HudText.h"
+#include "hud/HitMarker.h"
 #include "hud/SpeedMeter.h"
 #include "hud/TutorialHud.h"
 
@@ -20,7 +21,7 @@ public:
 	/** 案内を進め、タイムを進める。タイムは巨大ファイアウォールを突破したら止める（毎フレーム Game の Update から呼ぶ） */
 	void Update();
 	/** タイムを 0 に戻し、案内を最初からにする（最初からやり直すとき） */
-	void Reset() { m_time = 0.0f; m_tutorial.Reset(); }
+	void Reset() { m_time = 0.0f; m_tutorial.Reset(); m_hitMarker.Reset(); }
 	/** 全部を描く（毎フレーム Game の Render から呼ぶ。全員が動いた後の位置に出すため） */
 	void Draw();
 
@@ -50,6 +51,7 @@ private:
 
 	SpeedMeter m_speedMeter;							///< 右下のスピードメーター
 	TutorialHud m_tutorial;								///< 上のほうの案内
+	HitMarker m_hitMarker;								///< 弾が当たったときに照準のまわりに出す×
 	HudShape m_crosshair;								///< 真ん中の照準（Assets/shader/hudCrosshair.fx）
 	HudShape m_bracket;									///< ロックしたアンカーを囲む角カッコ（Assets/shader/hudBracket.fx）
 	HudText m_timeLabel;								///< 「TIME」

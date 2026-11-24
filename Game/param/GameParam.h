@@ -307,6 +307,8 @@ struct EffectParam
 	float hitScale = 0.0f;				///< 着弾のエフェクトの拡大率
 	float defeatScale = 0.0f;			///< 撃破のエフェクトの拡大率
 	float bulletScale = 0.0f;			///< 弾の光の筋の拡大率。gun.json の Lv ごとの bulletScale に掛ける
+	float hitStopTime = 0.0f;			///< 弾が当たった敵を止める秒数（0 で止めない）
+	float hitShake = 0.0f;				///< 止めている間に敵を左右に震わせる幅
 };
 
 /** 音量（sound.json）。0 で無音、1 でそのまま */

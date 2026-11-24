@@ -114,9 +114,17 @@ bool BattleCharacter::TakeDamage(const float damage, BattleCharacter* by)
 		return false;
 	}
 
+	if (by != nullptr)
+	{
+		by->m_hitCount++;
+	}
+
 	m_hp -= damage;
 	if (m_hp > 0.0f)
 	{
+		// 当たった敵だけ一瞬止めて震わせる（倒れたときは消えるので止めない）
+		const EffectParam& effect = nsGameParam::Get().effect;
+		StartHitStop(effect.hitStopTime, effect.hitShake);
 		return false;
 	}
 
@@ -134,6 +142,7 @@ void BattleCharacter::Defeat(BattleCharacter* by)
 	if (by != nullptr)
 	{
 		by->GetSpeedSystem().AddBase(m_param->health.killBoost);
+		by->m_defeatCount++;
 	}
 
 	// 隠す・消すのは最後（消した後は自分のメンバに触らない）

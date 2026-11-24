@@ -6,6 +6,7 @@
 #include "actor/EnemySpawner.h"
 #include "hud/Hud.h"
 #include "hud/LevelUpFlash.h"
+#include "hud/DefeatFlash.h"
 #include "hud/LockOnHud.h"
 #include "stage/Stage.h"
 #include "stage/Checkpoint.h"
@@ -42,6 +43,7 @@ private:
 
 	Stage m_stage;						///< stage.json の箱とアンカー
 	LevelUpFlash m_levelUpFlash;		///< 速度 Lv が上がった瞬間に画面を光らせる
+	DefeatFlash m_defeatFlash;			///< 敵を倒した瞬間に画面を薄く光らせる
 	Hud m_hud;							///< タイム・チェックポイント・照準・スピードメーター・グラップルの角カッコ
 	LockOnHud m_lockOnHud;				///< マルチロックオンのドーナツ
 	DebugManager m_debugManager;		///< デバッグ画面（ImGui のパネル。F1 で隠せる）
