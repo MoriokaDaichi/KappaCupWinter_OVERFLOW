@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "param/GameParam.h"
+#include "actor/CharacterOutline.h"
+#include <memory>
 
 /**
  * 台座の上に載せる砲身の見た目。毎フレーム、狙いの向きへ回す（弾を撃つ処理は EnemySpawner）
@@ -12,6 +14,8 @@ public:
 	void Init(const CharacterParam::Turret& param, const float scale, const Vector3& position);
 	/** position（足元の位置）の上に置き、aimDirection の方へ向ける。向きがないとき（長さ 0）は今の向きのまま */
 	void Update(const Vector3& position, const Vector3& aimDirection);
+	/** 輪郭線を付ける（体と同じ設定。Init の後に呼ぶ） */
+	void InitOutline(const CharacterParam::Outline& param);
 	/** 描く */
 	void Draw(RenderContext& rc);
 	/** 砲口の位置（2 本の砲身の間）を返す */
@@ -25,4 +29,5 @@ private:
 	float m_scale = 1.0f;								///< 見た目の倍率
 	Vector3 m_pivot;									///< 回す中心の位置
 	Quaternion m_rotation;								///< 今の向き
+	std::unique_ptr<CharacterOutline> m_outline;		///< 輪郭線（InitOutline を呼んだときだけ作る）
 };

@@ -139,6 +139,13 @@ struct CharacterParam
 		float accel = 0.0f;				///< その速さに近づく加速（1 秒あたり）
 	};
 
+	/** 輪郭線（書いたキャラだけ持つ。遠くからでも敵を見つけやすくする） */
+	struct Outline
+	{
+		std::array<float, 3> color = {};	///< 線の色（RGB。1 より大きいと Bloom で光る）
+		float width = 0.0f;				///< 線の太さ。カメラからの距離に掛ける（遠くても画面の上で同じくらいの太さになる）
+	};
+
 	std::string model;		///< モデルのファイル名（.tkm）
 	std::vector<std::string> abilities;		///< 持つ能力の名前（"Grapple"・"Gun"・"EnemyGun"）。書いていない能力は作らない
 	std::vector<std::string> states;		///< 使う State の名前（"Idle"・"Run"・"Air"・"WallRun"・"Swing"）
@@ -160,6 +167,8 @@ struct CharacterParam
 	Shooter shooter;
 	bool hasShooter = false;		///< JSON に shooter を書いたか
 	Fly fly;
+	Outline outline;
+	bool hasOutline = false;		///< JSON に outline を書いたか
 };
 
 /** カメラの値（camera.json） */

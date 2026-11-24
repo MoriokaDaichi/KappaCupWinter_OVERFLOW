@@ -45,11 +45,26 @@ void TurretModel::Update(const Vector3& position, const Vector3& aimDirection)
 	m_model.SetRotation(m_rotation);
 	m_model.SetPosition(m_pivot + pivotToOrigin);
 	m_model.Update();
+
+	if (m_outline)
+	{
+		m_outline->Update(m_pivot + pivotToOrigin, m_rotation, m_scale);
+	}
+}
+
+void TurretModel::InitOutline(const CharacterParam::Outline& param)
+{
+	m_outline = std::make_unique<CharacterOutline>();
+	m_outline->Init(m_param->model.c_str(), param);
 }
 
 void TurretModel::Draw(RenderContext& rc)
 {
 	m_model.Draw(rc);
+	if (m_outline)
+	{
+		m_outline->Draw(rc);
+	}
 }
 
 Vector3 TurretModel::GetMuzzlePosition() const

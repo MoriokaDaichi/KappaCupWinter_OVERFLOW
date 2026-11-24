@@ -156,6 +156,9 @@
     <ClCompile Include="actor\CharacterAnimation.cpp">
       <Filter>actor</Filter>
     </ClCompile>
+    <ClCompile Include="actor\CharacterOutline.cpp">
+      <Filter>actor</Filter>
+    </ClCompile>
     <ClCompile Include="actor\HandBones.cpp">
       <Filter>actor</Filter>
     </ClCompile>
@@ -335,6 +338,9 @@
       <Filter>actor</Filter>
     </ClInclude>
     <ClInclude Include="actor\CharacterAnimation.h">
+      <Filter>actor</Filter>
+    </ClInclude>
+    <ClInclude Include="actor\CharacterOutline.h">
       <Filter>actor</Filter>
     </ClInclude>
     <ClInclude Include="actor\HandBones.h">

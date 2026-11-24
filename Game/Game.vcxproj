@@ -227,6 +227,7 @@
     <ClCompile Include="actor\EnemySpawner.cpp" />
     <ClCompile Include="actor\CharacterAnimation.cpp" />
     <ClCompile Include="actor\HandBones.cpp" />
+    <ClCompile Include="actor\CharacterOutline.cpp" />
     <ClCompile Include="actor\characterState\TransitionTable.cpp" />
     <ClCompile Include="actor\Character.cpp" />
     <ClCompile Include="actor\characterState\AirState.cpp" />
@@ -293,6 +294,7 @@
     <ClInclude Include="actor\EnemySpawner.h" />
     <ClInclude Include="actor\CharacterAnimation.h" />
     <ClInclude Include="actor\HandBones.h" />
+    <ClInclude Include="actor\CharacterOutline.h" />
     <ClInclude Include="actor\characterState\BattleCharacterState.h" />
     <ClInclude Include="actor\characterState\CharacterStateId.h" />
     <ClInclude Include="actor\characterState\StateTransition.h" />

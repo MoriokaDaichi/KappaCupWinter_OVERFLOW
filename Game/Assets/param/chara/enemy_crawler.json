@@ -31,5 +31,9 @@
   "health": {
     "maxHp": 20.0,
     "killBoost": 30.0
+  },
+  "outline": {
+    "color": [ 3.0, 0.3, 4.0 ],
+    "width": 0.004
   }
 }

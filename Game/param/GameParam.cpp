@@ -28,6 +28,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Health, maxHp, killBoost)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Turret, model, height, pivotHeight, muzzleHeight, muzzleForward, maxPitch)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Shooter, detectRange, aimTime, cooldownTime, leadRate)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Fly, speed, accel)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CharacterParam::Outline, color, width)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraParam, distance, targetHeight, rotateSpeedX, rotateSpeedY, pitchMin, pitchMax,
 	viewAngleNormal, viewAngleMax, viewAngleLerpRate, maxSpeedForFov, collisionRadius, nearClip, farClip, shoulderOffset,
 	levelUpViewAngleKick, levelUpKickTime, pivotFollowRate, swingPivotFollowRate, pivotMaxLag, speedPullBack,
@@ -84,13 +85,14 @@ void from_json(const nlohmann::json& j, CharacterParam::Transition& transition)
  * health も書いたキャラだけが持つ（書かなければ、弾が当たらない）
  * turret も書いたキャラだけが持つ（書かなければ、砲身なし）
  * shooter も書いたキャラだけが持つ（書かなければ、撃たない）
+ * outline も書いたキャラだけが持つ（書かなければ、輪郭線なし）
  * 知らないキー（つづりの間違い）があれば止める（書かなくてもいいキーを打ち間違えると、黙って無視されてしまうため）
  */
 void from_json(const nlohmann::json& j, CharacterParam& param)
 {
-	static const std::array<const char*, 16> KNOWN_KEYS = {
+	static const std::array<const char*, 17> KNOWN_KEYS = {
 		"model", "abilities", "states", "transitions", "body", "move", "jump",
-		"wallRun", "lock", "swing", "animation", "hands", "health", "turret", "shooter", "fly"
+		"wallRun", "lock", "swing", "animation", "hands", "health", "turret", "shooter", "fly", "outline"
 	};
 	for (auto it = j.begin(); it != j.end(); ++it)
 	{
@@ -136,6 +138,12 @@ void from_json(const nlohmann::json& j, CharacterParam& param)
 	if (param.hasShooter)
 	{
 		j.at("shooter").get_to(param.shooter);
+	}
+
+	param.hasOutline = j.contains("outline");
+	if (param.hasOutline)
+	{
+		j.at("outline").get_to(param.outline);
 	}
 
 	if (Contains(param.states, "WallRun"))

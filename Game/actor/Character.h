@@ -66,6 +66,8 @@ protected:
 	Quaternion m_modelTilt = Quaternion::Identity;	///< 見た目だけの傾き。m_rotation の後にかける（当たり判定や向きの計算には使わない）
 	Quaternion m_modelTiltTarget = Quaternion::Identity;		///< 目標の傾き。State が毎フレーム SetModelTiltTarget で決め、出さなければまっすぐに戻る
 	float m_modelTiltPivotHeight = 0.0f;			///< 傾けるときの中心の、足元からの高さ
+	Vector3 m_modelPosition;						///< 見た目の位置（傾きの分ずらした後）。UpdateBody で決める。輪郭線を体に重ねるのに使う
+	Quaternion m_modelRotation = Quaternion::Identity;	///< 見た目の向き（向き × 傾き）。同上
 
 private:
 	static constexpr float MIN_FACE_LENGTH_SQ = 0.001f;		///< 向きを決められる長さかどうかの境目（長さの2乗）

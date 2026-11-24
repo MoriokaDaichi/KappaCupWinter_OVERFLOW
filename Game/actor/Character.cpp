@@ -24,8 +24,10 @@ void Character::UpdateBody()
 	Vector3 tiltedPivot = pivot;
 	m_modelTilt.Apply(tiltedPivot);
 
-	m_modelRender.SetRotation(modelRotation);
-	m_modelRender.SetPosition(position + pivot - tiltedPivot);
+	m_modelRotation = modelRotation;
+	m_modelPosition = position + pivot - tiltedPivot;
+	m_modelRender.SetRotation(m_modelRotation);
+	m_modelRender.SetPosition(m_modelPosition);
 	m_modelRender.Update();
 }
 

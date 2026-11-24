@@ -42,5 +42,9 @@
     "aimTime": 1.0,
     "cooldownTime": 1.5,
     "leadRate": 1.0
+  },
+  "outline": {
+    "color": [ 4.0, 0.25, 0.2 ],
+    "width": 0.004
   }
 }

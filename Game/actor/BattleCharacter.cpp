@@ -84,6 +84,16 @@ bool BattleCharacter::Start()
 	{
 		m_turretModel = std::make_unique<TurretModel>();
 		m_turretModel->Init(m_param->turret, body.modelScale, GetPosition());
+		if (m_param->hasOutline)
+		{
+			m_turretModel->InitOutline(m_param->outline);
+		}
+	}
+
+	if (m_param->hasOutline)
+	{
+		m_outline = std::make_unique<CharacterOutline>();
+		m_outline->Init(modelPath, m_param->outline);
 	}
 
 	return true;
@@ -507,6 +517,11 @@ void BattleCharacter::OnBodyUpdated()
 		m_enemyGun->UpdateWarningLine(IsAimPress(), GetMuzzlePosition(), GetCommand().aimDirection, GetCommand().aimDistance);
 	}
 
+	if (m_outline)
+	{
+		m_outline->Update(m_modelPosition, m_modelRotation, m_param->body.modelScale);
+	}
+
 	// 体が動いた後に、アンカーを胸へ合わせる（倒れることがあるので最後に呼ぶ）
 	UpdateBodyAnchor();
 }
@@ -514,6 +529,10 @@ void BattleCharacter::OnBodyUpdated()
 void BattleCharacter::Render(RenderContext& rc)
 {
 	Character::Render(rc);
+	if (m_outline)
+	{
+		m_outline->Draw(rc);
+	}
 	if (m_gunModel)
 	{
 		m_gunModel->Draw(rc);

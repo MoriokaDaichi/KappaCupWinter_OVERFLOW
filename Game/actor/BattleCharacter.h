@@ -3,6 +3,7 @@
 #include "actor/CharacterCommand.h"
 #include "actor/CharacterAnimation.h"
 #include "actor/HandBones.h"
+#include "actor/CharacterOutline.h"
 #include "actor/characterState/BattleCharacterState.h"
 #include "actor/characterState/CharacterStateId.h"
 #include "actor/characterState/TransitionTable.h"
@@ -215,4 +216,5 @@ private:
 	std::unique_ptr<HandBones> m_handBones;										///< 手の骨（設定に hands があるときだけ作る）
 	std::unique_ptr<GunModel> m_gunModel;										///< 手に持つ銃の見た目（銃と手の骨の両方があるときだけ作る）
 	std::unique_ptr<TurretModel> m_turretModel;									///< 砲身の見た目（設定に turret があるときだけ作る）
+	std::unique_ptr<CharacterOutline> m_outline;								///< 体の輪郭線（設定に outline があるときだけ作る。砲身の分は TurretModel が持つ）
 };
