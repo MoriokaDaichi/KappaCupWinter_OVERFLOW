@@ -17,8 +17,11 @@ public:
 	 * aimOrigin・aimDirection: 狙いの始点と向き（カメラの位置と前向き）
 	 */
 	void Update(const Vector3& position, const Vector3& chestPosition,const Vector3& aimOrigin, const Vector3& aimDirection);
-	/** スイングに使うロック中のアンカーを返す */
-	Anchor* GetLockedAnchor() const { return m_lockedAnchor.Get(); }
+	/**
+	 * スイングに使うロック中のアンカーを返す。消えていたら nullptr
+	 * 中身は .cpp に書く（GOHandle の Get は Anchor の中身を知らないとコンパイルできない。ここは class Anchor; だけなので）
+	 */
+	Anchor* GetLockedAnchor() const;
 
 private:
 	/** アンカー1つの点数を出す。候補にならないときはマイナス（例：-1.0f）を返す */

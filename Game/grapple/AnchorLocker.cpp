@@ -63,6 +63,11 @@ void AnchorLocker::Update(const Vector3& position, const Vector3& chestPosition,
 	m_lockedAnchor.Reset(best);
 }
 
+Anchor* AnchorLocker::GetLockedAnchor() const
+{
+	return m_lockedAnchor.Get();
+}
+
 float AnchorLocker::CalcLockScore(const Vector3& position, const Vector3& chestPosition, const Anchor* anchor, const Vector3& aimOrigin, const Vector3& aimDirection) const
 {
 	const Vector3 toAnchor = anchor->GetPosition() - position;
