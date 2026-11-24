@@ -7,9 +7,14 @@
 #include "input/InputManager.h"
 #include "effect/EffectManager.h"
 #include "sound/GameSound.h"
+#include "scene/Fade.h"
+#include "scene/ResultScene.h"
+#include "scene/TitleScene.h"
 
 Game::~Game()
 {
+	// ポーズのまま消えても、次のシーンの時間が止まらないように戻す
+	g_gameTime->DisableFixedFrameDeltaTime();
 	DeleteGO(m_player);
 	m_enemySpawner.DeleteAll();
 	DeleteGO(m_gameCamera);
@@ -64,12 +69,42 @@ bool Game::Start()
 	m_goalText.SetPosition(Vector2(0.0f, GOAL_FONT_Y));
 	m_goalText.SetColor(Vector4(0.0f, 0.9f, 1.0f, 1.0f));
 
+	m_pauseMenu.Init();
+	m_fade = FindGO<Fade>(Fade::NAME);
+	if (m_fade != nullptr)
+	{
+		m_fade->StartFadeIn(FADE_TIME);
+	}
+
 	return true;
 }
 
 void Game::Update()
 {
-	InputManager::GetInstance().Update();
+	InputManager& input = InputManager::GetInstance();
+	input.Update();
+
+	if (m_leaveTo != LEAVE_NONE)
+	{
+		UpdateLeave();
+		return;
+	}
+	if (m_isPaused)
+	{
+		UpdatePause();
+		return;
+	}
+	// ポーズを閉じたフレームは、閉じた A をプレイヤーに渡さないように、次のフレームで入力を戻す
+	if (m_isInputRestorePending)
+	{
+		m_playerController.SetInput(&input);
+		m_isInputRestorePending = false;
+	}
+	if (input.IsTrigger(EnInputAction::Pause))
+	{
+		SetPaused(true);
+		return;
+	}
 
 	m_debugManager.Update();
 	// Back ボタン（キーボードはスペース）でも最初からやり直せる。デバッグ画面のない Release でも使える（試遊会用）
@@ -93,6 +128,94 @@ void Game::Update()
 	const float swingVolumeRate = SWING_MIN_VOLUME_RATE + (1.0f - SWING_MIN_VOLUME_RATE) * swingSpeedRate;
 	const float swingPitch = SWING_MIN_PITCH + (SWING_MAX_PITCH - SWING_MIN_PITCH) * swingSpeedRate;
 	nsSound::SetLoop(EnSound::Swing, playerState == EnCharacterState::Swing, swingVolumeRate, swingPitch);
+
+	// 突破したら、GOAL の文字を少し見せてからリザルトへ
+	if (m_giantFirewall.IsBroken())
+	{
+		m_goalTimer += g_gameTime->GetFrameDeltaTime();
+		if (m_goalTimer >= GOAL_TO_RESULT_TIME)
+		{
+			StartLeave(LEAVE_TO_RESULT);
+		}
+	}
+}
+
+void Game::SetPaused(const bool isPaused)
+{
+	m_isPaused = isPaused;
+	if (isPaused)
+	{
+		// ほかのオブジェクトは g_gameTime の 1 フレームの時間で動くので、0 にすると全部止まる（描くのは続く）
+		g_gameTime->EnableFixedFrameDeltaTime(0.0f);
+		// 時間が 0 でも、ジャンプや射撃のボタンは効いてしまうので、プレイヤーへの入力を止める
+		m_playerController.SetInput(nullptr);
+		StopLoopSounds();
+		m_pauseMenu.Open();
+		return;
+	}
+
+	g_gameTime->DisableFixedFrameDeltaTime();
+	m_isInputRestorePending = true;
+}
+
+void Game::UpdatePause()
+{
+	switch (m_pauseMenu.Update(InputManager::GetInstance()))
+	{
+	case PauseMenu::Choice::Resume:
+		SetPaused(false);
+		break;
+	case PauseMenu::Choice::Checkpoint:
+		SetPaused(false);
+		m_checkpoint.Respawn();
+		break;
+	case PauseMenu::Choice::Title:
+		SetPaused(false);
+		StartLeave(LEAVE_TO_TITLE);
+		break;
+	case PauseMenu::Choice::None:
+		break;
+	}
+}
+
+void Game::StartLeave(const int next)
+{
+	m_leaveTo = next;
+	m_playerController.SetInput(nullptr);
+	m_isInputRestorePending = false;
+	StopLoopSounds();
+	if (m_fade != nullptr)
+	{
+		m_fade->StartFadeOut(FADE_TIME);
+	}
+}
+
+void Game::UpdateLeave()
+{
+	if (m_fade != nullptr && !m_fade->IsBlack())
+	{
+		return;
+	}
+
+	if (m_leaveTo == LEAVE_TO_RESULT)
+	{
+		ResultScene* result = NewGO<ResultScene>(0, "result");
+		result->SetResult(m_hud.GetTime(), m_player->GetDefeatCount());
+	}
+	else
+	{
+		NewGO<TitleScene>(0, "title");
+	}
+	DeleteGO(this);
+	// 消えるのはフレームの終わりなので、次のシーンを 2 回作らないように、もう抜けたことにする
+	m_leaveTo = LEAVE_NONE;
+	m_fade = nullptr;
+}
+
+void Game::StopLoopSounds()
+{
+	nsSound::SetLoop(EnSound::Run, false);
+	nsSound::SetLoop(EnSound::Swing, false);
 }
 
 void Game::Reset()
@@ -103,6 +226,7 @@ void Game::Reset()
 	m_giantFirewall.Reset();
 	m_hud.Reset();
 	m_defeatFlash.Reset();
+	m_goalTimer = 0.0f;
 	m_enemySpawner.Reset();
 }
 
@@ -118,5 +242,11 @@ void Game::Render(RenderContext& rc)
 	if (m_giantFirewall.IsBroken())
 	{
 		m_goalText.Draw();
+	}
+
+	// メニューは HUD の上に重ねるので、最後に描く
+	if (m_isPaused)
+	{
+		m_pauseMenu.Draw();
 	}
 }

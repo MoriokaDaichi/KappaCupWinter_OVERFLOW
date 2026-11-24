@@ -22,6 +22,8 @@ public:
 	void Update();
 	/** タイムを 0 に戻し、案内を最初からにする（最初からやり直すとき） */
 	void Reset() { m_time = 0.0f; m_tutorial.Reset(); m_hitMarker.Reset(); }
+	/** 経過時間（秒）を返す。突破したら止まるので、クリアのタイムになる（リザルトに渡す） */
+	float GetTime() const { return m_time; }
 	/** 全部を描く（毎フレーム Game の Render から呼ぶ。全員が動いた後の位置に出すため） */
 	void Draw();
 

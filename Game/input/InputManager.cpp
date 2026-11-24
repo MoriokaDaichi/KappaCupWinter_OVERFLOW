@@ -10,7 +10,10 @@ namespace
         enButtonRB1,  // Grapple
         enButtonStart, // Pause
         enButtonSelect, // Restart（キーボードではスペース）
-        enButtonRB3     // ShoulderSwap
+        enButtonRB3,    // ShoulderSwap
+        enButtonUp,     // MenuUp
+        enButtonDown,   // MenuDown
+        enButtonB       // Cancel
     };
 
     static_assert(ARRAYSIZE(ACTION_TO_BUTTON) == static_cast<size_t>(EnInputAction::Num),

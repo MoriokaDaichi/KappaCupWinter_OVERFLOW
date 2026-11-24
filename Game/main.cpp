@@ -4,7 +4,8 @@
 #include<InitGUID.h>
 #include<dxgidebug.h>
 
-#include "Game.h"
+#include "scene/Fade.h"
+#include "scene/TitleScene.h"
 
 
 
@@ -33,8 +34,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	// ここから初期化を行うコードを記述する。
 	//////////////////////////////////////
 
-	//Gameクラスのオブジェクトを作成。
-	NewGO<Game>(0, "game");
+	// 画面を黒くする係はずっと残す（シーンをまたいで使う）。いちばん上に描くように優先度を大きくする
+	NewGO<Fade>(Fade::PRIORITY, Fade::NAME);
+	// タイトルから始める（タイトル → ゲーム → リザルト → タイトル）
+	NewGO<TitleScene>(0, "title");
 
 	//////////////////////////////////////
 	// 初期化を行うコードを書くのはここまで！！！

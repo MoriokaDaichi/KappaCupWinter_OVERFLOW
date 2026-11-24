@@ -7,6 +7,9 @@ enum class EnInputAction : int {
     Pause,              ///< Start
     Restart,            ///< Back（ビュー）。最初からやり直す（試遊会で次の人に渡すとき用）
     ShoulderSwap,       ///< 右スティック押し込み（キーボードは 9）
+    MenuUp,             ///< 十字キーの上（キーボードはテンキーの 8）。メニューで選ぶ
+    MenuDown,           ///< 十字キーの下（キーボードはテンキーの 2）。メニューで選ぶ
+    Cancel,             ///< B（キーボードは K）。メニューを閉じる
     Num                 ///< 個数（配列の大きさに使う）
 };
 

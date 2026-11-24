@@ -58,6 +58,9 @@
     <Filter Include="stage">
       <UniqueIdentifier>{7c1e9a52-3d46-4b8f-a0e7-6f2d91c4b835}</UniqueIdentifier>
     </Filter>
+    <Filter Include="scene">
+      <UniqueIdentifier>{7c1e9a52-3d4f-4b8a-a6e1-2f9d0c5b8e31}</UniqueIdentifier>
+    </Filter>
     <Filter Include="hud">
       <UniqueIdentifier>{5e7d2c41-8a3b-4f6e-9d12-3c4b7a8e6f20}</UniqueIdentifier>
     </Filter>
@@ -203,6 +206,21 @@
     </ClCompile>
     <ClCompile Include="hud\DefeatFlash.cpp">
       <Filter>hud</Filter>
+    </ClCompile>
+    <ClCompile Include="hud\PauseMenu.cpp">
+      <Filter>hud</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\Fade.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\MenuSelector.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\TitleScene.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\ResultScene.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
     <ClCompile Include="hud\LevelUpFlash.cpp">
       <Filter>hud</Filter>
@@ -417,6 +435,21 @@
     </ClInclude>
     <ClInclude Include="hud\DefeatFlash.h">
       <Filter>hud</Filter>
+    </ClInclude>
+    <ClInclude Include="hud\PauseMenu.h">
+      <Filter>hud</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\Fade.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\MenuSelector.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\TitleScene.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\ResultScene.h">
+      <Filter>scene</Filter>
     </ClInclude>
     <ClInclude Include="hud\LevelUpFlash.h">
       <Filter>hud</Filter>

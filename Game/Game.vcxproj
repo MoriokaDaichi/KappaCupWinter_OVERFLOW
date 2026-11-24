@@ -287,6 +287,11 @@
     <ClCompile Include="hud\TutorialHud.cpp" />
     <ClCompile Include="hud\Hud.cpp" />
     <ClCompile Include="hud\LevelUpFlash.cpp" />
+    <ClCompile Include="scene\ResultScene.cpp" />
+    <ClCompile Include="scene\TitleScene.cpp" />
+    <ClCompile Include="scene\MenuSelector.cpp" />
+    <ClCompile Include="scene\Fade.cpp" />
+    <ClCompile Include="hud\PauseMenu.cpp" />
     <ClCompile Include="hud\DefeatFlash.cpp" />
     <ClCompile Include="hud\HitMarker.cpp" />
     <ClCompile Include="hud\HudText.cpp" />
@@ -361,6 +366,11 @@
     <ClInclude Include="hud\TutorialHud.h" />
     <ClInclude Include="hud\Hud.h" />
     <ClInclude Include="hud\LevelUpFlash.h" />
+    <ClInclude Include="scene\ResultScene.h" />
+    <ClInclude Include="scene\TitleScene.h" />
+    <ClInclude Include="scene\MenuSelector.h" />
+    <ClInclude Include="scene\Fade.h" />
+    <ClInclude Include="hud\PauseMenu.h" />
     <ClInclude Include="hud\DefeatFlash.h" />
     <ClInclude Include="hud\HitMarker.h" />
     <ClInclude Include="hud\HudText.h" />
