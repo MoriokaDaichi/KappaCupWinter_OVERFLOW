@@ -11,9 +11,6 @@ namespace
 	// Vector4 は constexpr にできないので、クラスの定数ではなくここに置く
 	const Vector4 CODE_COLOR(0.25f, 1.0f, 0.6f, 0.75f);		///< コードの緑
 	const Vector4 ALERT_COLOR(1.0f, 0.17f, 0.84f, 1.0f);	///< 「BUFFER OVERFLOW DETECTED」のマゼンタ
-	const Vector4 LOGO_COLOR(1.0f, 1.0f, 1.0f, 1.0f);		///< ロゴの白
-	const Vector4 MAGENTA(1.0f, 0.17f, 0.84f, 0.8f);		///< ロゴの色ずれのマゼンタ
-	const Vector4 CYAN(0.0f, 0.9f, 1.0f, 0.8f);				///< ロゴの色ずれのシアン
 	const Vector4 PRESS_COLOR(0.0f, 0.9f, 1.0f, 1.0f);		///< 「> PRESS START_」のシアン
 	const Vector4 KEY_COLOR(0.5f, 0.55f, 0.7f, 1.0f);		///< キーボードの案内の灰色
 
@@ -70,9 +67,8 @@ bool TitleScene::Start()
 		m_code[i].SetText("");
 	}
 
-	m_logo.Init("Assets/sprite/title/logo.DDS", LOGO_WIDTH, LOGO_HEIGHT);
-	m_logoMagenta.Init("Assets/sprite/title/logo_mask.DDS", LOGO_WIDTH, LOGO_HEIGHT);
-	m_logoCyan.Init("Assets/sprite/title/logo_mask.DDS", LOGO_WIDTH, LOGO_HEIGHT);
+	m_logo.Init("Assets/sprite/title/logo_final.DDS", LOGO_WIDTH, LOGO_HEIGHT);
+	m_logoGlitch.Init("Assets/sprite/title/logo_glitch.DDS", LOGO_WIDTH, LOGO_HEIGHT);
 
 	const char* press = "> PRESS START_";
 	m_press.Init(static_cast<int>(strlen(press)), PRESS_HEIGHT, HudText::Align::Center);
@@ -225,24 +221,22 @@ void TitleScene::DrawPanel(RenderContext& rc, const float alpha)
 		m_code[i].Draw();
 	}
 
-	// ロゴ: ふだんは色が少しずれ、ときどき大きく乱れる
+	// ロゴ: ふだんは光る本番の画像。ときどき（と、押した瞬間）色ずれのグリッチ版に切り替え、左右に震わせて帯を重ねる
 	const bool isGlitch = fmodf(m_time, GLITCH_INTERVAL) < GLITCH_TIME || m_phase == Phase::Tap;
-	const float ghost = isGlitch ? LOGO_GLITCH_GHOST * (static_cast<float>(std::rand() % 100) / 100.0f) : LOGO_GHOST;
-	const float shake = isGlitch ? static_cast<float>(std::rand() % 9 - 4) : 0.0f;
-	SpriteRender* logos[] = { &m_logoMagenta, &m_logoCyan, &m_logo };
-	const Vector4 logoColors[] = { MAGENTA, CYAN, LOGO_COLOR };
-	const float logoX[] = { -ghost + shake, ghost + shake, shake };
-	for (int i = 0; i < 3; i++)
-	{
-		const Vector4& color = logoColors[i];
-		logos[i]->SetMulColor(Vector4(color.x, color.y, color.z, color.w * alpha));
-		logos[i]->SetPosition(Vector3(logoX[i], LOGO_Y, 0.0f));
-		logos[i]->Update();
-		logos[i]->Draw(rc);
-	}
+	SpriteRender& logo = isGlitch ? m_logoGlitch : m_logo;
+	const float shake = isGlitch ? static_cast<float>(std::rand() % (LOGO_SHAKE * 2 + 1) - LOGO_SHAKE) : 0.0f;
+	const float scale = isGlitch ? LOGO_GLITCH_SCALE : 1.0f;
+	logo.SetMulColor(Vector4(1.0f, 1.0f, 1.0f, alpha));
+	logo.SetPosition(Vector3(shake, LOGO_Y, 0.0f));
+	logo.SetScale(Vector3(scale, scale, 1.0f));
+	logo.Update();
+	logo.Draw(rc);
 
-	m_glitch.Update(Vector2(0.0f, LOGO_Y), Vector4(1.0f, 1.0f, 1.0f, alpha), isGlitch ? 1.0f : 0.0f);
-	m_glitch.Draw();
+	if (isGlitch)
+	{
+		m_glitch.Update(Vector2(0.0f, LOGO_Y), Vector4(1.0f, 1.0f, 1.0f, alpha), 1.0f);
+		m_glitch.Draw();
+	}
 
 	// 「> PRESS START_」の「_」はカーソルのように点滅する。押したら付けたままにする
 	const bool isCursorOn = m_phase != Phase::Idle || fmodf(m_time, CURSOR_BLINK_TIME * 2.0f) < CURSOR_BLINK_TIME;
