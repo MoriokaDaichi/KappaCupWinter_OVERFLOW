@@ -3,7 +3,10 @@
 
 #include "Game.h"
 #include "input/InputManager.h"
+#include "camera/ScreenPosition.h"
 #include "scene/Fade.h"
+#include "scene/SceneExposure.h"
+#include <cfloat>
 #include <cstdlib>
 
 namespace
@@ -45,6 +48,124 @@ namespace
 	}
 }
 
+namespace
+{
+	/**
+	 * Blender（D:\my\05_Assets\02_OVERFLOW\title の pose_title.py）で決めた、端末の位置と向き（目を原点にした 3ds Max の座標。cm）
+	 * ゲームの座標へは ToEngine で直す（モデルの上は Z。エンジンが読むと Y が上、-Y が前の +Z になる）
+	 */
+	const Vector3 TABLET_CENTER(0.0f, -34.0f, -20.0f);		///< 端末の中心
+	const Vector3 TABLET_RIGHT(-1.0f, 0.0f, 0.0f);			///< 見ている人の右
+	const Vector3 TABLET_UP(0.0f, -0.507f, 0.862f);			///< 画面の上
+	const Vector3 TABLET_NORMAL(0.0f, 0.862f, 0.507f);		///< 画面の向き（目の方）
+	constexpr float SCREEN_HALF_WIDTH = 11.5f;				///< 画面の大きさの半分
+	constexpr float SCREEN_HALF_HEIGHT = 6.8f;
+	constexpr float SCREEN_FRONT = 0.7f;					///< 画面の、端末の中心からの前への出っぱり（厚さの半分）
+	constexpr float THUMB_FROM_EDGE = 12.7f;				///< 親指の先の、端末の中心からの横のずれ
+	constexpr float THUMB_DOWN = 2.0f;						///< 親指の先の、中心からの下へのずれ
+	constexpr float THUMB_FRONT = 1.8f;						///< 親指の先の、前への出っぱり
+	constexpr float Z_UP_ROTATION = -90.0f;					///< Z が上のモデルを Y が上に起こす回転（X 軸のまわり、度）。エンジンの enModelUpAxisZ と同じ
+
+	/** 3ds Max の座標（Z が上、-Y が前）を、ゲームの座標（Y が上、+Z が前）に直す */
+	Vector3 ToEngine(const Vector3& v)
+	{
+		return Vector3(v.x, v.z, -v.y);
+	}
+}
+
+void TitleScene::InitModels()
+{
+	// カメラは主人公の目（原点）。端末の真ん中を見る
+	g_camera3D->SetPosition(Vector3::Zero);
+	g_camera3D->SetTarget(ToEngine(TABLET_CENTER));
+	g_camera3D->SetUp(Vector3::Up);
+	g_camera3D->SetViewAngle(Math::DegToRad(CAMERA_VIEW_ANGLE));
+	g_camera3D->SetNear(CAMERA_NEAR);
+	g_camera3D->SetFar(CAMERA_FAR);
+	g_camera3D->Update();
+
+	nsSceneExposure::SetScale(EXPOSURE_SCALE);
+	Vector3 lightDirection(0.3f, -1.0f, 0.6f);
+	lightDirection.Normalize();
+	g_renderingEngine->SetDirectionLight(0, lightDirection, Vector3(LIGHT_BRIGHTNESS, LIGHT_BRIGHTNESS, LIGHT_BRIGHTNESS));
+
+	// 3 つとも、モデルは原点（目）から離れた所にある。エンジンに「Z が上」と渡すと、forward 描画のモデルは
+	// 画面に入るかの判定（ビューカリング）にだけ Z を起こす回転が入らず、カメラの後ろにあるとみなされて描かれない
+	// （判定は読み込んでいない別の Model の行列を使い、その Model の上方向の初期値が Y のため）。
+	// そこで「Y が上」として読み、Z を起こす回転（X 軸のまわりに -90 度）は自分で SetRotation で掛ける
+	Quaternion zUpToYUp;
+	zUpToYUp.SetRotationDegX(Z_UP_ROTATION);
+
+	// 腕と手は、ゲームの主人公と同じテクスチャ（player フォルダ）に、上からの光とふちのシアンの光を足して描く（titleArms.fx）
+	ModelInitData armsData;
+	armsData.m_tkmFilePath = "Assets/modelData/player/title_arms.tkm";
+	armsData.m_fxFilePath = "Assets/shader/titleArms.fx";
+	armsData.m_colorBufferFormat[0] = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	armsData.m_modelUpAxis = enModelUpAxisY;
+	m_arms.InitForwardRendering(armsData);
+	m_arms.SetShadowCasterFlag(false);
+	m_arms.SetRotation(zUpToYUp);
+	m_arms.Update();
+
+	ModelInitData tabletData;
+	tabletData.m_tkmFilePath = "Assets/modelData/title/title_tablet.tkm";
+	tabletData.m_fxFilePath = "Assets/shader/titleTablet.fx";
+	tabletData.m_colorBufferFormat[0] = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	tabletData.m_modelUpAxis = enModelUpAxisY;
+	m_tablet.InitForwardRendering(tabletData);
+	m_tablet.SetShadowCasterFlag(false);
+	m_tablet.SetRotation(zUpToYUp);
+	m_tablet.Update();
+
+	ModelInitData backData;
+	backData.m_tkmFilePath = "Assets/modelData/title/title_back.tkm";
+	backData.m_fxFilePath = "Assets/shader/titleBack.fx";
+	backData.m_expandConstantBuffer = &m_backConstant;
+	backData.m_expandConstantBufferSize = sizeof(m_backConstant);
+	backData.m_colorBufferFormat[0] = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	// 板の表と裏のどちらがカメラを向いていても描く
+	backData.m_cullMode = D3D12_CULL_MODE_NONE;
+	backData.m_modelUpAxis = enModelUpAxisY;
+	m_back.InitForwardRendering(backData);
+	m_back.SetShadowCasterFlag(false);
+	m_back.SetRotation(zUpToYUp);
+	m_back.Update();
+}
+
+void TitleScene::CalcPanelRect()
+{
+	// 画面の四隅を、画面の上の位置に直して、囲む四角を出す
+	const Vector3 front = TABLET_CENTER + TABLET_NORMAL * SCREEN_FRONT;
+	Vector2 minPos(FLT_MAX, FLT_MAX);
+	Vector2 maxPos(-FLT_MAX, -FLT_MAX);
+	for (const float sx : { -1.0f, 1.0f })
+	{
+		for (const float sy : { -1.0f, 1.0f })
+		{
+			const Vector3 corner = front + TABLET_RIGHT * (sx * SCREEN_HALF_WIDTH) + TABLET_UP * (sy * SCREEN_HALF_HEIGHT);
+			Vector2 screenPos;
+			nsScreen::CalcScreenPosition(ToEngine(corner), screenPos);
+			minPos.x = min(minPos.x, screenPos.x); minPos.y = min(minPos.y, screenPos.y);
+			maxPos.x = max(maxPos.x, screenPos.x); maxPos.y = max(maxPos.y, screenPos.y);
+		}
+	}
+	m_panelCenter = Vector2((minPos.x + maxPos.x) * 0.5f, (minPos.y + maxPos.y) * 0.5f);
+	m_panelSize = Vector2(maxPos.x - minPos.x, maxPos.y - minPos.y);
+
+	// 親指の先は左右に 1 つずつある。画面の右に映るほうに輪を出す
+	m_touchPosition = Vector2(-FLT_MAX, 0.0f);
+	for (const float side : { -1.0f, 1.0f })
+	{
+		const Vector3 thumb = TABLET_CENTER + TABLET_RIGHT * (side * THUMB_FROM_EDGE) - TABLET_UP * THUMB_DOWN + TABLET_NORMAL * THUMB_FRONT;
+		Vector2 screenPos;
+		nsScreen::CalcScreenPosition(ToEngine(thumb), screenPos);
+		if (screenPos.x > m_touchPosition.x)
+		{
+			m_touchPosition = screenPos;
+		}
+	}
+}
+
 bool TitleScene::Start()
 {
 	static_assert(ARRAYSIZE(CODE_LINES) == CODE_LINE_NUM, "CODE_LINES の数を CODE_LINE_NUM と合わせてください");
@@ -56,7 +177,10 @@ bool TitleScene::Start()
 		m_fade->StartFadeIn(FADE_IN_TIME);
 	}
 
-	m_device.Init("Assets/shader/titleDevice.fx", UI_SPACE_WIDTH, UI_SPACE_HEIGHT);
+	InitModels();
+	CalcPanelRect();
+	m_panel.Init("Assets/shader/titlePanel.fx", m_panelSize.x, m_panelSize.y);
+	m_touch.Init("Assets/shader/titleTouch.fx", TOUCH_SIZE, TOUCH_SIZE);
 	m_glitch.Init("Assets/shader/titleGlitch.fx", GLITCH_WIDTH, GLITCH_HEIGHT);
 	m_dive.Init("Assets/shader/titleDive.fx", UI_SPACE_WIDTH, UI_SPACE_HEIGHT);
 
@@ -217,7 +341,7 @@ void TitleScene::DrawPanel(RenderContext& rc, const float alpha)
 		const float y = (isTop ? CODE_TOP_Y : CODE_BOTTOM_Y) - CODE_SPACING * (i % (CODE_LINE_NUM / 2));
 		const Vector4& color = (i == ALERT_LINE) ? ALERT_COLOR : CODE_COLOR;
 		m_code[i].SetColor(Vector4(color.x, color.y, color.z, color.w * alpha));
-		m_code[i].SetPosition(Vector2(CODE_LEFT, y));
+		m_code[i].SetPosition(Vector2(m_panelCenter.x + CODE_LEFT, m_panelCenter.y + y));
 		m_code[i].Draw();
 	}
 
@@ -227,14 +351,14 @@ void TitleScene::DrawPanel(RenderContext& rc, const float alpha)
 	const float shake = isGlitch ? static_cast<float>(std::rand() % (LOGO_SHAKE * 2 + 1) - LOGO_SHAKE) : 0.0f;
 	const float scale = isGlitch ? LOGO_GLITCH_SCALE : 1.0f;
 	logo.SetMulColor(Vector4(1.0f, 1.0f, 1.0f, alpha));
-	logo.SetPosition(Vector3(shake, LOGO_Y, 0.0f));
+	logo.SetPosition(Vector3(m_panelCenter.x + shake, m_panelCenter.y + LOGO_Y, 0.0f));
 	logo.SetScale(Vector3(scale, scale, 1.0f));
 	logo.Update();
 	logo.Draw(rc);
 
 	if (isGlitch)
 	{
-		m_glitch.Update(Vector2(0.0f, LOGO_Y), Vector4(1.0f, 1.0f, 1.0f, alpha), 1.0f);
+		m_glitch.Update(Vector2(m_panelCenter.x, m_panelCenter.y + LOGO_Y), Vector4(1.0f, 1.0f, 1.0f, alpha), 1.0f);
 		m_glitch.Draw();
 	}
 
@@ -242,7 +366,7 @@ void TitleScene::DrawPanel(RenderContext& rc, const float alpha)
 	const bool isCursorOn = m_phase != Phase::Idle || fmodf(m_time, CURSOR_BLINK_TIME * 2.0f) < CURSOR_BLINK_TIME;
 	m_press.SetText(isCursorOn ? "> PRESS START_" : "> PRESS START");
 	m_press.SetColor(Vector4(PRESS_COLOR.x, PRESS_COLOR.y, PRESS_COLOR.z, alpha));
-	m_press.SetPosition(Vector2(0.0f, PRESS_Y));
+	m_press.SetPosition(Vector2(m_panelCenter.x, m_panelCenter.y + PRESS_Y));
 	m_press.Draw();
 }
 
@@ -289,13 +413,21 @@ void TitleScene::Render(RenderContext& rc)
 		return;
 	}
 
-	// 親指で押し込む量と、画面が白く光る量
+	// 3D: 背景・端末・腕
+	m_backConstant.time = m_time;
+	m_back.Draw(rc);
+	m_tablet.Draw(rc);
+	m_arms.Draw(rc);
+
+	// 2D: 端末の画面（押した後は白く光る）と、親指のまわりの輪
 	const float press = (m_phase == Phase::Tap) ? min(m_phaseTime / TAP_TIME, 1.0f) : (m_phase == Phase::Flash ? 1.0f : 0.0f);
 	const float flash = (m_phase == Phase::Flash) ? min(m_phaseTime / FLASH_TIME, 1.0f) : 0.0f;
-	m_device.Update(Vector2::Zero, Vector4::White, press, flash);
-	m_device.Draw();
+	m_panel.Update(m_panelCenter, Vector4::White, 0.0f, flash, m_panelSize.y / max(m_panelSize.x, 1.0f));
+	m_panel.Draw();
 
 	DrawPanel(rc, 1.0f - flash);
+	m_touch.Update(m_touchPosition, Vector4::White, press);
+	m_touch.Draw();
 	DrawFloatingDigits();
 
 	if (m_phase == Phase::Idle)
