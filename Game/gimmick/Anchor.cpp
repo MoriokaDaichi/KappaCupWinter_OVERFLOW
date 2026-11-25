@@ -26,7 +26,10 @@ void Anchor::Update()
 
 void Anchor::Render(RenderContext& rc)
 {
-	m_modelRender.Draw(rc);
+	if (m_isModelVisible)
+	{
+		m_modelRender.Draw(rc);
+	}
 }
 
 void Anchor::NotifyReleased(BattleCharacter& by)

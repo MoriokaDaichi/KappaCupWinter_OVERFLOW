@@ -22,6 +22,8 @@ public:
 	const Vector3& GetPosition() const { return m_position; }
 	/** ロック中かどうかを受け取る。見た目の大きさに使う */
 	void SetLocked(const bool locked) { m_isLocked = locked; }
+	/** 目印のモデルを描くか（敵の体に付けるアンカーは描かない。敵そのものが目印になるため。ロックの角カッコは HUD が出す） */
+	void SetModelVisible(const bool isVisible) { m_isModelVisible = isVisible; }
 	/** ぶら下がっていたキャラ（by）が離したことを覚える（SwingState が呼ぶ） */
 	void NotifyReleased(BattleCharacter& by);
 	/**
@@ -36,5 +38,6 @@ private:
 	ModelRender m_modelRender;						///< 見た目
 	Vector3 m_position = Vector3::Zero;				///< 位置
 	bool m_isLocked = false;						///< ロック中か
+	bool m_isModelVisible = true;					///< 目印のモデルを描くか
 	GOHandle<BattleCharacter> m_releasedBy;			///< 離したキャラ（まだ受け取られていなければ）。プレイヤーがやり直しで作り直されることもあるので GOHandle
 };

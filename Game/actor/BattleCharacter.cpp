@@ -650,6 +650,8 @@ void BattleCharacter::InitAbilities()
 		// 名前を "anchor" にすると、プレイヤーの AnchorLocker がステージのアンカーと同じように探してロックする
 		Anchor* anchor = NewGO<Anchor>(0, "anchor");
 		anchor->SetPosition(GetChestPosition());
+		// 目印のモデルは出さない（敵の体と輪郭線が目印になる）
+		anchor->SetModelVisible(false);
 		m_bodyAnchor.Reset(anchor);
 	}
 }
