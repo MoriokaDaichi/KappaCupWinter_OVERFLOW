@@ -1,12 +1,13 @@
 ﻿#pragma once
 #include "hud/HudShape.h"
 #include "hud/HudText.h"
+#include "hud/JapaneseText.h"
 #include "scene/MenuSelector.h"
 
 class InputManager;
 
 /**
- * ポーズのメニュー（再開・チェックポイントから・タイトルへ）。ゲームの画面を暗くして、真ん中に並べる
+ * ポーズのメニュー（再開・やり直す（チェックポイントから）・タイトルに戻る）。文字は日本語。ゲームの画面を暗くして、真ん中に並べる
  * 選ぶ・決めるだけを受け持ち、決めた後に何をするかは Game が決める。Game が持つ
  */
 class PauseMenu
@@ -28,7 +29,7 @@ public:
 	/** 入力を見て選ぶ。決めたら、その Choice を返す（B・Start は「再開」） */
 	Choice Update(const InputManager& input);
 	/** 描く予約をする（毎フレーム、開いている間だけ Game の Render から呼ぶ） */
-	void Draw();
+	void Draw(RenderContext& rc);
 
 private:
 	static constexpr int ITEM_NUM = 3;					///< 並べるものの数
@@ -46,6 +47,6 @@ private:
 	HudShape m_dim;										///< ゲームの画面を暗くする板（Assets/shader/hudFill.fx）
 	HudShape m_cursor;									///< 選んでいるものの下の帯（チュートリアルの帯と同じ見た目）
 	HudText m_header;									///< 「PAUSE」
-	HudText m_items[ITEM_NUM];							///< 「RESUME」「CHECKPOINT」「TITLE」
-	HudText m_guide;									///< 「[A] OK  [B] BACK」
+	JapaneseText m_items[ITEM_NUM];						///< 「再開」「やり直す」「タイトルに戻る」
+	JapaneseText m_guide;								///< 「[A] 決定　[B] 戻る」
 };

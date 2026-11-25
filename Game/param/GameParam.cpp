@@ -456,7 +456,9 @@ namespace
 		float prevZ = -FLT_MAX;
 		for (const TutorialParam::Message& message : tutorial.messages)
 		{
-			if (message.text.size() > TutorialParam::MAX_TEXT_LENGTH)
+			// UTF-8 のバイトの数ではなく、文字の数（UTF-16 の数）で数える
+			const int length = MultiByteToWideChar(CP_UTF8, 0, message.text.c_str(), static_cast<int>(message.text.size()), nullptr, 0);
+			if (length > TutorialParam::MAX_TEXT_LENGTH)
 			{
 				throw std::runtime_error("Assets/param/tutorial.json\ntext is too long: " + message.text);
 			}

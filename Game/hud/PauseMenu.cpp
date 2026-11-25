@@ -13,8 +13,8 @@ namespace
 	const Vector4 CURSOR_COLOR(0.0f, 0.9f, 1.0f, 1.0f);			///< 帯の上下の線のシアン
 	const Vector4 GUIDE_COLOR(0.6f, 0.7f, 0.8f, 1.0f);			///< 操作の案内の灰色
 
-	// HudText は 1 つに 16 文字まで。並びは PauseMenu::Choice の Resume からの順と同じ
-	const char* ITEM_TEXTS[] = { "RESUME", "CHECKPOINT", "TITLE" };
+	// 並びは PauseMenu::Choice の Resume からの順と同じ。「やり直す」はチェックポイントからやり直す
+	const char* ITEM_TEXTS[] = { u8"再開", u8"やり直す", u8"タイトルに戻る" };
 }
 
 void PauseMenu::Init()
@@ -32,14 +32,13 @@ void PauseMenu::Init()
 
 	for (int i = 0; i < ITEM_NUM; i++)
 	{
-		m_items[i].Init(static_cast<int>(strlen(ITEM_TEXTS[i])), ITEM_HEIGHT, HudText::Align::Center);
+		m_items[i].Init(ITEM_HEIGHT, JapaneseText::Align::Center);
 		m_items[i].SetText(ITEM_TEXTS[i]);
 		m_items[i].SetPosition(Vector2(0.0f, ITEM_TOP_Y - ITEM_SPACING * i));
 	}
 
-	const char* guide = "[A] OK  [B] BACK";
-	m_guide.Init(static_cast<int>(strlen(guide)), GUIDE_HEIGHT, HudText::Align::Center);
-	m_guide.SetText(guide);
+	m_guide.Init(GUIDE_HEIGHT, JapaneseText::Align::Center);
+	m_guide.SetText(u8"[A] 決定　[B] 戻る");
 	m_guide.SetColor(GUIDE_COLOR);
 	m_guide.SetPosition(Vector2(0.0f, GUIDE_Y));
 }
@@ -68,7 +67,7 @@ PauseMenu::Choice PauseMenu::Update(const InputManager& input)
 	return Choice::None;
 }
 
-void PauseMenu::Draw()
+void PauseMenu::Draw(RenderContext& rc)
 {
 	m_dim.Update(Vector2::Zero, DIM_COLOR, 0.0f);
 	m_dim.Draw();
@@ -83,8 +82,8 @@ void PauseMenu::Draw()
 	for (int i = 0; i < ITEM_NUM; i++)
 	{
 		m_items[i].SetColor(i == selected ? SELECTED_COLOR : UNSELECTED_COLOR);
-		m_items[i].Draw();
+		m_items[i].Draw(rc);
 	}
 
-	m_guide.Draw();
+	m_guide.Draw(rc);
 }

@@ -1,12 +1,13 @@
 ﻿#pragma once
 #include "hud/HudShape.h"
 #include "hud/HudText.h"
+#include "hud/JapaneseText.h"
 
 class BattleCharacter;
 
 /**
  * 各要素が初めて出る場所で、短い案内を画面の上のほうに数秒出す（tutorial.json）。Hud が持つ
- * 斜めに切った紺の帯が左から伸び、文字が 1 文字ずつ打ち出される。帯の左上に小さな帯（タブ）を付け、「GUIDE 3/8」を出す
+ * 斜めに切った紺の帯が左から伸び、日本語の文字が 1 文字ずつ打ち出される。帯の左上に小さな帯（タブ）を付け、「GUIDE 3/8」を出す
  * 案内は z の小さい順に並んでいる（起動時に GameParam が確かめる）ので、「次の案内」を 1 つ見ていれば足りる
  */
 class TutorialHud
@@ -17,12 +18,12 @@ public:
 	/** プレイヤーが次の案内の場所を越えたら出し、出している時間を進める（毎フレーム Hud の Update から呼ぶ） */
 	void Update();
 	/** 出している間だけ描く（毎フレーム Hud の Draw から呼ぶ） */
-	void Draw();
+	void Draw(RenderContext& rc);
 	/** 最初の案内からやり直す（最初からやり直すとき）。チェックポイントへ戻すときは呼ばない（同じ案内を二度出さないため） */
 	void Reset();
 
 private:
-	static constexpr float PANEL_WIDTH = 620.0f;		///< 帯の幅（ピクセル。16 文字が入る幅）
+	static constexpr float PANEL_WIDTH = 620.0f;		///< 帯の幅（ピクセル。日本語 16 文字が入る幅）
 	static constexpr float PANEL_HEIGHT = 72.0f;		///< 帯の高さ（ピクセル）
 	static constexpr float PANEL_POSITION_Y = 250.0f;	///< 帯の真ん中の高さ（画面の中央から上へ。照準とタイムの間）
 	static constexpr float TEXT_HEIGHT = 38.0f;			///< 案内の文字の高さ（ピクセル）
@@ -45,6 +46,6 @@ private:
 	float m_elapsed = 0.0f;								///< 今の案内を出してからの秒数
 	HudShape m_panel;									///< 帯（Assets/shader/hudTutorial.fx）
 	HudShape m_tab;										///< 「GUIDE 3/8」を載せるタブ（帯と同じシェーダー）
-	HudText m_text;										///< 案内の文字
+	JapaneseText m_text;								///< 案内の文字（日本語）
 	HudText m_label;									///< 「GUIDE 3/8」
 };

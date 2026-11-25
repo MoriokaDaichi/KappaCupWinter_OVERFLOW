@@ -78,7 +78,7 @@ void Hud::Update()
 	m_levelTimeSum += static_cast<float>(m_player->GetSpeedSystem().GetLevel()) * dt;
 }
 
-void Hud::Draw()
+void Hud::Draw(RenderContext& rc)
 {
 	if (m_player == nullptr)
 	{
@@ -92,7 +92,7 @@ void Hud::Draw()
 	DrawGrappleMarker();
 	DrawInfo();
 	m_speedMeter.Draw();
-	m_tutorial.Draw();
+	m_tutorial.Draw(rc);
 	// いちばん上に重ねる
 	DrawSignalLost();
 }

@@ -235,7 +235,7 @@ void Game::Render(RenderContext& rc)
 	m_stage.Draw(rc);
 	m_levelUpFlash.Draw(rc);
 	m_defeatFlash.Draw(rc);
-	m_hud.Draw();
+	m_hud.Draw(rc);
 	m_lockOnHud.Draw(rc);
 	m_giantFirewall.Draw(rc);
 
@@ -247,6 +247,6 @@ void Game::Render(RenderContext& rc)
 	// メニューは HUD の上に重ねるので、最後に描く
 	if (m_isPaused)
 	{
-		m_pauseMenu.Draw();
+		m_pauseMenu.Draw(rc);
 	}
 }

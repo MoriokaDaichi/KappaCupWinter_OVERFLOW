@@ -222,6 +222,9 @@
     <ClCompile Include="scene\ResultScene.cpp">
       <Filter>scene</Filter>
     </ClCompile>
+    <ClCompile Include="hud\JapaneseText.cpp">
+      <Filter>hud</Filter>
+    </ClCompile>
     <ClCompile Include="hud\LevelUpFlash.cpp">
       <Filter>hud</Filter>
     </ClCompile>
@@ -450,6 +453,9 @@
     </ClInclude>
     <ClInclude Include="scene\ResultScene.h">
       <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="hud\JapaneseText.h">
+      <Filter>hud</Filter>
     </ClInclude>
     <ClInclude Include="hud\LevelUpFlash.h">
       <Filter>hud</Filter>

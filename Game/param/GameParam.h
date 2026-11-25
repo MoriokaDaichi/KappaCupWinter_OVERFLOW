@@ -271,10 +271,10 @@ struct TutorialParam
 	struct Message
 	{
 		float z = 0.0f;					///< プレイヤーがこの奥行き（z）を越えたら出す
-		std::string text;				///< 出す文字（HUD の文字。英大文字・数字・記号だけ、MAX_TEXT_LENGTH 文字まで）
+		std::string text;				///< 出す文字（日本語でよい。UTF-8 で書く。MAX_TEXT_LENGTH 文字まで）
 	};
 
-	static constexpr int MAX_TEXT_LENGTH = 16;	///< 案内の文字数の上限（帯の幅に収まる数。HudText::MAX_LENGTH 以下にする。GameParam は HUD を知らないので、ここに置く）
+	static constexpr int MAX_TEXT_LENGTH = 16;	///< 案内の文字数の上限（日本語の文字の数。帯の幅に収まる数。GameParam は HUD を知らないので、ここに置く）
 
 	float showTime = 0.0f;				///< 1 つの案内を出しておく秒数
 	std::vector<Message> messages;		///< 案内の一覧（z の小さい順に並べる）

@@ -16,7 +16,7 @@ void TutorialHud::Init(const BattleCharacter* player)
 	m_player = player;
 	m_panel.Init("Assets/shader/hudTutorial.fx", PANEL_WIDTH, PANEL_HEIGHT);
 	m_tab.Init("Assets/shader/hudTutorial.fx", TAB_WIDTH, TAB_HEIGHT);
-	m_text.Init(TutorialParam::MAX_TEXT_LENGTH, TEXT_HEIGHT, HudText::Align::Left);
+	m_text.Init(TEXT_HEIGHT, JapaneseText::Align::Left);
 	m_label.Init(LABEL_LENGTH, LABEL_HEIGHT, HudText::Align::Left);
 	Reset();
 }
@@ -53,7 +53,7 @@ void TutorialHud::Update()
 	}
 }
 
-void TutorialHud::Draw()
+void TutorialHud::Draw(RenderContext& rc)
 {
 	if (m_shownIndex < 0)
 	{
@@ -81,14 +81,15 @@ void TutorialHud::Draw()
 		return;
 	}
 
+	// 文字は日本語なので、バイトではなく文字の数で打ち出す（JapaneseText が数える）
 	const int typed = static_cast<int>((m_elapsed - PANEL_IN_TIME) / CHAR_INTERVAL) + 1;
-	const std::string shown = text.substr(0, min(static_cast<size_t>(typed), text.size()));
 	Vector4 textColor = TEXT_COLOR;
 	textColor.w = fade;
-	m_text.SetText(shown.c_str());
+	m_text.SetText(text);
+	m_text.SetVisibleCount(typed);
 	m_text.SetColor(textColor);
 	m_text.SetPosition(Vector2(panelLeft + TEXT_LEFT_PADDING, panelY));
-	m_text.Draw();
+	m_text.Draw(rc);
 
 	// 帯の左上のタブ（背景が明るくても小さな文字が読めるように、帯と同じ紺を敷く）
 	const float tabLeft = panelLeft + TAB_LEFT;

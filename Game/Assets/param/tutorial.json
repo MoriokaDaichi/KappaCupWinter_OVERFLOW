@@ -1,14 +1,14 @@
 {
   "showTime": 4.0,
   "messages": [
-    { "z": 0.0,       "text": "KEEP MOVING" },
-    { "z": 600.0,     "text": "RUN ALONG WALLS" },
-    { "z": 1200.0,    "text": "WALL PADS BOOST" },
-    { "z": 13500.0,   "text": "AVOID FENCES" },
-    { "z": 18000.0,   "text": "[RB] HOLD SWING" },
-    { "z": 34000.0,   "text": "SWING THRU GAPS" },
-    { "z": 70000.0,   "text": "[RT] FIRE IN BOX" },
-    { "z": 175500.0,  "text": "LASERS BLINK" },
-    { "z": 262500.0,  "text": "MAX SPEED BREAKS" }
+    { "z": 0.0,       "text": "止まらずに走り続けろ" },
+    { "z": 600.0,     "text": "壁に沿って走ると壁走り" },
+    { "z": 1200.0,    "text": "壁のダッシュ板で加速する" },
+    { "z": 13500.0,   "text": "電気柵に触れると減速する" },
+    { "z": 18000.0,   "text": "[RB] 押している間スイング" },
+    { "z": 34000.0,   "text": "スイングで壁のすき間を抜けろ" },
+    { "z": 70000.0,   "text": "[RT] 四角の中の敵を撃て" },
+    { "z": 175500.0,  "text": "レーザーは消えた隙に抜けろ" },
+    { "z": 262500.0,  "text": "最高速で防壁を突き破れ" }
   ]
 }

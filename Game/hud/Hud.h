@@ -27,7 +27,7 @@ public:
 	/** タイムが進んでいた間の、速度 Lv の平均を返す（リザルトのランクに使う） */
 	float GetAverageLevel() const { return (m_time > 0.0f) ? m_levelTimeSum / m_time : 1.0f; }
 	/** 全部を描く（毎フレーム Game の Render から呼ぶ。全員が動いた後の位置に出すため） */
-	void Draw();
+	void Draw(RenderContext& rc);
 
 private:
 	/** 左上のタイムと、右上のチェックポイントを描く */
