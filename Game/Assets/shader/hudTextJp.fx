@@ -5,6 +5,12 @@
 
 static const float ATLAS_COLS = 16.0f;		// 画像の横のマスの数
 static const float ATLAS_ROWS = 8.0f;		// 画像の縦のマスの数（16 x 8。gen_jp_atlas.ps1 と同じ）
+static const float MIP_SHARPEN = 0.5f;		// 縮小の画像を選ぶときの変化量に掛ける数（1 より小さいほど細かい画像を使い、くっきりする）
+static const float EDGE_LOW = 0.3f;		// 文字のふちをくっきりさせる範囲（この濃さ以下は透明、EDGE_HIGH 以上は不透明）
+static const float EDGE_HIGH = 0.7f;
+static const float GLOW_SCALE = 0.45f;		// にじみの強さに掛ける数（日本語は線が込み入っているので、英数字より弱くする）
+static const float3 GLOW_TINT = float3(0.0f, 0.9f, 1.0f);	// にじみの色（文字と同じ白だとぼやけて見えるので、シアンの光にする）
+static const float GLOW_TINT_RATE = 0.8f;	// にじみの色を GLOW_TINT に寄せる割合
 
 cbuffer cb : register(b0){
 	float4x4 mvp;		// モデルビュープロジェクション行列
@@ -65,14 +71,17 @@ float4 PSMain(PSInput In) : SV_Target0
 
 	// 文字の境目で縮小のぼけ具合が飛ばないように、つながった座標の変化量で読む
 	const float2 continuous = float2(x, In.uv.y) / atlasSize;
-	const float4 font = fontTexture.SampleGrad(Sampler, uv, ddx(continuous), ddy(continuous));
+	// 少し細かい縮小の画像を読む（そのままだと縮めたときに甘くなる）
+	const float4 font = fontTexture.SampleGrad(Sampler, uv, ddx(continuous) * MIP_SHARPEN, ddy(continuous) * MIP_SHARPEN);
 
-	const float glow = font.g * glowStrength;
-	const float alpha = max(font.r, glow);
+	const float body = smoothstep(EDGE_LOW, EDGE_HIGH, font.r);
+	const float glow = font.g * glowStrength * GLOW_SCALE;
+	const float alpha = max(body, glow);
 	if (alpha <= 0.0f)
 	{
 		discard;
 	}
-	const float3 color = lerp(glowColor.rgb, textColor.rgb, saturate(font.r));
+	const float3 glowRgb = lerp(glowColor.rgb, GLOW_TINT, GLOW_TINT_RATE);
+	const float3 color = lerp(glowRgb, textColor.rgb, body);
 	return float4(color, alpha * textColor.a);
 }
