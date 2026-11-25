@@ -13,8 +13,8 @@ public:
 	 * @param height		画面の上での高さ（ピクセル）
 	 */
 	void Init(const char* fxFilePath, const float width, const float height);
-	/** screenPos は画面の中央を 0,0 とした中心の位置。value・value2 はシェーダーに渡す値（value2 はロックの四角なら高さの割合） */
-	void Update(const Vector2& screenPos, const Vector4& color, const float value, const float flag = 0.0f, const float value2 = 0.0f);
+	/** screenPos は画面の中央を 0,0 とした中心の位置。value・value2 はシェーダーに渡す値（value2 はロックの四角なら高さの割合）。scale は大きさ（演出用） */
+	void Update(const Vector2& screenPos, const Vector4& color, const float value, const float flag = 0.0f, const float value2 = 0.0f, const float scale = 1.0f);
 	/** 描く予約をする（毎フレーム呼ぶ。呼ばなかったフレームは出ない） */
 	void Draw();
 

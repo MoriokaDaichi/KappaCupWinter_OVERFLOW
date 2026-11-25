@@ -15,7 +15,7 @@ cbuffer cb : register(b0){
 cbuffer TextCb : register(b1){
 	float4 textColor;		// 文字の色
 	float4 glowColor;		// にじみの色
-	int4 chars[4];			// 文字の番号（16 文字まで。-1 は空白）
+	int4 chars[8];			// 文字の番号（32 文字まで。-1 は空白。HudText::MAX_LENGTH と同じ）
 	float charCount;		// 文字の数
 	float maxLength;		// 板に並べられる文字の数
 	float align;			// そろえ方（0 で左、0.5 で真ん中、1 で右）

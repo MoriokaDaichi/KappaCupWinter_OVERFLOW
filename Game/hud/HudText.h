@@ -2,7 +2,7 @@
 
 /**
  * HUD の文字列 1 つ分。自作フォントの画像（Assets/sprite/hud/hud_font.DDS）から、文字を並べて 1 枚の板に描く（Assets/shader/hudText.fx）
- * 使える文字は数字・英大文字・「: . / [ ] -」・小文字の v・空白だけ。それ以外は空白になる
+ * 使える文字は数字・英大文字・「: . / [ ] - > < _ ! # = , ( ) % * + ?」・小文字の v・空白だけ。それ以外は空白になる
  */
 class HudText : public IRenderer
 {
@@ -25,12 +25,15 @@ public:
 	void SetText(const char* text);
 	/** 文字の色。にじみも同じ色で、少し薄く出す */
 	void SetColor(const Vector4& color);
-	/** 位置（画面の中央を 0,0 とする）。そろえ方の端または真ん中、高さは文字の真ん中 */
-	void SetPosition(const Vector2& position);
+	/**
+	 * 位置（画面の中央を 0,0 とする）。そろえ方の端または真ん中、高さは文字の真ん中
+	 * scale で大きさを変える（演出用。そろえ方の端は動かさない）
+	 */
+	void SetPosition(const Vector2& position, const float scale = 1.0f);
 	/** 描く予約をする（毎フレーム呼ぶ。呼ばなかったフレームは出ない） */
 	void Draw();
 
-	static constexpr int MAX_LENGTH = 16;		///< 1 つの文字列に出せる文字の数
+	static constexpr int MAX_LENGTH = 32;		///< 1 つの文字列に出せる文字の数（hudText.fx の chars の数 × 4 と同じ）
 
 private:
 	/** 2D の描画のときに呼ばれる */

@@ -4,7 +4,7 @@
 namespace
 {
 	/** フォントの画像の文字の並び（D:\my\05_Assets\02_OVERFLOW\hud\gen_hud_font.py の CHARSET と同じにすること） */
-	const char* CHARSET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ:./[]-v";
+	const char* CHARSET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ:./[]-v><_!#=,()%*+?";
 	constexpr int BLANK = -1;						///< 空白（描かない文字）の番号
 
 	/** 文字を、フォントの画像の中の番号にする。ない文字は空白 */
@@ -69,11 +69,11 @@ void HudText::SetColor(const Vector4& color)
 	m_textData.glowColor.Set(color.x, color.y, color.z, color.w * GLOW_ALPHA);
 }
 
-void HudText::SetPosition(const Vector2& position)
+void HudText::SetPosition(const Vector2& position, const float scale)
 {
-	// 板の位置は中心なので、そろえ方に合わせてずらす
-	const float offset = (0.5f - ToAlignRate(m_align)) * m_width;
-	m_sprite.Update(Vector3(position.x + offset, position.y, 0.0f), Quaternion::Identity, Vector3::One);
+	// 板の位置は中心なので、そろえ方に合わせてずらす（大きさを変えたときは、ずらす量も同じだけ変える）
+	const float offset = (0.5f - ToAlignRate(m_align)) * m_width * scale;
+	m_sprite.Update(Vector3(position.x + offset, position.y, 0.0f), Quaternion::Identity, Vector3(scale, scale, 1.0f));
 }
 
 void HudText::Draw()
