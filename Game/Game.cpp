@@ -14,7 +14,10 @@
 Game::~Game()
 {
 	// ポーズのまま消えても、次のシーンの時間が止まらないように戻す
-	g_gameTime->DisableFixedFrameDeltaTime();
+	if (g_gameTime != nullptr)
+	{
+		g_gameTime->DisableFixedFrameDeltaTime();
+	}
 	DeleteGO(m_player);
 	m_enemySpawner.DeleteAll();
 	DeleteGO(m_gameCamera);
