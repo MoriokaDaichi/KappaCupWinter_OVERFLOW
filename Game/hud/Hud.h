@@ -45,6 +45,9 @@ private:
 	static constexpr float CROSSHAIR_SIZE = 48.0f;		///< 照準の大きさ（ピクセル）
 	static constexpr float BRACKET_SIZE = 90.0f;		///< アンカーを囲む角カッコの大きさ（ピクセル）
 	static constexpr float GRAPPLE_TEXT_OFFSET_X = 60.0f;	///< 「[RB] GRAPPLE」の、角カッコの中心から右へのずれ（ピクセル）
+	static constexpr float GRAPPLE_TAB_WIDTH = 230.0f;	///< 「[RB] GRAPPLE」の下に敷く紺の帯の幅（ピクセル。明るい壁の前でも読めるように）
+	static constexpr float GRAPPLE_TAB_HEIGHT = 36.0f;	///< 同じく高さ
+	static constexpr float GRAPPLE_TAB_PADDING = 24.0f;	///< 帯の左端から文字までの空き（帯の左の印と斜めの切り口の分）
 	static constexpr float GRAPPLE_TEXT_HEIGHT = 22.0f;	///< 「[RB] GRAPPLE」の文字の高さ（ピクセル）
 	static constexpr float SECONDS_PER_MINUTE = 60.0f;	///< 1 分の秒数
 	static constexpr int TIME_LENGTH = 8;				///< タイムの文字数（00:00.00）
@@ -64,6 +67,7 @@ private:
 	TutorialHud m_tutorial;								///< 上のほうの案内
 	HitMarker m_hitMarker;								///< 弾が当たったときに照準のまわりに出す×
 	HudShape m_crosshair;								///< 真ん中の照準（Assets/shader/hudCrosshair.fx）
+	HudShape m_grappleTab;								///< 「[RB] GRAPPLE」の下の紺の帯（チュートリアルの帯と同じ見た目）
 	HudShape m_bracket;									///< ロックしたアンカーを囲む角カッコ（Assets/shader/hudBracket.fx）
 	HudText m_timeLabel;								///< 「TIME」
 	HudText m_timeValue;								///< タイムの数字

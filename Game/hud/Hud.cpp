@@ -31,6 +31,7 @@ void Hud::Init(const BattleCharacter* player, const Checkpoint* checkpoint, cons
 	m_hitMarker.Init(player);
 	m_crosshair.Init("Assets/shader/hudCrosshair.fx", CROSSHAIR_SIZE, CROSSHAIR_SIZE);
 	m_bracket.Init("Assets/shader/hudBracket.fx", BRACKET_SIZE, BRACKET_SIZE);
+	m_grappleTab.Init("Assets/shader/hudTutorial.fx", GRAPPLE_TAB_WIDTH, GRAPPLE_TAB_HEIGHT);
 
 	const char* timeLabel = "TIME";
 	const char* checkpointLabel = "CHECKPOINT";
@@ -169,6 +170,11 @@ void Hud::DrawGrappleMarker()
 	m_bracket.Update(screenPos, GRAPPLE_COLOR, 0.0f);
 	m_bracket.Draw();
 
-	m_grappleText.SetPosition(Vector2(screenPos.x + GRAPPLE_TEXT_OFFSET_X, screenPos.y));
+	// 明るい壁の前でも読めるように、文字の下に紺の帯を敷く（帯の左端を文字より少し左にする）
+	const float textLeft = screenPos.x + GRAPPLE_TEXT_OFFSET_X;
+	m_grappleTab.Update(Vector2(textLeft - GRAPPLE_TAB_PADDING + GRAPPLE_TAB_WIDTH * 0.5f, screenPos.y), GRAPPLE_COLOR, 1.0f);
+	m_grappleTab.Draw();
+
+	m_grappleText.SetPosition(Vector2(textLeft, screenPos.y));
 	m_grappleText.Draw();
 }
