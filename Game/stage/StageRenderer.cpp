@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "stage/StageRenderer.h"
 
+#include "scene/SceneExposure.h"
+
 void StageRenderer::Init()
 {
 	m_instances[0].halfSize.Set(BACKGROUND_SIZE, BACKGROUND_SIZE, BACKGROUND_SIZE, 0.0f);
@@ -21,7 +23,8 @@ void StageRenderer::Init()
 
 	// エンジンの自動露出は、暗い場面を明るく持ち上げて紺を白っぽくする。露出を下げ、そのぶんキャラに当たる光を強くする
 	// ステージは +Z へ進むので、カメラから見える背中と、こちらを向く敵に当たるように、ライトも +Z へ向ける
-	g_renderingEngine->SetSceneMiddleGray(g_renderingEngine->GetSceneMiddleGray() * EXPOSURE_SCALE);
+	// 最初の値に掛ける（今の値に掛けると、ゲームを作り直すたびに暗くなる）
+	nsSceneExposure::SetScale(EXPOSURE_SCALE);
 	Vector3 lightDirection(LIGHT_DIRECTION_X, LIGHT_DIRECTION_Y, LIGHT_DIRECTION_Z);
 	lightDirection.Normalize();
 	g_renderingEngine->SetDirectionLight(0, lightDirection, Vector3(LIGHT_BRIGHTNESS, LIGHT_BRIGHTNESS, LIGHT_BRIGHTNESS));

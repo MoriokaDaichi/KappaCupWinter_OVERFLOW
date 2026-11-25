@@ -367,6 +367,7 @@
     <ClInclude Include="hud\TutorialHud.h" />
     <ClInclude Include="hud\Hud.h" />
     <ClInclude Include="hud\LevelUpFlash.h" />
+    <ClInclude Include="scene\SceneExposure.h" />
     <ClInclude Include="hud\JapaneseText.h" />
     <ClInclude Include="scene\ResultScene.h" />
     <ClInclude Include="scene\TitleScene.h" />

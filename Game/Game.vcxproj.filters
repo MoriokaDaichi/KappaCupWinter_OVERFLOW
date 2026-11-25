@@ -457,6 +457,9 @@
     <ClInclude Include="hud\JapaneseText.h">
       <Filter>hud</Filter>
     </ClInclude>
+    <ClInclude Include="scene\SceneExposure.h">
+      <Filter>scene</Filter>
+    </ClInclude>
     <ClInclude Include="hud\LevelUpFlash.h">
       <Filter>hud</Filter>
     </ClInclude>
