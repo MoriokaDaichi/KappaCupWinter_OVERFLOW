@@ -200,7 +200,7 @@ void Game::UpdateLeave()
 	if (m_leaveTo == LEAVE_TO_RESULT)
 	{
 		ResultScene* result = NewGO<ResultScene>(0, "result");
-		result->SetResult(m_hud.GetTime(), m_player->GetDefeatCount());
+		result->SetResult(m_hud.GetTime(), m_hud.GetAverageLevel(), m_player->GetDefeatCount());
 	}
 	else
 	{

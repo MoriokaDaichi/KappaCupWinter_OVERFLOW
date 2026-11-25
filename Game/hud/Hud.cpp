@@ -15,6 +15,8 @@ namespace
 	const Vector4 VALUE_COLOR(1.0f, 1.0f, 1.0f, 1.0f);		///< 数字の白
 	const Vector4 CROSSHAIR_COLOR(1.0f, 1.0f, 1.0f, 0.9f);	///< 照準の色
 	const Vector4 GRAPPLE_COLOR(0.0f, 0.90f, 1.0f, 1.0f);	///< 角カッコと「[RB] GRAPPLE」のシアン
+	const Vector4 SIGNAL_LOST_COLOR(1.0f, 0.2f, 0.25f, 1.0f);	///< 「SIGNAL LOST」の赤
+	const Vector4 SIGNAL_LOST_GHOST_COLOR(0.5f, 0.0f, 0.1f, 0.8f);	///< 後ろに重ねる暗い赤
 }
 
 void Hud::Init(const BattleCharacter* player, const Checkpoint* checkpoint, const GiantFirewall* giantFirewall)
@@ -49,6 +51,15 @@ void Hud::Init(const BattleCharacter* player, const Checkpoint* checkpoint, cons
 	m_grappleText.Init(static_cast<int>(strlen(grappleText)), GRAPPLE_TEXT_HEIGHT, HudText::Align::Left);
 	m_grappleText.SetText(grappleText);
 	m_grappleText.SetColor(GRAPPLE_COLOR);
+
+	const char* signalLost = "SIGNAL LOST";
+	m_signalLostScreen.Init("Assets/shader/hudSignalLost.fx", UI_SPACE_WIDTH, UI_SPACE_HEIGHT);
+	m_signalLostText.Init(static_cast<int>(strlen(signalLost)), SIGNAL_LOST_HEIGHT, HudText::Align::Center);
+	m_signalLostText.SetText(signalLost);
+	m_signalLostText.SetColor(SIGNAL_LOST_COLOR);
+	m_signalLostGhost.Init(static_cast<int>(strlen(signalLost)), SIGNAL_LOST_HEIGHT, HudText::Align::Center);
+	m_signalLostGhost.SetText(signalLost);
+	m_signalLostGhost.SetColor(SIGNAL_LOST_GHOST_COLOR);
 }
 
 void Hud::Update()
@@ -62,7 +73,9 @@ void Hud::Update()
 	{
 		return;
 	}
-	m_time += g_gameTime->GetFrameDeltaTime();
+	const float dt = g_gameTime->GetFrameDeltaTime();
+	m_time += dt;
+	m_levelTimeSum += static_cast<float>(m_player->GetSpeedSystem().GetLevel()) * dt;
 }
 
 void Hud::Draw()
@@ -80,7 +93,30 @@ void Hud::Draw()
 	DrawInfo();
 	m_speedMeter.Draw();
 	m_tutorial.Draw();
+	// いちばん上に重ねる
+	DrawSignalLost();
 }
+
+void Hud::DrawSignalLost()
+{
+	if (m_checkpoint == nullptr || !m_checkpoint->IsSignalLost())
+	{
+		return;
+	}
+
+	const float rate = m_checkpoint->GetSignalLostRate();
+	m_signalLostScreen.Update(Vector2::Zero, Vector4::White, rate);
+	m_signalLostScreen.Draw();
+
+	// 出た瞬間ほど大きく左右に震わせる（1 秒に SIGNAL_LOST_SHAKE_STEPS 回、向きを変える）
+	const float side = (static_cast<int>(rate * SIGNAL_LOST_SHAKE_STEPS) % 2 == 0) ? 1.0f : -1.0f;
+	const float jitter = side * SIGNAL_LOST_JITTER * max(0.0f, 1.0f - rate * 3.0f);
+	m_signalLostGhost.SetPosition(Vector2(jitter + SIGNAL_LOST_GHOST, -SIGNAL_LOST_GHOST * 0.5f));
+	m_signalLostGhost.Draw();
+	m_signalLostText.SetPosition(Vector2(jitter, 0.0f));
+	m_signalLostText.Draw();
+}
+
 
 void Hud::DrawInfo()
 {

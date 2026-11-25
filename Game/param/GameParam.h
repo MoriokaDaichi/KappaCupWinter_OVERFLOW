@@ -274,7 +274,7 @@ struct TutorialParam
 		std::string text;				///< 出す文字（HUD の文字。英大文字・数字・記号だけ、MAX_TEXT_LENGTH 文字まで）
 	};
 
-	static constexpr int MAX_TEXT_LENGTH = 16;	///< 案内の文字数の上限（HudText::MAX_LENGTH と同じ。GameParam は HUD を知らないので、ここにも置く）
+	static constexpr int MAX_TEXT_LENGTH = 16;	///< 案内の文字数の上限（帯の幅に収まる数。HudText::MAX_LENGTH 以下にする。GameParam は HUD を知らないので、ここに置く）
 
 	float showTime = 0.0f;				///< 1 つの案内を出しておく秒数
 	std::vector<Message> messages;		///< 案内の一覧（z の小さい順に並べる）
@@ -451,6 +451,17 @@ struct DebugParam
 };
 
 /** すべての調整値 */
+/** リザルトのランクの値（result.json）。タイムの点と平均速度 Lv の点を混ぜて、境目と比べる */
+struct ResultParam
+{
+	float timeBest = 0.0f;			///< この秒数以下なら、タイムの点は満点（1）
+	float timeWorst = 0.0f;			///< この秒数以上なら、タイムの点は 0
+	float timeWeight = 0.0f;		///< タイムの点の重み（0〜1）。残りが平均速度 Lv の点の重み
+	float rankS = 0.0f;				///< 点がこれ以上なら S
+	float rankA = 0.0f;				///< 点がこれ以上なら A
+	float rankB = 0.0f;				///< 点がこれ以上なら B（足りなければ C）
+};
+
 struct GameParam
 {
 	CharacterParam player;			///< プレイヤー（chara/player.json）
@@ -471,6 +482,7 @@ struct GameParam
 	TutorialParam tutorial;
 	SpeedParam speed;
 	DebugParam debug;
+	ResultParam result;
 };
 
 namespace nsGameParam

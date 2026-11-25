@@ -54,6 +54,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam::Section, name, blocks, panels, an
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(StageParam, playerStart, giantFirewall, sections)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam::WarpPoint, name, position)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DebugParam, warpPoints)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ResultParam, timeBest, timeWorst, timeWeight, rankS, rankA, rankB)
 
 namespace
 {
@@ -513,6 +514,7 @@ namespace
 		ReadFile("Assets/param/tutorial.json", out.tutorial);
 		ReadFile("Assets/param/speed.json", out.speed);
 		ReadFile("Assets/param/debug.json", out.debug);
+		ReadFile("Assets/param/result.json", out.result);
 
 		CheckCharacter("Assets/param/chara/player.json", out.player);
 		CheckCharacter("Assets/param/chara/enemy_aegis.json", out.enemyAegis);
