@@ -4,7 +4,7 @@
  */
 
 static const float ATLAS_COLS = 16.0f;		// 画像の横のマスの数
-static const float ATLAS_ROWS = 16.0f;		// 画像の縦のマスの数
+static const float ATLAS_ROWS = 8.0f;		// 画像の縦のマスの数（16 x 8。gen_jp_atlas.ps1 と同じ）
 
 cbuffer cb : register(b0){
 	float4x4 mvp;		// モデルビュープロジェクション行列
