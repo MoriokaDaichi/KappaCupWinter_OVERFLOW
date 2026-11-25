@@ -34,7 +34,7 @@ private:
 	/** 画面の中のコードの文字を、時間に合わせて作り直す（打ち込むように 1 文字ずつ出す・数字を変える） */
 	void UpdateCode();
 	/** 端末の画面の中（コード・ロゴ・PRESS START）を描く。alpha で全体を薄くする */
-	void DrawPanel(const float alpha);
+	void DrawPanel(RenderContext& rc, const float alpha);
 	/** 端末のまわりに浮かぶ数字を描く */
 	void DrawFloatingDigits();
 	/** ダイブ中に、真ん中から外へ飛んでいく数字を描く */
@@ -57,7 +57,8 @@ private:
 	static constexpr float CODE_LINE_DELAY = 0.12f;		///< 行を 1 つずつ打ち始める間隔（秒）
 	static constexpr float CODE_TYPE_SPEED = 90.0f;		///< 1 秒に打つ文字の数
 	static constexpr float CODE_REFRESH_TIME = 0.12f;	///< 変わる数字（16 進の行）を作り直す間隔（秒）
-	static constexpr float LOGO_HEIGHT = 170.0f;		///< ロゴの文字の高さ
+	static constexpr float LOGO_WIDTH = 1000.0f;		///< ロゴの画像の大きさ（画像は 2048 x 512）
+	static constexpr float LOGO_HEIGHT = 250.0f;
 	static constexpr float LOGO_Y = 75.0f;				///< ロゴの高さ
 	static constexpr float LOGO_GHOST = 4.0f;			///< ふだんのロゴの色ずれの幅（ピクセル）
 	static constexpr float LOGO_GLITCH_GHOST = 22.0f;	///< 乱れたときのロゴの色ずれの幅
@@ -86,9 +87,9 @@ private:
 	HudShape m_dive;					///< ダイブの通路（Assets/shader/titleDive.fx）
 	std::array<HudText, CODE_LINE_NUM> m_code;			///< 画面の中のコードの行
 	std::array<std::string, CODE_LINE_NUM> m_codeText;	///< コードの行の、全部打ち終わったときの文字
-	HudText m_logo;						///< 「OVERFLOW」の白
-	HudText m_logoMagenta;				///< 左にずらして重ねるマゼンタ
-	HudText m_logoCyan;					///< 右にずらして重ねるシアン
+	SpriteRender m_logo;				///< ロゴ（Assets/sprite/title/logo.DDS。作り方は D:\my\05_Assets\02_OVERFLOW\logo\gen_logo.py）
+	SpriteRender m_logoMagenta;			///< 左にずらして重ねるマゼンタ（ロゴの形だけの白 logo_mask.DDS に色を掛ける）
+	SpriteRender m_logoCyan;			///< 右にずらして重ねるシアン（同じ）
 	HudText m_press;					///< 「> PRESS START_」
 	HudText m_key;						///< キーボードの案内
 	std::array<HudText, FLOAT_DIGIT_NUM> m_floatDigits;	///< 端末のまわりに浮かぶ数字

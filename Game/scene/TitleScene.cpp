@@ -70,15 +70,9 @@ bool TitleScene::Start()
 		m_code[i].SetText("");
 	}
 
-	const char* logo = "OVERFLOW";
-	HudText* logos[] = { &m_logoMagenta, &m_logoCyan, &m_logo };
-	const Vector4 logoColors[] = { MAGENTA, CYAN, LOGO_COLOR };
-	for (int i = 0; i < 3; i++)
-	{
-		logos[i]->Init(static_cast<int>(strlen(logo)), LOGO_HEIGHT, HudText::Align::Center);
-		logos[i]->SetText(logo);
-		logos[i]->SetColor(logoColors[i]);
-	}
+	m_logo.Init("Assets/sprite/title/logo.DDS", LOGO_WIDTH, LOGO_HEIGHT);
+	m_logoMagenta.Init("Assets/sprite/title/logo_mask.DDS", LOGO_WIDTH, LOGO_HEIGHT);
+	m_logoCyan.Init("Assets/sprite/title/logo_mask.DDS", LOGO_WIDTH, LOGO_HEIGHT);
 
 	const char* press = "> PRESS START_";
 	m_press.Init(static_cast<int>(strlen(press)), PRESS_HEIGHT, HudText::Align::Center);
@@ -214,7 +208,7 @@ void TitleScene::UpdateCode()
 	}
 }
 
-void TitleScene::DrawPanel(const float alpha)
+void TitleScene::DrawPanel(RenderContext& rc, const float alpha)
 {
 	if (alpha <= 0.0f)
 	{
@@ -235,15 +229,17 @@ void TitleScene::DrawPanel(const float alpha)
 	const bool isGlitch = fmodf(m_time, GLITCH_INTERVAL) < GLITCH_TIME || m_phase == Phase::Tap;
 	const float ghost = isGlitch ? LOGO_GLITCH_GHOST * (static_cast<float>(std::rand() % 100) / 100.0f) : LOGO_GHOST;
 	const float shake = isGlitch ? static_cast<float>(std::rand() % 9 - 4) : 0.0f;
-	m_logoMagenta.SetColor(Vector4(MAGENTA.x, MAGENTA.y, MAGENTA.z, MAGENTA.w * alpha));
-	m_logoCyan.SetColor(Vector4(CYAN.x, CYAN.y, CYAN.z, CYAN.w * alpha));
-	m_logo.SetColor(Vector4(LOGO_COLOR.x, LOGO_COLOR.y, LOGO_COLOR.z, alpha));
-	m_logoMagenta.SetPosition(Vector2(-ghost + shake, LOGO_Y));
-	m_logoCyan.SetPosition(Vector2(ghost + shake, LOGO_Y));
-	m_logo.SetPosition(Vector2(shake, LOGO_Y));
-	m_logoMagenta.Draw();
-	m_logoCyan.Draw();
-	m_logo.Draw();
+	SpriteRender* logos[] = { &m_logoMagenta, &m_logoCyan, &m_logo };
+	const Vector4 logoColors[] = { MAGENTA, CYAN, LOGO_COLOR };
+	const float logoX[] = { -ghost + shake, ghost + shake, shake };
+	for (int i = 0; i < 3; i++)
+	{
+		const Vector4& color = logoColors[i];
+		logos[i]->SetMulColor(Vector4(color.x, color.y, color.z, color.w * alpha));
+		logos[i]->SetPosition(Vector3(logoX[i], LOGO_Y, 0.0f));
+		logos[i]->Update();
+		logos[i]->Draw(rc);
+	}
 
 	m_glitch.Update(Vector2(0.0f, LOGO_Y), Vector4(1.0f, 1.0f, 1.0f, alpha), isGlitch ? 1.0f : 0.0f);
 	m_glitch.Draw();
@@ -305,7 +301,7 @@ void TitleScene::Render(RenderContext& rc)
 	m_device.Update(Vector2::Zero, Vector4::White, press, flash);
 	m_device.Draw();
 
-	DrawPanel(1.0f - flash);
+	DrawPanel(rc, 1.0f - flash);
 	DrawFloatingDigits();
 
 	if (m_phase == Phase::Idle)
