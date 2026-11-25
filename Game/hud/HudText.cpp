@@ -30,11 +30,12 @@ namespace
 	}
 }
 
-void HudText::Init(const int maxLength, const float height, const Align align)
+void HudText::Init(const int maxLength, const float height, const Align align, const Font font)
 {
+	const bool isJapanese = font == Font::Japanese;
 	const int length = min(maxLength, MAX_LENGTH);
 	m_align = align;
-	m_width = height * CELL_ASPECT * length;
+	m_width = height * (isJapanese ? 1.0f : CELL_ASPECT) * length;
 
 	m_textData.maxLength = static_cast<float>(length);
 	m_textData.align = ToAlignRate(align);
@@ -42,8 +43,8 @@ void HudText::Init(const int maxLength, const float height, const Align align)
 	SetColor(Vector4::White);
 
 	SpriteInitData initData;
-	initData.m_ddsFilePath[0] = "Assets/sprite/hud/hud_font.DDS";
-	initData.m_fxFilePath = "Assets/shader/hudText.fx";
+	initData.m_ddsFilePath[0] = isJapanese ? "Assets/sprite/hud/hud_font_jp.DDS" : "Assets/sprite/hud/hud_font.DDS";
+	initData.m_fxFilePath = isJapanese ? "Assets/shader/hudTextJp.fx" : "Assets/shader/hudText.fx";
 	initData.m_width = static_cast<UINT>(m_width);
 	initData.m_height = static_cast<UINT>(height);
 	initData.m_expandConstantBuffer = &m_textData;
@@ -61,6 +62,16 @@ void HudText::SetText(const char* text)
 		m_textData.chars[count] = ToCode(text[count]);
 	}
 	m_textData.charCount = static_cast<float>(count);
+}
+
+void HudText::SetCodes(const int* codes, const int count)
+{
+	const int length = min(count, static_cast<int>(m_textData.maxLength));
+	for (int i = 0; i < length; i++)
+	{
+		m_textData.chars[i] = codes[i];
+	}
+	m_textData.charCount = static_cast<float>(max(length, 0));
 }
 
 void HudText::SetColor(const Vector4& color)

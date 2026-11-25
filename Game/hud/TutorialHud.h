@@ -26,7 +26,7 @@ private:
 	static constexpr float PANEL_WIDTH = 620.0f;		///< 帯の幅（ピクセル。日本語 16 文字が入る幅）
 	static constexpr float PANEL_HEIGHT = 72.0f;		///< 帯の高さ（ピクセル）
 	static constexpr float PANEL_POSITION_Y = 250.0f;	///< 帯の真ん中の高さ（画面の中央から上へ。照準とタイムの間）
-	static constexpr float TEXT_HEIGHT = 38.0f;			///< 案内の文字の高さ（ピクセル）
+	static constexpr float TEXT_HEIGHT = 34.0f;			///< 案内の文字の高さ（ピクセル。日本語 16 文字が帯に収まる大きさ）
 	static constexpr float TEXT_LEFT_PADDING = 44.0f;	///< 帯の左端から文字までの空き（ピクセル。左の印と斜めの切り口の分）
 	static constexpr float LABEL_HEIGHT = 20.0f;		///< 「GUIDE 3/8」の文字の高さ（ピクセル）
 	static constexpr float TAB_WIDTH = 190.0f;			///< 「GUIDE 3/8」を載せるタブの幅（ピクセル）

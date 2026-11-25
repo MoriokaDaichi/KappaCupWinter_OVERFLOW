@@ -1,6 +1,53 @@
 ﻿#include "stdafx.h"
 #include "hud/JapaneseText.h"
 
+#include <fstream>
+#include <iterator>
+#include <unordered_map>
+
+namespace
+{
+	constexpr const char* CHARSET_PATH = "Assets/sprite/hud/hud_font_jp.txt";	///< 画像に入っている文字の一覧（この順にマスへ並んでいる）
+	constexpr int BLANK = -1;													///< 空白（描かない文字）の番号
+	constexpr wchar_t FULL_WIDTH_SPACE = L'　';							///< 全角の空白
+	constexpr wchar_t ASCII_FIRST = 0x21;										///< 全角に変える英数字・記号の範囲（! から ~ まで）
+	constexpr wchar_t ASCII_LAST = 0x7E;
+	constexpr wchar_t FULL_WIDTH_OFFSET = 0xFEE0;								///< 英数字・記号を全角にするときに足す数
+
+	/** 文字から画像のマスの番号を引く表。最初に使うときに一度だけ読む */
+	const std::unordered_map<wchar_t, int>& GetCodeTable()
+	{
+		static std::unordered_map<wchar_t, int> s_table;
+		static bool s_isLoaded = false;
+		if (!s_isLoaded)
+		{
+			s_isLoaded = true;
+			std::ifstream file(CHARSET_PATH, std::ios::binary);
+			const std::string utf8((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+			const std::wstring chars = JapaneseText::ToWide(utf8);
+			for (int i = 0; i < static_cast<int>(chars.size()); i++)
+			{
+				s_table[chars[i]] = i;
+			}
+		}
+		return s_table;
+	}
+
+	/** 英数字・記号・空白を全角にする（画像の 1 マスは正方形で、全角の形で入っている） */
+	wchar_t ToFullWidth(const wchar_t ch)
+	{
+		if (ch == L' ')
+		{
+			return FULL_WIDTH_SPACE;
+		}
+		if (ch >= ASCII_FIRST && ch <= ASCII_LAST)
+		{
+			return static_cast<wchar_t>(ch + FULL_WIDTH_OFFSET);
+		}
+		return ch;
+	}
+}
+
 std::wstring JapaneseText::ToWide(const std::string& utf8)
 {
 	if (utf8.empty())
@@ -15,36 +62,39 @@ std::wstring JapaneseText::ToWide(const std::string& utf8)
 
 void JapaneseText::Init(const float height, const Align align)
 {
-	m_align = align;
-	m_scale = height / FONT_LINE_HEIGHT;
-	m_font.SetScale(m_scale);
-	// 暗い所でも明るい所でも読めるように、細い影を付ける
-	m_font.SetShadowParam(true, 2.0f, Vector4(0.0f, 0.0f, 0.05f, 0.9f));
+	const HudText::Align hudAlign = (align == Align::Center) ? HudText::Align::Center : HudText::Align::Left;
+	m_text.Init(HudText::MAX_LENGTH, height, hudAlign, HudText::Font::Japanese);
 }
 
 void JapaneseText::SetText(const std::string& utf8)
 {
-	m_text = ToWide(utf8);
-	SetVisibleCount(m_visibleCount);
+	m_wide = ToWide(utf8);
+	for (wchar_t& ch : m_wide)
+	{
+		ch = ToFullWidth(ch);
+	}
+	UpdateCodes();
 }
 
 void JapaneseText::SetVisibleCount(const int count)
 {
 	m_visibleCount = count;
-	const size_t shown = (count < 0) ? m_text.size() : min(static_cast<size_t>(count), m_text.size());
-	// FontRender の文字の箱は MAX_TEXT_SIZE まで
-	const std::wstring visible = m_text.substr(0, min(shown, static_cast<size_t>(FontRender::MAX_TEXT_SIZE - 1)));
-	m_font.SetText(visible.c_str());
+	UpdateCodes();
 }
 
-void JapaneseText::SetPosition(const Vector2& position)
+void JapaneseText::UpdateCodes()
 {
-	// FontRender の位置は文字の左上。高さの真ん中と、そろえ方に合わせてずらす
-	float x = position.x;
-	if (m_align == Align::Center)
+	const std::unordered_map<wchar_t, int>& table = GetCodeTable();
+	const int total = static_cast<int>(m_wide.size());
+	const int shown = (m_visibleCount < 0) ? total : min(m_visibleCount, total);
+
+	int codes[HudText::MAX_LENGTH] = {};
+	const int count = min(shown, HudText::MAX_LENGTH);
+	for (int i = 0; i < count; i++)
 	{
-		x -= FONT_CHAR_WIDTH * m_scale * static_cast<float>(m_text.size()) * 0.5f;
+		const auto found = table.find(m_wide[i]);
+		// 画像にない文字（全角の空白も）は空白にする
+		codes[i] = (found != table.end()) ? found->second : BLANK;
 	}
-	const float y = position.y + FONT_LINE_HEIGHT * m_scale * 0.5f;
-	m_font.SetPosition(Vector3(x, y, 0.0f));
+	m_text.SetCodes(codes, count);
 }

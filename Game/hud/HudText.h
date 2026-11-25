@@ -3,6 +3,7 @@
 /**
  * HUD の文字列 1 つ分。自作フォントの画像（Assets/sprite/hud/hud_font.DDS）から、文字を並べて 1 枚の板に描く（Assets/shader/hudText.fx）
  * 使える文字は数字・英大文字・「: . / [ ] - > < _ ! # = , ( ) % * + ?」・小文字の v・空白だけ。それ以外は空白になる
+ * 日本語のフォント（Font::Japanese。hud_font_jp.DDS、hudTextJp.fx）でも描ける。そのときは JapaneseText が文字の番号を SetCodes で渡す
  */
 class HudText : public IRenderer
 {
@@ -15,14 +16,24 @@ public:
 		Right,		///< 右端
 	};
 
+	/** どのフォントの画像で描くか */
+	enum class Font : int
+	{
+		Digital,	///< 自作のデジタルな英数字（hud_font.DDS。1 マスは縦長）
+		Japanese,	///< 日本語（M PLUS 1 Code を画像にした hud_font_jp.DDS。1 マスは正方形）
+	};
+
 	/**
 	 * @param maxLength	いちばん長いときの文字数（MAX_LENGTH まで）
 	 * @param height	文字の高さ（ピクセル）
 	 * @param align		そろえ方
+	 * @param font		どのフォントの画像で描くか
 	 */
-	void Init(const int maxLength, const float height, const Align align);
+	void Init(const int maxLength, const float height, const Align align, const Font font = Font::Digital);
 	/** 出す文字列を決める。maxLength より長い分は出ない */
 	void SetText(const char* text);
+	/** 文字の番号（フォントの画像のマスの番号。-1 は空白）を、そのまま渡す（日本語の JapaneseText が使う） */
+	void SetCodes(const int* codes, const int count);
 	/** 文字の色。にじみも同じ色で、少し薄く出す */
 	void SetColor(const Vector4& color);
 	/**
@@ -54,7 +65,7 @@ private:
 	// cbuffer は 16 バイトずつ読むので、大きさを 16 の倍数にする（足りなければ padding を足す）
 	static_assert(sizeof(TextData) % 16 == 0, "cbuffer size must be a multiple of 16 (add padding)");
 
-	static constexpr float CELL_ASPECT = 64.0f / 96.0f;	///< フォントの画像の 1 マスの、幅÷高さ
+	static constexpr float CELL_ASPECT = 64.0f / 96.0f;	///< デジタルのフォントの画像の 1 マスの、幅÷高さ（日本語は 1）
 	static constexpr float GLOW_STRENGTH = 0.8f;		///< にじみの強さ
 	static constexpr float GLOW_ALPHA = 0.7f;			///< にじみの色の濃さ（文字の色に掛ける）
 
