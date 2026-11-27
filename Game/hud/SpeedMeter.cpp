@@ -9,6 +9,7 @@ namespace
 	const Vector4 LEVEL_COLOR(1.0f, 1.0f, 1.0f, 1.0f);			///< Lv の数字の色
 	const Vector4 LABEL_COLOR(0.71f, 0.30f, 1.0f, 1.0f);		///< 「Lv」の文字の紫（#b44dff）
 	const Vector4 OVERDRIVE_COLOR(0.0f, 0.90f, 1.0f, 1.0f);		///< OVERDRIVE 中の文字のシアン（#00e5ff）
+	constexpr float DIGITAL_CELL_ASPECT = 64.0f / 96.0f;		///< デジタルのフォントの 1 マスの幅÷高さ（HudText の CELL_ASPECT と同じ）
 }
 
 void SpeedMeter::Init(const BattleCharacter* player)
@@ -17,7 +18,9 @@ void SpeedMeter::Init(const BattleCharacter* player)
 	m_meter.Init("Assets/shader/hudSpeedMeter.fx", METER_SIZE, METER_SIZE);
 	m_levelText.Init(LEVEL_LENGTH, LEVEL_HEIGHT, HudText::Align::Center);
 	m_levelText.SetColor(LEVEL_COLOR);
-	m_labelText.Init(LABEL_LENGTH, LABEL_HEIGHT, HudText::Align::Center);
+	m_labelText.Init(LABEL_LENGTH, LABEL_HEIGHT, HudText::Align::Right);
+	m_speedText.Init(SPEED_LENGTH, SPEED_HEIGHT, HudText::Align::Center);
+	m_speedText.SetColor(LEVEL_COLOR);
 }
 
 void SpeedMeter::Draw()
@@ -34,6 +37,11 @@ void SpeedMeter::Draw()
 	const float cornerX = UI_SPACE_WIDTH * 0.5f - SCREEN_MARGIN;
 	const float cornerY = -(UI_SPACE_HEIGHT * 0.5f - SCREEN_MARGIN);
 
+	// 実際の速さ（デバッグ表示の「横の速さ」と同じく、縦の速さは入れない）
+	Vector3 horizontal = m_player->GetMoveSpeed();
+	horizontal.y = 0.0f;
+	const float actualSpeed = horizontal.Length();
+
 	const Vector2 meterCenter(cornerX - METER_SIZE * 0.5f, cornerY + METER_SIZE * 0.5f);
 	m_meter.Update(meterCenter, LEVEL_COLOR, isOverdrive ? 1.0f : speed.GetLevelRate(), isOverdrive ? 1.0f : 0.0f);
 	m_meter.Draw();
@@ -47,6 +55,16 @@ void SpeedMeter::Draw()
 
 	m_labelText.SetText(isOverdrive ? "OVERDRIVE" : "Lv");
 	m_labelText.SetColor(isOverdrive ? OVERDRIVE_COLOR : LABEL_COLOR);
-	m_labelText.SetPosition(Vector2(levelPos.x, levelPos.y + LABEL_OFFSET_Y));
+	// 「Lv」は数字の左に置く（数字の幅 ＝ 高さ × 1 マスの幅÷高さ）
+	const float levelHalfWidth = LEVEL_HEIGHT * DIGITAL_CELL_ASPECT * LEVEL_LENGTH * 0.5f;
+	const float labelX = levelPos.x - levelHalfWidth - LABEL_GAP;
+	const float labelY = cornerY + METER_SIZE * LABEL_Y_RATE;
+	m_labelText.SetPosition(Vector2(labelX, labelY));
 	m_labelText.Draw();
+
+	char speedText[8];
+	sprintf_s(speedText, "%.0f", min(actualSpeed, SPEED_MAX_SHOW));
+	m_speedText.SetText(speedText);
+	m_speedText.SetPosition(Vector2(cornerX - METER_SIZE * SPEED_X_RATE, cornerY + METER_SIZE * SPEED_Y_RATE));
+	m_speedText.Draw();
 }
