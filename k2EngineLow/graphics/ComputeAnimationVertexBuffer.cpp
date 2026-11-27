@@ -21,12 +21,21 @@ namespace nsK2EngineLow {
 	){
 		m_numInstance = numInstance;
 		// tkmファイルをロード。
-		m_tkmFile.Load(tkmFilePath, false, false, false);
-		m_numMesh = m_tkmFile.GetNumMesh();
+		auto tkmFile = g_engine->GetTkmFileFromBank(tkmFilePath);
+		if (tkmFile == nullptr) {
+			//未登録
+			tkmFile = new TkmFile;
+			{
+				tkmFile->Load(tkmFilePath, false);
+			}
+			g_engine->RegistTkmFileToBank(tkmFilePath, tkmFile);
+		}
+		m_tkmFile = tkmFile;
+		m_numMesh = m_tkmFile->GetNumMesh();
 		m_meshArray = make_unique<SMeshLocal[]>(m_numMesh);
 		
 		int meshNo = 0;
-		m_tkmFile.QueryMeshParts([&](const TkmFile::SMesh& mesh) {
+		m_tkmFile->QueryMeshParts([&](const TkmFile::SMesh& mesh) {
 			SMeshLocal& meshLocal = m_meshArray[meshNo];
 			int numVertex = (int)mesh.vertexBuffer.size();
 			int vertexStride = sizeof(TkmFile::SVertex);

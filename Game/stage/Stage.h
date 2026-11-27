@@ -17,8 +17,19 @@ class BattleCharacter;
 class Stage
 {
 public:
-	/** stage.json の箱とアンカーを作る */
-	void Init();
+	/** 箱と背景の見た目を準備する（読み込みの作業 1 つ分） */
+	void InitRenderer();
+	/** 舞うデータの粒を準備する（読み込みの作業 1 つ分） */
+	void InitParticle();
+	/** type 番の小物の見た目を準備する（読み込みの作業 1 つ分。並びは StageParam::PROP_TYPES と同じ） */
+	void InitProp(const int type);
+	/** stage.json の値で置き直し始める（前の分を片づける）。このあと BuildNextSection を true になるまで呼ぶ */
+	void BeginBuild();
+	/**
+	 * 区間を 1 つ作る（箱・アンカー・飾り・小物・ギミック）。全部の区間を作り終えたら true
+	 * 読み込みでは 1 フレームに 1 回呼ぶ（アンカーの Start が次のフレームに来るので、1 フレームに集めないため）
+	 */
+	bool BuildNextSection();
 	/** 毎フレーム Game の Update から呼ぶ。JSON を読み直していたら作り直す */
 	void Update();
 	/** アンカーを全部消す（Game が消えるときに呼ぶ） */
@@ -60,4 +71,6 @@ private:
 	StageParticle m_particle;								///< 舞うデータの粒
 	int m_reloadCount = 0;									///< 最後に作ったときの、JSON を読み直した回数
 	BattleCharacter* m_player = nullptr;					///< ギミックが見るプレイヤー
+	int m_buildSectionIndex = 0;							///< BuildNextSection で、次に作る区間の番号
+	int m_buildAnchorCount = 0;								///< ここまでに置いたアンカーの数（区間をまたいで数える）
 };

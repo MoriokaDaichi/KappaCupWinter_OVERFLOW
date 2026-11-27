@@ -4,6 +4,7 @@
 
 #include "k2EngineLowPreCompile.h"
 #include "AnimationClip.h"
+#include "EngineLoadTimer.h"
 
 
 namespace nsK2EngineLow {
@@ -16,11 +17,15 @@ namespace nsK2EngineLow {
 		m_tkaFile = g_engine->GetTkaFileFromBank(filePath);
 		if (m_tkaFile == nullptr) {
 			m_tkaFile = new TkaFile;
+			{ EngineLoadTimer tmrTka("Eng::TkaLoad", filePath);
 			m_tkaFile->Load(filePath);
+			}
 			g_engine->RegistTkaFileToBank(filePath, m_tkaFile);
 		}
 		
+		{ EngineLoadTimer tmrKey("Eng::AnimBuildKeys", filePath);
 		BuildKeyFramesAndAnimationEvents();
+		}
 	}
 
 	void AnimationClip::BuildKeyFramesAndAnimationEvents()

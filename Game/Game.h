@@ -12,6 +12,8 @@
 #include "stage/Stage.h"
 #include "stage/Checkpoint.h"
 #include "gimmick/GiantFirewall.h"
+#include <chrono>
+#include <functional>
 
 class BattleCharacter;
 class GameCamera;
@@ -27,6 +29,15 @@ public:
 	void Update();
 	void Render(RenderContext& rc);
 
+public:
+	/** 読み込みが全部終わったか（Start が最後の段まで進み、敵の Start も終わった）。タイトルが毎フレーム聞く */
+	bool IsReady() const { return IsStart(); }
+	/**
+	 * 遊び始める。読み込みの間止めていた時間を戻し、黒から戻す
+	 * タイトルが画面を黒くし終えてから、1 回だけ呼ぶ
+	 */
+	void Begin();
+
 private:
 	/** 最初からやり直す（プレイヤー・チェックポイント・タイム・敵・巨大ファイアウォールを最初に戻す。デバッグ画面か Back ボタンから） */
 	void Reset();
@@ -40,6 +51,11 @@ private:
 	void UpdateLeave();
 	/** 足音とスイングの音を止める（ポーズの間と、シーンを抜けるとき） */
 	void StopLoopSounds();
+	/**
+	 * 読み込みでやることを、前から順に m_loadTasks に並べる（最初の Start で 1 回だけ呼ぶ）
+	 * 作業は「終わったら true」を返す。何回かに分ける作業（敵を 1 体ずつ出すなど）は、残りがあれば false を返す
+	 */
+	void BuildLoadTasks();
 
 private:
 	BattleCharacter* m_player = nullptr;	///< プレイヤー（PlayerController で動かす BattleCharacter）
@@ -57,6 +73,8 @@ private:
 	static constexpr int LEAVE_NONE = 0;				///< 抜けない（遊んでいる）
 	static constexpr int LEAVE_TO_RESULT = 1;			///< リザルトへ移る
 	static constexpr int LEAVE_TO_TITLE = 2;			///< タイトルへ戻る
+	static constexpr float LOAD_BUDGET_SEC = 0.03f;	///< 読み込みで 1 フレームに使ってよい秒数（超えたら次のフレームへ。ダイブの絵を止めないため）
+	static constexpr float LOAD_BUSY_SEC = 0.05f;	///< 前の Start からこれ以上たっていたら、このフレームはほかの Start でもう重いとみなし、作業を休む
 
 	Stage m_stage;						///< stage.json の箱とアンカー
 	LevelUpFlash m_levelUpFlash;		///< 速度 Lv が上がった瞬間に画面を光らせる
@@ -75,5 +93,10 @@ private:
 	bool m_isInputRestorePending = false;	///< ポーズを閉じた次のフレームで、プレイヤーへの入力を戻すか（閉じた A でジャンプしないように）
 	int m_leaveTo = LEAVE_NONE;			///< 抜けて移る先（LEAVE_ の値）
 	float m_goalTimer = 0.0f;			///< 突破してからの秒数
+	std::vector<std::function<bool()>> m_loadTasks;	///< 読み込みでやることの列（前から順にやる。BuildLoadTasks で作る）
+	int m_loadTaskIndex = 0;						///< 次にやる m_loadTasks の番号
+	std::chrono::steady_clock::time_point m_lastLoadTime;	///< 前に Start を抜けた時刻（このフレームがもう重いかを見るため）
+	bool m_isLoadRested = false;					///< 前のフレームで作業を休んだか（2 フレーム続けては休まない。休み続けて読み込みが進まなくならないように）
+	bool m_isBegun = false;				///< Begin() が呼ばれたか（それまでは Update も Render もしない）
 };
 

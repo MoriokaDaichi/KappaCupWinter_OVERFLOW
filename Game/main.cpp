@@ -34,6 +34,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	// ここから初期化を行うコードを記述する。
 	//////////////////////////////////////
 
+	g_renderingEngine->DisableRaytracing();
 	// 画面を黒くする係はずっと残す（シーンをまたいで使う）。いちばん上に描くように優先度を大きくする
 	NewGO<Fade>(Fade::PRIORITY, Fade::NAME);
 	// タイトルから始める（タイトル → ゲーム → リザルト → タイトル）

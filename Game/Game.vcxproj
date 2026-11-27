@@ -268,6 +268,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Preview|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="system\system.cpp" />
+    <ClCompile Include="system\TkmPrefetcher.cpp" />
     <ClCompile Include="weapon\BulletSystem.cpp" />
     <ClCompile Include="weapon\EnemyGun.cpp" />
     <ClCompile Include="weapon\WarningLine.cpp" />
@@ -308,6 +309,7 @@
     <ClInclude Include="actor\characterState\StateTransition.h" />
     <ClInclude Include="actor\characterState\TransitionTable.h" />
     <ClInclude Include="actor\characterState\FlyState.h" />
+    <ClInclude Include="debug\LoadTimer.h" />
     <ClInclude Include="gimmick\DashPad.h" />
     <ClInclude Include="gimmick\ElectricFence.h" />
     <ClInclude Include="gimmick\LaserWall.h" />
@@ -343,6 +345,7 @@
     <ClInclude Include="sound\GameSound.h" />
     <ClInclude Include="speed\SpeedSystem.h" />
     <ClInclude Include="stage\Checkpoint.h" />
+    <ClInclude Include="system\TkmPrefetcher.h" />
     <ClInclude Include="thirdParty\nlohmann\json.hpp" />
     <ClInclude Include="state\IState.h" />
     <ClInclude Include="state\StateMachine.h" />

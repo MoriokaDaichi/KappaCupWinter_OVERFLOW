@@ -17,6 +17,8 @@ public:
 	void Update(const Vector2& screenPos, const Vector4& color, const float value, const float flag = 0.0f, const float value2 = 0.0f, const float scale = 1.0f);
 	/** 描く予約をする（毎フレーム呼ぶ。呼ばなかったフレームは出ない） */
 	void Draw();
+	/** true にすると、ゲームの時間を止めている間も time が進む（タイトルの演出用。ゲームの HUD はポーズで止めたいので false のまま） */
+	void SetRealTime(const bool isRealTime) { m_isRealTime = isRealTime; }
 
 private:
 	/** 2D の描画のときに呼ばれる */
@@ -37,4 +39,5 @@ private:
 
 	Sprite m_sprite;					///< 形を描く板
 	ShapeData m_shapeData;				///< m_sprite がここを毎回シェーダーへ送る（Init の後は動かさない）
+	bool m_isRealTime = false;			///< 本当の経過時間で time を進めるか
 };

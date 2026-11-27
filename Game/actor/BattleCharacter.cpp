@@ -14,6 +14,7 @@
 #include "actor/characterState/SwingState.h"
 #include "actor/characterState/StunState.h"
 #include "actor/characterState/FlyState.h"
+#include "debug/LoadTimer.h"
 #include <algorithm>
 
 BattleCharacter::BattleCharacter() : m_stateMachine(this)
@@ -31,9 +32,11 @@ BattleCharacter::~BattleCharacter()
 
 bool BattleCharacter::Start()
 {
+	LoadTimer timer("BattleCharacter::Start");
 	// アニメーションは ModelRender の Init に渡すので、体より先に読む
 	if (m_param->hasAnimation)
 	{
+		LoadTimer t("Chara::Animation");
 		m_animation = std::make_unique<CharacterAnimation>();
 		m_animation->Load(m_param->animation);
 	}
@@ -50,12 +53,14 @@ bool BattleCharacter::Start()
 
 	if (m_animation)
 	{
+		LoadTimer t("Chara::InitCharacter");
 		// アニメーションがあるキャラ: vector ごと渡す
 		InitCharacter(modelPath, m_animation->GetClips(), body.radius, body.height, m_startPosition);
 		m_animation->SetModel(m_modelRender);
 	}
 	else
 	{
+		LoadTimer t("Chara::InitCharacter");
 		// アニメーションがないキャラ（今の敵）
 		InitCharacter(modelPath, body.radius, body.height, m_startPosition);
 	}
@@ -64,24 +69,30 @@ bool BattleCharacter::Start()
 
 	if (m_param->hasHands)
 	{
+		LoadTimer t("Chara::Hands");
 		m_handBones = std::make_unique<HandBones>();
 		m_handBones->Init(m_modelRender, m_param->hands);
 	}
 
-	// 最初の状態に切り替えるとアニメーションも切り替わるので、アニメーションの準備の後に呼ぶ
-	InitState();
+	{
+		LoadTimer t("Chara::State");
+		// 最初の状態に切り替えるとアニメーションも切り替わるので、アニメーションの準備の後に呼ぶ
+		InitState();
 
-	InitAbilities();
+		InitAbilities();
+	}
 
 	// 銃の見た目は、銃を持っていて、握る手の骨がわかるキャラだけ
 	if (HasGun() && m_handBones)
 	{
+		LoadTimer t("Chara::Gun");
 		m_gunModel = std::make_unique<GunModel>();
 		m_gunModel->Init();
 	}
 
 	if (m_param->hasTurret)
 	{
+		LoadTimer t("Chara::Turret");
 		m_turretModel = std::make_unique<TurretModel>();
 		m_turretModel->Init(m_param->turret, body.modelScale, GetPosition());
 		if (m_param->hasOutline)
@@ -92,6 +103,7 @@ bool BattleCharacter::Start()
 
 	if (m_param->hasOutline)
 	{
+		LoadTimer t("Chara::Outline");
 		m_outline = std::make_unique<CharacterOutline>();
 		m_outline->Init(modelPath, m_param->outline);
 	}

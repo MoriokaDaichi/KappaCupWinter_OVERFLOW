@@ -1,6 +1,7 @@
 #include "k2EnginePreCompile.h"
 #include "ModelRender.h"
 #include "RenderingEngine.h"
+#include "../../k2EngineLow/graphics/EngineLoadTimer.h"
 
 
 
@@ -91,21 +92,33 @@ namespace nsK2Engine {
 	void ModelRender::InitForwardRendering(ModelInitData& initData)
 	{
 		//インスタンシング描画用のデータを初期化。
+{ EngineLoadTimer tmrMR("MR::Fwd::Instancing");
 		InitInstancingDraw(1);
+}
+{ EngineLoadTimer tmrMR("MR::Fwd::Skeleton");
 		InitSkeleton(initData.m_tkmFilePath);
+}
 
 		// todo アニメーション済み頂点バッファの計算処理を初期化。
+{ EngineLoadTimer tmrMR("MR::Fwd::ComputeAnim");
 		InitComputeAnimatoinVertexBuffer(initData.m_tkmFilePath, initData.m_modelUpAxis);
+}
 
 		initData.m_colorBufferFormat[0] = DXGI_FORMAT_R16G16B16A16_FLOAT;
 		//作成した初期化データをもとにモデルを初期化する。
+{ EngineLoadTimer tmrMR("MR::Fwd::Model");
 		m_forwardRenderModel.Init(initData);
+}
 		//ZPrepass描画用のモデルを初期化。
 		//InitModelOnZprepass(*g_renderingEngine, initData.m_tkmFilePath, initData.m_modelUpAxis);
 		//シャドウマップ描画用のモデルを初期化。
+{ EngineLoadTimer tmrMR("MR::Fwd::ShadowModels");
 		InitModelOnShadowMap(*g_renderingEngine, initData.m_tkmFilePath, initData.m_modelUpAxis, false);
+}
 		// 幾何学データを初期化。
+{ EngineLoadTimer tmrMR("MR::Fwd::Geometry");
 		InitGeometryDatas(1);
+}
 		// レイトレワールドに追加。
 		// g_renderingEngine->AddModelToRaytracingWorld(m_forwardRenderModel);
 		// m_addRaytracingWorldModel = &m_forwardRenderModel;
@@ -122,29 +135,47 @@ namespace nsK2Engine {
 		bool isFrontCullingOnDrawShadowMap)
 	{
 		// インスタンシング描画用のデータを初期化。
+{ EngineLoadTimer tmrMR("MR::Instancing");
 		InitInstancingDraw(maxInstance);
+}
 		// スケルトンを初期化。
+{ EngineLoadTimer tmrMR("MR::Skeleton");
 		InitSkeleton(filePath);
+}
 		// アニメーションを初期化。
+{ EngineLoadTimer tmrMR("MR::Animation");
 		InitAnimation(animationClips, numAnimationClips, enModelUpAxis);
+}
 		// アニメーション済み頂点バッファの計算処理を初期化。
+{ EngineLoadTimer tmrMR("MR::ComputeAnim");
 		InitComputeAnimatoinVertexBuffer(filePath, enModelUpAxis);
+}
 		// GBuffer描画用のモデルを初期化。
+{ EngineLoadTimer tmrMR("MR::GBufferModel");
 		InitModelOnRenderGBuffer(*g_renderingEngine, filePath, enModelUpAxis, isShadowReciever);
+}
 		// ZPrepass描画用のモデルを初期化。
+{ EngineLoadTimer tmrMR("MR::ZprepassModel");
 		InitModelOnZprepass(*g_renderingEngine, filePath, enModelUpAxis);
+}
 		// シャドウマップ描画用のモデルを初期化。
+{ EngineLoadTimer tmrMR("MR::ShadowModels");
 		InitModelOnShadowMap(*g_renderingEngine, filePath, enModelUpAxis, isFrontCullingOnDrawShadowMap);
+}
 		// 幾何学データを初期化。
+{ EngineLoadTimer tmrMR("MR::Geometry");
 		InitGeometryDatas(maxInstance);
+}
 		// 各種ワールド行列を更新する。
 		UpdateWorldMatrixInModes();
 		
+{ EngineLoadTimer tmrMR("MR::Raytracing");
 		if (m_isRaytracingWorld) {
 			// レイトレワールドに追加。
 			g_renderingEngine->AddModelToRaytracingWorld(m_renderToGBufferModel);
 			m_addRaytracingWorldModel = &m_renderToGBufferModel;
 		}
+}
 	}
 
 	void ModelRender::Init(

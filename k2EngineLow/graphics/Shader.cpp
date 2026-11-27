@@ -1,5 +1,6 @@
 ﻿#include "k2EngineLowPreCompile.h"
 #include "Shader.h"
+#include "EngineLoadTimer.h"
 #include <stierr.h>
 #include <sstream>
 #include <fstream>
@@ -35,6 +36,7 @@ namespace nsK2EngineLow {
 		wchar_t wfxFilePath[256] = { L"" };
 		mbstowcs(wfxFilePath, filePath, 256);
 
+		EngineLoadTimer tmrCompile("Eng::D3DCompile", filePath);
 		auto hr = D3DCompileFromFile(wfxFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryFuncName, shaderModel, compileFlags, 0, &m_blob, &errorBlob);
 
 		if (FAILED(hr)) {

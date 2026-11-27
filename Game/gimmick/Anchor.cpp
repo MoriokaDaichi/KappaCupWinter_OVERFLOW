@@ -2,9 +2,11 @@
 #include "gimmick/Anchor.h"
 
 #include "actor/BattleCharacter.h"
+#include "debug/LoadTimer.h"
 
 bool Anchor::Start()
 {
+	LoadTimer timer("Anchor::Start");
 	// 飾りの多い場面でも目立つように、ライトに関係なく光らせる
 	ModelInitData initData;
 	initData.m_tkmFilePath = "Assets/modelData/stage/anchor.tkm";

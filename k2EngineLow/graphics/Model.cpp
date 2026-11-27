@@ -1,6 +1,7 @@
 #include "k2EngineLowPreCompile.h"
 #include "Model.h"
 #include "Material.h"
+#include "EngineLoadTimer.h"
 
 namespace nsK2EngineLow {
 	void Model::Init(const ModelInitData& initData)
@@ -28,10 +29,13 @@ namespace nsK2EngineLow {
 		if (tkmFile == nullptr) {
 			//–¢“o˜^
 			tkmFile = new TkmFile;
+			{ EngineLoadTimer tmrTkm("Eng::TkmLoad", initData.m_tkmFilePath);
 			tkmFile->Load(initData.m_tkmFilePath, false);
+			}
 			g_engine->RegistTkmFileToBank(initData.m_tkmFilePath, tkmFile);
 		}
 		m_tkmFile = tkmFile;
+		{ EngineLoadTimer tmrMesh("Eng::MeshParts", initData.m_fxFilePath);
 		m_meshParts.InitFromTkmFile(
 			*m_tkmFile,
 			initData.m_fxFilePath,
@@ -48,6 +52,7 @@ namespace nsK2EngineLow {
 			initData.m_cullMode,
 			initData.m_computedAnimationVertexBuffer
 		);
+		}
 
 		UpdateWorldMatrix(g_vec3Zero, g_quatIdentity, g_vec3One);
 		m_isInited = true;

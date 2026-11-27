@@ -21,7 +21,9 @@ void HudShape::Update(const Vector2& screenPos, const Vector4& color, const floa
 	m_shapeData.value = value;
 	m_shapeData.flag = flag;
 	m_shapeData.value2 = value2;
-	m_shapeData.time += g_gameTime->GetFrameDeltaTime();
+	// タイトルの演出は、ゲームの時間を止めている間（読み込み中）も進める
+	const float dt = m_isRealTime ? g_gameTime->GetRealFrameDeltaTime() : g_gameTime->GetFrameDeltaTime();
+	m_shapeData.time += dt;
 	m_sprite.Update(Vector3(screenPos.x, screenPos.y, 0.0f), Quaternion::Identity, Vector3(scale, scale, 1.0f));
 }
 

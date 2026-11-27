@@ -183,6 +183,7 @@ bool TitleScene::Start()
 	m_touch.Init("Assets/shader/titleTouch.fx", TOUCH_SIZE, TOUCH_SIZE);
 	m_glitch.Init("Assets/shader/titleGlitch.fx", GLITCH_WIDTH, GLITCH_HEIGHT);
 	m_dive.Init("Assets/shader/titleDive.fx", UI_SPACE_WIDTH, UI_SPACE_HEIGHT);
+	m_dive.SetRealTime(true);
 
 	for (int i = 0; i < CODE_LINE_NUM; i++)
 	{
@@ -215,6 +216,10 @@ bool TitleScene::Start()
 		m_diveDigits[i].SetText(text);
 	}
 
+	// ゲームで使う重い tkm を、裏で読み始める
+	// タイトルのモデル（InitModels）を作り終えてから始める（tkm を 2 つのスレッドで同時に読まないため）
+	m_prefetcher.Start();
+
 	return true;
 }
 
@@ -228,7 +233,7 @@ void TitleScene::Update()
 {
 	InputManager& input = InputManager::GetInstance();
 	input.Update();
-	const float dt = g_gameTime->GetFrameDeltaTime();
+	const float dt = g_gameTime->GetRealFrameDeltaTime();
 	m_time += dt;
 	m_phaseTime += dt;
 
@@ -255,7 +260,17 @@ void TitleScene::Update()
 		}
 		break;
 	case Phase::Dive:
-		if (m_phaseTime >= DIVE_TIME)
+		// 先読みが終わっていたら、ゲームを作り始める（ここから先は、トンネルの裏で 1 フレームに 1 段ずつ作られる）
+		// 起動してすぐ押すと、まだ先読みが終わっていないので、毎フレーム見て、終わった次のフレームで作る
+		if (m_game == nullptr && m_prefetcher.IsDone())
+		{
+			// 読んだ tkm をバンクに登録してから、ゲームを作る（ゲームはバンクから借りるだけになる）
+			m_prefetcher.RegistToBank();
+			m_game = NewGO<Game>(0, "game");
+		}
+		// 落ちる演出を最後まで見せて、かつ ゲームの準備ができたら、黒くし始める
+		// 準備がまだなら Dive のまま（トンネルの輪は time で流れ続けるので、落ち続けて見える）
+		if (m_phaseTime >= DIVE_TIME && m_game != nullptr && m_game->IsReady())
 		{
 			ChangePhase(Phase::Leave);
 			if (m_fade != nullptr)
@@ -265,27 +280,14 @@ void TitleScene::Update()
 		}
 		break;
 	case Phase::Leave:
-		// 真っ黒になったら、まず「> DIVING...」を 1 フレーム出してから、次のフレームでゲームを作る
-		// （ゲームを作ると読み込みで数秒止まるので、その間に出ている絵を、真っ黒ではなく文字にする）
+		// 真っ黒になるまで待つ（ゲームに切り替わる瞬間を見せないため）
 		if (m_fade != nullptr && !m_fade->IsBlack())
 		{
 			break;
 		}
-		if (!m_isLoadingShown)
-		{
-			m_isLoadingShown = true;
-			if (m_fade != nullptr)
-			{
-				m_fade->SetMessage("> DIVING...");
-			}
-			break;
-		}
-		if (!m_isGame)
-		{
-			m_isGame = true;
-			NewGO<Game>(0, "game");
-			DeleteGO(this);
-		}
+		// 遊び始める（読み込みの間止めていた時間を戻し、ゲームが黒から戻し始める）
+		m_game->Begin();
+		DeleteGO(this);
 		break;
 	}
 }
@@ -293,7 +295,7 @@ void TitleScene::Update()
 void TitleScene::UpdateCode()
 {
 	// 変わり続ける行（16 進の数字と、進み具合の棒）を作り直す
-	m_codeRefreshTimer -= g_gameTime->GetFrameDeltaTime();
+	m_codeRefreshTimer -= g_gameTime->GetRealFrameDeltaTime();
 	if (m_codeRefreshTimer <= 0.0f)
 	{
 		m_codeRefreshTimer = CODE_REFRESH_TIME;

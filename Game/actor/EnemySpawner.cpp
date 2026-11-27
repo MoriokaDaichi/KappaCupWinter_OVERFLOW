@@ -7,6 +7,7 @@
 void EnemySpawner::Init(const BattleCharacter* player)
 {
 	m_player = player;
+	m_nextSpawnIndex = 0;
 
 	const std::vector<SpawnParam::Point>& points = nsGameParam::Get().spawn.points;
 	m_spawns.resize(points.size());
@@ -23,7 +24,6 @@ void EnemySpawner::Init(const BattleCharacter* player)
 		{
 			spawn.controller.SetPatrol(spawn.position, Vector3(point.patrolTo[0], point.patrolTo[1], point.patrolTo[2]));
 		}
-		SpawnEnemy(spawn);
 	}
 }
 
@@ -105,4 +105,16 @@ void EnemySpawner::SpawnEnemy(Spawn& spawn)
 
 	spawn.enemy.Reset(enemy);
 	spawn.respawnTimer = spawn.respawnTime;
+}
+
+bool EnemySpawner::SpawnNext()
+{
+	int spawnNum = 0;
+	while (m_nextSpawnIndex < static_cast<int>(m_spawns.size()) && spawnNum < SPAWN_NUM_PER_CALL)
+	{
+		SpawnEnemy(m_spawns[m_nextSpawnIndex]);
+		m_nextSpawnIndex++;
+		spawnNum++;
+	}
+	return m_nextSpawnIndex >= static_cast<int>(m_spawns.size());
 }

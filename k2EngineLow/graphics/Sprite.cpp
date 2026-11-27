@@ -51,8 +51,18 @@ namespace nsK2EngineLow {
         }
 
         //シェーダーをロードする。
-        m_vs.LoadVS(initData.m_fxFilePath, initData.m_vsEntryPointFunc);
-        m_ps.LoadPS(initData.m_fxFilePath, initData.m_psEntryPoinFunc);
+        m_vs = g_engine->GetShaderFromBank(initData.m_fxFilePath, initData.m_vsEntryPointFunc);
+        if (m_vs == nullptr) {
+            m_vs = new Shader;
+            m_vs->LoadVS(initData.m_fxFilePath, initData.m_vsEntryPointFunc);
+            g_engine->RegistShaderToBank(initData.m_fxFilePath, initData.m_vsEntryPointFunc, m_vs);
+        }
+        m_ps = g_engine->GetShaderFromBank(initData.m_fxFilePath, initData.m_psEntryPoinFunc);
+        if (m_ps == nullptr) {
+            m_ps = new Shader;
+            m_ps->LoadPS(initData.m_fxFilePath, initData.m_psEntryPoinFunc);
+            g_engine->RegistShaderToBank(initData.m_fxFilePath, initData.m_psEntryPoinFunc, m_ps);
+        }
     }
     void Sprite::InitDescriptorHeap(const SpriteInitData& initData)
     {
@@ -129,8 +139,8 @@ namespace nsK2EngineLow {
         D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = { 0 };
         psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
         psoDesc.pRootSignature = m_rootSignature.Get();
-        psoDesc.VS = CD3DX12_SHADER_BYTECODE(m_vs.GetCompiledBlob());
-        psoDesc.PS = CD3DX12_SHADER_BYTECODE(m_ps.GetCompiledBlob());
+        psoDesc.VS = CD3DX12_SHADER_BYTECODE(m_vs->GetCompiledBlob());
+        psoDesc.PS = CD3DX12_SHADER_BYTECODE(m_ps->GetCompiledBlob());
         psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
         psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
         psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);

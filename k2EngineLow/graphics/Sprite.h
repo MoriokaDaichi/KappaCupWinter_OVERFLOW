@@ -169,8 +169,8 @@ namespace nsK2EngineLow {
 		DescriptorHeap		m_descriptorHeap;		//ディスクリプタヒープ。
 		RootSignature		m_rootSignature;		//ルートシグネチャ。
 		PipelineState		m_pipelineState;		//パイプラインステート。
-		Shader				m_vs;					//頂点シェーダー。
-		Shader				m_ps;					//ピクセルシェーダー。
+		Shader*				m_vs = nullptr;					//頂点シェーダー。
+		Shader*				m_ps = nullptr;					//ピクセルシェーダー。
 		Vector4				m_mulColor = Vector4::White;	//乗算カラー。
 	};
 }

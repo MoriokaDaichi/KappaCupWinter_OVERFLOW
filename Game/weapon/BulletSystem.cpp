@@ -4,6 +4,7 @@
 #include "actor/BattleCharacter.h"
 #include "effect/EffectManager.h"
 #include "sound/GameSound.h"
+#include "debug/LoadTimer.h"
 #include <algorithm>
 
 namespace
@@ -13,6 +14,7 @@ namespace
 
 bool BulletSystem::Start()
 {
+	LoadTimer timer("BulletSystem::Start");
 	// 弾はすぐ消えるので、レイトレには入れない（入れると作るたび・消すたびに重くなる）
 	m_modelRender.SetRaytracingWorld(false);
 	m_modelRender.Init("Assets/modelData/debug/debug_anchor.tkm", nullptr, 0, enModelUpAxisZ, true, MAX_BULLET);

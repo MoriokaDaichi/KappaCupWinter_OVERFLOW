@@ -61,6 +61,15 @@ namespace nsK2EngineLow {
 		}
 
 		/// <summary>
+		/// 固定化を無視した、本当の 1 フレームの経過時間を取得(単位・秒)
+		/// ゲームの時間を止めている間も動かしたいもの（暗転・タイトルの演出）に使う
+		/// </summary>
+		const float GetRealFrameDeltaTime() const
+		{
+			return m_frameDeltaTime;
+		}
+
+		/// <summary>
 		/// 1フレームの経過時間をキューにプッシュする
 		/// </summary>
 		/// <param name="deltaTime">経過時間</param>

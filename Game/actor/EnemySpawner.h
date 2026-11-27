@@ -6,14 +6,15 @@ class BattleCharacter;
 struct CharacterParam;
 
 /**
- * spawn.json に書いた場所に敵を出す。respawnTime を書いた場所は、倒されたら湧き直す（敵が湧き直す区間）。Game が持つ
- * 敵を作るときはモデルの準備でゲームが止まるので、作るのは Init の 1 回だけにする。湧き直す敵は、倒されたら隠しておいて使い回す
+ * spawn.json に書いた場所に敵を出す。respawnTime を書いた場所は、倒されたら湧き直す（敵が湧き直す区間）。 
+ * 湧き直す敵は、倒されたら隠しておいて使い回す。
+ * 敵を作るときはモデルの準備でゲームが止まるので、作るのはゲームの読み込みの間だけにする（Init で場所を写し、SpawnNext で数体ずつ作る）。
  * 場所は Init のときに写すので、JSON を読み直しても変わらない（ゲームの途中で敵の数が変わると、持っている枠とずれるため）
  */
 class EnemySpawner
 {
 public:
-	/** spawn.json の場所すべてに敵を出す。player は敵が追いかける相手で、距離も測る（借りているだけ） */
+	/** spawn.json の場所を写す（敵はまだ出さない。SpawnNext で出す）。player は敵が追いかける相手で、距離も測る（借りているだけ） */
 	void Init(const BattleCharacter* player);
 	/** 毎フレーム Game の Update から呼ぶ。倒された敵の湧き直しの時間を進める */
 	void Update();
@@ -24,6 +25,11 @@ public:
 	 * 湧き直さない敵は倒されると消えているので、作り直す（そのときはモデルの準備で少し止まる）
 	 */
 	void Reset();
+	/**
+	 * まだ出していない敵を、1 回に SPAWN_NUM_PER_CALL 体まで出す。全部出し終わったら true
+	 * Game::Start から毎フレーム呼ぶ（敵の Start は重いので、1 フレームに集めないため）
+	 */
+	bool SpawnNext();
 
 private:
 	/** 敵を出す場所 1 つ分 */
@@ -42,6 +48,9 @@ private:
 	void SpawnEnemy(Spawn& spawn);
 
 private:
+	static constexpr int SPAWN_NUM_PER_CALL = 1;	///< 1 回に出す敵の数（敵の Start は 1 体 0.03〜0.17 秒かかるので、1 フレームに 1 体ずつにしてダイブの絵を止めない）
+
+	int m_nextSpawnIndex = 0;						///< 次に出す m_spawns の番号
 	std::vector<Spawn> m_spawns;					///< 敵を出す場所の一覧
 	const BattleCharacter* m_player = nullptr;		///< プレイヤー（借りているだけ）
 };

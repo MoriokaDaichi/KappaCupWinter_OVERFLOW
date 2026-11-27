@@ -3,9 +3,11 @@
 #include "actor/BattleCharacter.h"
 #include "input/InputManager.h"
 #include "actor/characterState/WallRunState.h"
+#include "debug/LoadTimer.h"
 
 bool GameCamera::Start()
 {
+	LoadTimer timer("GameCamera::Start");
 	m_collisionSolver.Init(m_param.collisionRadius);
 	g_camera3D->SetNear(m_param.nearClip);
 	g_camera3D->SetFar(m_param.farClip);

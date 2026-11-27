@@ -267,6 +267,9 @@
     <ClCompile Include="actor\characterState\FlyState.cpp">
       <Filter>actor\characterState</Filter>
     </ClCompile>
+    <ClCompile Include="system\TkmPrefetcher.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -501,6 +504,12 @@
     </ClInclude>
     <ClInclude Include="actor\characterState\FlyState.h">
       <Filter>actor\characterState</Filter>
+    </ClInclude>
+    <ClInclude Include="debug\LoadTimer.h">
+      <Filter>debug</Filter>
+    </ClInclude>
+    <ClInclude Include="system\TkmPrefetcher.h">
+      <Filter>system</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

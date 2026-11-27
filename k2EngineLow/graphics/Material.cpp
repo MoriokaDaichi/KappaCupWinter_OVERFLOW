@@ -1,5 +1,6 @@
 #include "k2EngineLowPreCompile.h"
 #include "Material.h"
+#include "EngineLoadTimer.h"
 
 namespace nsK2EngineLow {
 	//ルートシグネチャとパイプラインステート周りはカリカリカリ
@@ -166,7 +167,9 @@ namespace nsK2EngineLow {
 	)
 	{
 		//テクスチャをロード。
+		{ EngineLoadTimer tmrTex("Eng::Texture");
 		InitTexture(tkmMat);
+		}
 
 		//定数バッファを作成。
 		SMaterialParam matParam;
@@ -210,8 +213,11 @@ namespace nsK2EngineLow {
 
 		if (fxFilePath != nullptr && strlen(fxFilePath) > 0) {
 			//シェーダーを初期化。
+			{ EngineLoadTimer tmrSh("Eng::Shaders", fxFilePath);
 			InitShaders(fxFilePath, vsEntryPointFunc, vsSkinEntryPointFunc, psEntryPointFunc);
+			}
 			//パイプラインステートを初期化。
+			{ EngineLoadTimer tmrPso("Eng::PSO", fxFilePath);
 			InitPipelineState(
 				colorBufferFormat, 
 				alphaBlendMode, 
@@ -219,6 +225,7 @@ namespace nsK2EngineLow {
 				isDepthTest,
 				cullMode
 			);
+			}
 		}
 	}
 	void Material::InitPipelineState(

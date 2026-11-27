@@ -7,18 +7,21 @@
 #include "gimmick/ElectricFence.h"
 #include "gimmick/LaserWall.h"
 
-void Stage::Init()
+void Stage::InitRenderer()
 {
 	m_renderer.Init();
-	m_particle.Init();
-	for (int i = 0; i < StageParam::PROP_TYPE_COUNT; i++)
-	{
-		const std::string path = std::string("Assets/modelData/stage/stage_") + StageParam::PROP_TYPES[i].name + ".tkm";
-		m_props[i].Init(path.c_str(), StageParam::PROP_TYPES[i].tint);
-	}
-	Build();
 }
 
+void Stage::InitParticle()
+{
+	m_particle.Init();
+}
+
+void Stage::InitProp(const int type)
+{
+	const std::string path = std::string("Assets/modelData/stage/stage_") + StageParam::PROP_TYPES[type].name + ".tkm";
+	m_props[type].Init(path.c_str(), StageParam::PROP_TYPES[type].tint);
+}
 void Stage::Update()
 {
 	if (m_reloadCount != nsGameParam::GetReloadCount())
@@ -65,6 +68,15 @@ void Stage::Draw(RenderContext& rc)
 
 void Stage::Build()
 {
+	BeginBuild();
+	// 全部の区間を一気に置く（F5 で JSON を読み直したとき用。少しずつ置くのは読み込みのときだけ）
+	while (!BuildNextSection())
+	{
+	}
+}
+
+void Stage::BeginBuild()
+{
 	m_gimmicks.clear();
 	m_reloadCount = nsGameParam::GetReloadCount();
 	m_blocks.clear();
@@ -73,17 +85,24 @@ void Stage::Build()
 	{
 		prop.Clear();
 	}
+	m_buildSectionIndex = 0;
+	m_buildAnchorCount = 0;
+}
 
-	int anchorCount = 0;
-	for (const StageParam::Section& section : nsGameParam::Get().stage.sections)
+bool Stage::BuildNextSection()
+{
+	const std::vector<StageParam::Section>& sections = nsGameParam::Get().stage.sections;
+	if (m_buildSectionIndex < static_cast<int>(sections.size()))
 	{
+		const StageParam::Section& section = sections[m_buildSectionIndex];
+
 		AddBlocks(section.blocks, StageRenderer::Kind::Block);
 		AddBlocks(section.panels, StageRenderer::Kind::Panel);
 
-		for (const std::array<float, 3>& position : section.anchors)
+		for (const std::array<float, 3>&position : section.anchors)
 		{
-			PlaceAnchor(anchorCount, Vector3(position[0], position[1], position[2]));
-			anchorCount++;
+			PlaceAnchor(m_buildAnchorCount, Vector3(position[0], position[1], position[2]));
+			m_buildAnchorCount++;
 		}
 
 		AddDecorations(section.towers, StageRenderer::Kind::Tower);
@@ -124,12 +143,21 @@ void Stage::Build()
 			gimmick->Init(block);
 			m_gimmicks.push_back(std::move(gimmick));
 		}
+
+		m_buildSectionIndex++;
+		// まだ区間が残っていれば、続きは次の呼び出しで（読み込みでは次のフレーム）
+		if (m_buildSectionIndex < static_cast<int>(sections.size()))
+		{
+			return false;
+		}
 	}
 
-	for (int i = anchorCount; i < static_cast<int>(m_anchors.size()); i++)
+	// 全部の区間を置き終えた。使わなかったアンカーは、ロックされない高さへ隠す
+	for (int i = m_buildAnchorCount; i < static_cast<int>(m_anchors.size()); i++)
 	{
 		m_anchors[i]->SetPosition(Vector3(0.0f, HIDDEN_HEIGHT, 0.0f));
 	}
+	return true;
 }
 
 void Stage::AddBlocks(const std::vector<StageParam::Block>& blocks, const StageRenderer::Kind kind)

@@ -1,9 +1,11 @@
 ﻿#pragma once
 #include "hud/HudShape.h"
 #include "hud/HudText.h"
+#include "system/TkmPrefetcher.h"
 #include <array>
 
 class Fade;
+class Game;
 
 /**
  * タイトル画面（企画書の「スタート」の絵）
@@ -90,8 +92,8 @@ private:
 	float m_time = 0.0f;				///< 出てからの秒数
 	float m_phaseTime = 0.0f;			///< 今の Phase になってからの秒数
 	float m_codeRefreshTimer = 0.0f;	///< 変わる数字を作り直すまでの残り（秒）
-	bool m_isLoadingShown = false;	///< 真っ黒の上に「> DIVING...」を出したか
-	bool m_isGame = false;				///< もうゲームを作ったか（2 回作らないように）
+	Game* m_game = nullptr;				///< ダイブ中に作り始めたゲーム（準備ができたか聞き、Begin を呼ぶ。消すのはゲーム自身）
+	TkmPrefetcher m_prefetcher;			///< ゲームで使う重い tkm を、タイトルの間に別スレッドで読んでおく係
 
 	/** titleBack.fx に渡す値（titleBack.fx の BackCb と同じ並び） */
 	struct BackConstant
